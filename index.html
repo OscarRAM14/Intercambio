@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d2418">
+<title>Intercambio Navideño</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+/* =====================================================================
+   CONFIGURACIÓN — pega aquí los datos de tu proyecto de Supabase
+   (Supabase > Project Settings > API: "Project URL" y "Publishable key")
+   ===================================================================== */
+const SUPABASE_URL = "PEGA_AQUI_TU_PROJECT_URL";      // ej. https://abcd1234.supabase.co
+const SUPABASE_KEY = "PEGA_AQUI_TU_PUBLISHABLE_KEY";  // ej. sb_publishable_xxx  (o la anon key)
+const APP_VERSION  = "1.0";
+</script>
+<style>
+:root{
+  --noche:#0d2418; --pino:#173d2a; --pino2:#1e5b3a; --rojo:#c0262d; --rojo2:#9e1c22;
+  --oro:#d9a93a; --oro2:#f3d27a; --crema:#fffaf0; --papel:#fff4e0; --tinta:#2a1f17; --gris:#7a6e62;
+  --linea:#ead9bd; --ok:#2f8a4f; --sombra:0 10px 30px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:Nunito,system-ui,sans-serif; color:var(--tinta); min-height:100vh;
+  background:
+    radial-gradient(1200px 600px at 50% -200px, #24563a 0%, transparent 70%),
+    radial-gradient(circle at 20% 80%, rgba(217,169,58,.06) 0 2px, transparent 3px) 0 0/38px 38px,
+    var(--noche);
+  padding-bottom:calc(90px + env(safe-area-inset-bottom));
+}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;line-height:1.15}
+button,input,textarea,select{font:inherit}
+a{color:var(--rojo)}
+.wrap{max-width:560px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 16px 24px;position:relative;z-index:1}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#snow span{position:absolute;top:-10px;color:#fff;opacity:.7;animation:caer linear infinite}
+@keyframes caer{to{transform:translateY(110vh) translateX(30px)}}
+@media (prefers-reduced-motion:reduce){#snow{display:none}}
+
+.hero{text-align:center;color:var(--crema);padding:18px 0 8px}
+.hero .emoji{font-size:54px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+.hero h1{font-size:34px;font-weight:800;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--oro2)}
+.hero p{color:#cfe2d4;margin:6px 0 0}
+.top{display:flex;align-items:center;gap:10px;color:var(--crema);margin-bottom:12px}
+.top h1{font-size:22px;flex:1}
+.top .sub{font-size:13px;color:#b9d3c1}
+.iconbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:var(--crema);
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:18px;flex:none}
+
+.card{background:var(--crema);border-radius:20px;padding:18px;margin:14px 0;box-shadow:var(--sombra);position:relative}
+.card.ribbon{border-top:6px solid var(--rojo)}
+.card h2{font-size:20px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h3{font-size:16px;margin:14px 0 8px}
+.muted{color:var(--gris);font-size:14px}
+.small{font-size:13px}
+.center{text-align:center}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrapr{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.mt{margin-top:12px}.mt0{margin-top:0}
+
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input,textarea,select{width:100%;border:2px solid var(--linea);background:#fff;border-radius:12px;padding:11px 12px;color:var(--tinta);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--oro)}
+textarea{resize:vertical;min-height:70px}
+.hint{font-size:12px;color:var(--gris);margin-top:4px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 16px;
+  font-weight:800;cursor:pointer;text-decoration:none;transition:transform .08s, filter .15s;font-size:15px}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.btn.full{width:100%}
+.btn.rojo{background:linear-gradient(180deg,#d4343b,var(--rojo2));color:#fff;box-shadow:0 4px 0 #7a141a}
+.btn.verde{background:linear-gradient(180deg,#2a7a4d,var(--pino2));color:#fff;box-shadow:0 4px 0 #0f3b23}
+.btn.oro{background:linear-gradient(180deg,var(--oro2),var(--oro));color:#3b2a06;box-shadow:0 4px 0 #a07a1f}
+.btn.wa{background:#25d366;color:#053d1c;box-shadow:0 4px 0 #128c4a}
+.btn.ghost{background:transparent;border:2px solid var(--linea);color:var(--tinta)}
+.btn.sm{padding:8px 11px;font-size:13px;border-radius:11px}
+.btn.xs{padding:6px 9px;font-size:12px;border-radius:9px;box-shadow:none}
+.btn.danger{background:#fff;color:var(--rojo);border:2px solid #f0c5c7}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font-size:12px;font-weight:800;border-radius:999px;padding:3px 9px;background:#efe6d6;color:#6b5c4c}
+.chip.ok{background:#dcf1e3;color:#1e6b3b}
+.chip.oro{background:#fbecc4;color:#7a5a0c}
+.chip.rojo{background:#fbe0e1;color:#9e1c22}
+
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.stat div{background:var(--papel);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px;font-family:Fraunces,serif}
+.stat span{font-size:12px;color:var(--gris)}
+
+.info{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:15px}
+.info .k{font-size:18px}
+
+.count{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.count div{background:var(--pino);color:var(--crema);border-radius:12px;padding:8px 10px;min-width:62px;text-align:center}
+.count b{display:block;font-size:22px;font-family:Fraunces,serif;color:var(--oro2)}
+.count span{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#b9d3c1}
+
+.person{border:2px solid var(--linea);border-radius:16px;padding:12px;margin:10px 0;background:#fff}
+.person .name{font-weight:800;font-size:16px}
+.person .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.pin{font-family:ui-monospace,Menlo,monospace;font-weight:800;background:var(--papel);border-radius:8px;padding:2px 7px;letter-spacing:2px}
+
+.wish{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--linea)}
+.wish:last-child{border-bottom:0}
+.wish .t{font-weight:700}
+.wish.bought .t{text-decoration:line-through;color:var(--gris)}
+.chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--linea);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none;font-size:15px}
+.chk.on{background:var(--ok);border-color:var(--ok);color:#fff}
+
+.pinbox{display:flex;gap:10px;justify-content:center;margin:18px 0}
+.pinbox input{width:58px;height:66px;text-align:center;font-size:30px;font-weight:800;border-radius:14px;padding:0}
+
+.gift{width:180px;height:180px;margin:10px auto;cursor:pointer;position:relative;border:0;background:none;display:block}
+.gift .box{position:absolute;bottom:0;left:15px;width:150px;height:110px;background:var(--rojo);border-radius:10px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.15)}
+.gift .lid{position:absolute;bottom:105px;left:5px;width:170px;height:38px;background:#d9343b;border-radius:10px;transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
+.gift .rv{position:absolute;bottom:0;left:80px;width:20px;height:143px;background:var(--oro)}
+.gift .bow{position:absolute;bottom:138px;left:62px;font-size:44px;transition:transform .5s}
+.gift.shake{animation:shake .5s ease-in-out 2}
+.gift.open .lid{transform:translateY(-70px) rotate(-18deg)}
+.gift.open .bow{transform:translateY(-80px) rotate(-25deg)}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+
+.big-name{font-family:Fraunces,serif;font-size:38px;font-weight:800;color:var(--rojo);text-align:center;margin:6px 0 2px;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+.chat{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow:auto;padding:4px 2px 8px}
+.msg{max-width:82%;padding:9px 12px;border-radius:16px;font-size:15px;line-height:1.35}
+.msg.me{align-self:flex-end;background:var(--pino2);color:#fff;border-bottom-right-radius:4px}
+.msg.them{align-self:flex-start;background:var(--papel);border-bottom-left-radius:4px}
+.msg time{display:block;font-size:11px;opacity:.7;margin-top:3px}
+
+.seg{display:flex;background:var(--papel);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;padding:9px;border-radius:10px;font-weight:800;color:var(--gris);cursor:pointer}
+.seg button.on{background:#fff;color:var(--tinta);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:rgba(13,36,24,.96);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(255,255,255,.1);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.nav button{background:none;border:0;color:#9fbfaa;font-weight:800;font-size:11px;padding:6px 0;border-radius:12px;cursor:pointer;position:relative}
+.nav button .i{display:block;font-size:22px;margin-bottom:2px}
+.nav button.on{color:var(--oro2);background:rgba(255,255,255,.06)}
+.dot{position:absolute;top:4px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:var(--rojo);border:2px solid var(--noche)}
+
+.banner{background:linear-gradient(135deg,var(--oro2),var(--oro));color:#3b2a06;border-radius:18px;padding:14px;margin:14px 0;box-shadow:var(--sombra)}
+.banner b{font-family:Fraunces,serif;font-size:17px}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:rgba(255,255,255,.6);border-radius:8px;padding:8px;word-break:break-all;margin:8px 0}
+
+.empty{text-align:center;padding:14px;color:var(--gris)}
+.empty .e{font-size:40px}
+
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;
+  background:var(--tinta);color:#fff;padding:11px 16px;border-radius:14px;font-weight:700;z-index:20;transition:.25s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--rojo2)}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30;display:grid;place-items:center;padding:20px}
+.modal .card{max-width:420px;width:100%;margin:0}
+
+.spinner{width:36px;height:36px;border:4px solid rgba(255,255,255,.2);border-top-color:var(--oro2);border-radius:50%;animation:spin 1s linear infinite;margin:60px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.foot{text-align:center;color:#7fa18a;font-size:12px;margin-top:20px}
+.list-link{display:flex;align-items:center;gap:10px;padding:12px;border:2px solid var(--linea);border-radius:14px;margin:8px 0;text-decoration:none;color:var(--tinta);background:#fff}
+.list-link b{flex:1}
+details summary{cursor:pointer;font-weight:800}
+</style>
+</head>
+<body>
+<div id="snow"></div>
+<div class="wrap" id="app"><div class="spinner"></div></div>
+<div class="nav" id="nav" hidden></div>
+<div class="toast" id="toast"></div>
+<div id="modalRoot"></div>
+
+<script>
+/* ============================ UTILIDADES ============================ */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const params = new URLSearchParams(location.search);
+const BASE = location.origin + location.pathname;
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+function toast(msg, err){
+  const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.className = 'toast', 2600);
+}
+function money(n, cur){
+  if (n === null || n === undefined || n === '') return '';
+  return new Intl.NumberFormat('es-MX', {style:'currency', currency: cur || 'MXN', maximumFractionDigits: Number(n) % 1 ? 2 : 0}).format(n);
+}
+function fechaLarga(iso){
+  if (!iso) return '';
+  const d = new Date(iso);
+  const s = d.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const h = d.toLocaleTimeString('es-MX', {hour:'numeric', minute:'2-digit'});
+  return s.charAt(0).toUpperCase() + s.slice(1) + ' · ' + h;
+}
+function hora(iso){ const d = new Date(iso); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit'}); }
+function toLocalInput(iso){
+  if (!iso) return '';
+  const d = new Date(iso); const p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function waPhone(t){
+  const d = String(t || '').replace(/\D/g,'');
+  if (!d) return '';
+  if (d.length === 10) return '52' + d;
+  return d;
+}
+function waLink(tel, text){
+  const p = waPhone(tel);
+  return 'https://wa.me/' + (p || '') + '?text=' + encodeURIComponent(text);
+}
+async function copiar(text){
+  try{ await navigator.clipboard.writeText(text); toast('Copiado ✅'); return; }catch(e){}
+  const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('Copiado ✅'); }catch(e){ toast('No se pudo copiar', true); }
+  ta.remove();
+}
+function modal(html){
+  const root = $('#modalRoot');
+  root.innerHTML = `<div class="modal"><div class="card ribbon">${html}</div></div>`;
+  root.querySelector('.modal').addEventListener('click', e => { if (e.target.classList.contains('modal')) closeModal(); });
+  return root;
+}
+function closeModal(){ $('#modalRoot').innerHTML = ''; }
+function confirmar(titulo, texto, btn = 'Sí, continuar', clase = 'rojo'){
+  return new Promise(res => {
+    const r = modal(`<h2>${titulo}</h2><p class="muted">${texto}</p>
+      <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn ${clase} grow" data-x="si">${btn}</button></div>`);
+    r.querySelector('[data-x=no]').onclick = () => { closeModal(); res(false); };
+    r.querySelector('[data-x=si]').onclick = () => { closeModal(); res(true); };
+  });
+}
+function countdownHTML(iso){
+  if (!iso) return '';
+  const ms = new Date(iso) - Date.now();
+  if (ms <= 0) return `<div class="center mt"><span class="chip oro">🎉 ¡Hoy es el intercambio (o ya pasó)!</span></div>`;
+  const d = Math.floor(ms/864e5), h = Math.floor(ms/36e5)%24, m = Math.floor(ms/6e4)%60;
+  return `<div class="count"><div><b>${d}</b><span>días</span></div><div><b>${h}</b><span>horas</span></div><div><b>${m}</b><span>min</span></div></div>`;
+}
+function snow(){
+  const s = $('#snow'); const flakes = ['❄','❅','✦','•'];
+  for (let i = 0; i < 22; i++){
+    const f = document.createElement('span');
+    f.textContent = flakes[i % 4];
+    f.style.left = Math.random()*100 + 'vw';
+    f.style.fontSize = (8 + Math.random()*12) + 'px';
+    f.style.animationDuration = (9 + Math.random()*12) + 's';
+    f.style.animationDelay = (-Math.random()*20) + 's';
+    s.appendChild(f);
+  }
+}
+
+/* ============================ SUPABASE ============================ */
+const configurado = !SUPABASE_URL.includes('PEGA_') && !SUPABASE_KEY.includes('PEGA_');
+async function rpc(fn, args = {}){
+  const headers = {'Content-Type':'application/json', 'apikey': SUPABASE_KEY};
+  if (SUPABASE_KEY.startsWith('eyJ')) headers['Authorization'] = 'Bearer ' + SUPABASE_KEY;
+  let r;
+  try{
+    r = await fetch(SUPABASE_URL.replace(/\/$/,'') + '/rest/v1/rpc/' + fn, {method:'POST', headers, body: JSON.stringify(args)});
+  }catch(e){ throw new Error('Sin conexión. Revisa tu internet.'); }
+  const txt = await r.text();
+  let data = null; try{ data = txt ? JSON.parse(txt) : null; }catch(e){}
+  if (!r.ok) throw new Error((data && data.message) || 'Error del servidor (' + r.status + ')');
+  return data;
+}
+async function hacer(btn, fn){
+  if (btn){ btn.disabled = true; }
+  try{ return await fn(); }
+  catch(e){ toast(e.message, true); throw e; }
+  finally{ if (btn) btn.disabled = false; }
+}
+
+/* ============================ RUTEO ============================ */
+function arrancar(){
+  snow();
+  if (!configurado) return vistaConfig();
+  if (params.get('admin')) return Admin.iniciar(params.get('admin'));
+  if (params.get('p')) return Part.iniciar(params.get('p'));
+  if (params.get('nuevo') !== null) return vistaCrear();
+  vistaInicio();
+}
+
+function pie(){ return `<div class="foot">Intercambio Navideño · v${APP_VERSION}</div>`; }
+
+function vistaConfig(){
+  app.innerHTML = `
+  <div class="hero"><div class="emoji">🛠️</div><h1>Falta <em>conectar</em> Supabase</h1></div>
+  <div class="card ribbon">
+    <p>Abre <b>index.html</b> en GitHub (lápiz ✏️ para editar) y al inicio del archivo pega:</p>
+    <ol class="muted">
+      <li><b>SUPABASE_URL</b>: tu Project URL</li>
+      <li><b>SUPABASE_KEY</b>: tu Publishable key (o anon key)</li>
+    </ol>
+    <p class="muted">Los encuentras en Supabase → Project Settings → API. Guarda el cambio (Commit) y recarga esta página en 1 minuto.</p>
+  </div>${pie()}`;
+}
+
+/* ============================ INICIO ============================ */
+function vistaInicio(){
+  const mios = store.get('ix_admins', []);
+  app.innerHTML = `
+  <div class="hero">
+    <div class="emoji">🎄🎁</div>
+    <h1>Intercambio <em>Navideño</em></h1>
+    <p>Sorteo secreto, lista de deseos y todo por WhatsApp</p>
+  </div>
+  <div class="card ribbon">
+    <h2>🎅 Organiza un intercambio</h2>
+    <p class="muted mt0">Pon el monto, agrega a tu familia, haz el sorteo y manda a cada quien su link con código por WhatsApp.</p>
+    <a class="btn rojo full mt" href="?nuevo">Crear intercambio</a>
+  </div>
+  ${mios.length ? `<div class="card"><h2>📋 Mis intercambios</h2>
+    ${mios.map(m => `<a class="list-link" href="?admin=${esc(m.code)}"><span>🎄</span><b>${esc(m.nombre)}</b><span class="muted">Abrir ›</span></a>`).join('')}
+  </div>` : ''}
+  <div class="card">
+    <h2>📩 ¿Te invitaron?</h2>
+    <p class="muted mt0">Abre el link que te llegó por WhatsApp y escribe tu código de 4 dígitos.</p>
+  </div>
+  ${pie()}`;
+}
+
+function formGrupo(g = {}){
+  return `
+    <label>Nombre del intercambio</label>
+    <input id="f_nombre" maxlength="80" placeholder="Ej. Intercambio Familia Ramírez 2026" value="${esc(g.nombre)}">
+    <label>Monto del regalo (MXN)</label>
+    <input id="f_monto" type="number" inputmode="decimal" min="0" step="50" placeholder="Ej. 500" value="${esc(g.monto ?? '')}">
+    <label>Fecha y hora del intercambio</label>
+    <input id="f_fecha" type="datetime-local" value="${esc(toLocalInput(g.fecha))}">
+    <label>Lugar</label>
+    <input id="f_lugar" maxlength="120" placeholder="Ej. Casa de la abuela" value="${esc(g.lugar)}">
+    <label>Notas para todos <span class="muted">(opcional)</span></label>
+    <textarea id="f_notas" maxlength="500" placeholder="Ej. Cada quien lleva un platillo 🫔">${esc(g.notas)}</textarea>`;
+}
+function leerGrupo(){
+  const f = $('#f_fecha').value, m = $('#f_monto').value;
+  return {
+    p_nombre: $('#f_nombre').value.trim(),
+    p_monto: m === '' ? null : Number(m),
+    p_fecha: f ? new Date(f).toISOString() : null,
+    p_lugar: $('#f_lugar').value.trim() || null,
+    p_notas: $('#f_notas').value.trim() || null
+  };
+}
+function vistaCrear(){
+  app.innerHTML = `
+  <div class="top"><a class="iconbtn" href="./">‹</a><h1>Nuevo intercambio</h1></div>
+  <div class="card ribbon">${formGrupo({})}
+    <button class="btn rojo full mt" id="crear">🎄 Crear y agregar participantes</button>
+  </div>${pie()}`;
+  $('#crear').onclick = e => hacer(e.currentTarget, async () => {
+    const args = leerGrupo();
+    if (!args.p_nombre) throw new Error('Ponle nombre al intercambio');
+    const r = await rpc('ix_crear_grupo', args);
+    const mios = store.get('ix_admins', []);
+    mios.unshift({code: r.admin_code, nombre: args.p_nombre});
+    store.set('ix_admins', mios.slice(0, 20));
+    store.set('ix_nuevo_' + r.admin_code, true);
+    location.href = '?admin=' + r.admin_code;
+  });
+}
+
+/* ============================ ORGANIZADOR ============================ */
+const Admin = {
+  code: null, d: null,
+  async iniciar(code){
+    this.code = code;
+    await this.cargar();
+    window.addEventListener('focus', () => this.cargar(true));
+  },
+  async cargar(silencioso){
+    try{
+      this.d = await rpc('ix_admin_get', {p_admin: this.code});
+      const mios = store.get('ix_admins', []);
+      const i = mios.findIndex(m => m.code === this.code);
+      if (i === -1) mios.unshift({code: this.code, nombre: this.d.grupo.nombre}); else mios[i].nombre = this.d.grupo.nombre;
+      store.set('ix_admins', mios.slice(0, 20));
+      this.render();
+    }catch(e){
+      if (!silencioso) app.innerHTML = `<div class="hero"><div class="emoji">😕</div><h1>No encontramos el intercambio</h1><p>${esc(e.message)}</p></div><div class="center"><a class="btn oro" href="./">Ir al inicio</a></div>`;
+    }
+  },
+  linkAdmin(){ return BASE + '?admin=' + this.code; },
+  linkPart(p){ return BASE + '?p=' + p.token; },
+  mensaje(p){
+    const g = this.d.grupo;
+    const lineas = [`🎄 ¡Hola ${p.nombre}!`, `Estás en el intercambio navideño *${g.nombre}* 🎁`, ''];
+    if (g.monto) lineas.push(`💰 Monto: ${money(g.monto, g.moneda)}`);
+    if (g.fecha) lineas.push(`📅 ${fechaLarga(g.fecha)}`);
+    if (g.lugar) lineas.push(`📍 ${g.lugar}`);
+    lineas.push('');
+    lineas.push(g.sorteado
+      ? '👉 ¡Ya se hizo el sorteo! Entra aquí para ver a quién te tocó y qué le gustaría:'
+      : '👉 Entra aquí para llenar tu lista de deseos. Cuando se haga el sorteo, en este mismo link verás a quién te tocó:');
+    lineas.push(this.linkPart(p), '', `🔐 Tu código: *${p.pin}*`, '🤫 ¡Es secreto, no se lo enseñes a nadie!');
+    return lineas.join('\n');
+  },
+  render(){
+    const {grupo: g, participantes: ps, exclusiones: ex} = this.d;
+    const nombre = id => (ps.find(p => p.id === id) || {}).nombre || '¿?';
+    const conLista = ps.filter(p => p.deseos > 0).length;
+    const vieron = ps.filter(p => p.vio).length;
+    const nuevo = store.get('ix_nuevo_' + this.code, false);
+
+    app.innerHTML = `
+    <div class="top"><a class="iconbtn" href="./">‹</a>
+      <div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">Panel del organizador</div></div>
+      <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
+
+    ${nuevo ? `<div class="banner"><b>⭐ Guarda tu link de organizador</b>
+      <div class="small">Con él vuelves a este panel desde cualquier celular. No lo compartas.</div>
+      <div class="code">${esc(this.linkAdmin())}</div>
+      <div class="row"><button class="btn sm verde grow" id="copAdmin">Copiar</button>
+      <a class="btn sm wa grow" target="_blank" href="${esc(waLink('', '🎅 Mi link de organizador del intercambio "' + g.nombre + '":\n' + this.linkAdmin()))}">Mandármelo por WhatsApp</a></div>
+      <button class="btn xs ghost mt" id="okNuevo">Ya lo guardé ✓</button></div>` : ''}
+
+    <div class="card ribbon">
+      <div class="row"><h2 class="grow" style="margin:0">🎁 Detalles</h2><button class="btn xs ghost" id="editar">Editar</button></div>
+      <div class="info mt">
+        ${g.monto ? `<span class="k">💰</span><span><b>${money(g.monto, g.moneda)}</b> por regalo</span>` : ''}
+        ${g.fecha ? `<span class="k">📅</span><span>${esc(fechaLarga(g.fecha))}</span>` : ''}
+        ${g.lugar ? `<span class="k">📍</span><span>${esc(g.lugar)}</span>` : ''}
+        ${g.notas ? `<span class="k">📝</span><span>${esc(g.notas)}</span>` : ''}
+      </div>
+      ${countdownHTML(g.fecha)}
+      <div class="stat"><div><b>${ps.length}</b><span>participantes</span></div><div><b>${conLista}</b><span>con lista</span></div><div><b>${g.sorteado ? vieron : '—'}</b><span>vieron resultado</span></div></div>
+    </div>
+
+    <div class="card">
+      <h2>🎲 Sorteo</h2>
+      ${g.sorteado ? `
+        <p class="mt0"><span class="chip ok">✓ Sorteo hecho</span> <span class="muted small">${esc(hora(g.sorteado_at))}</span></p>
+        <p class="muted">Nadie, ni tú, puede ver quién le tocó a quién en este panel. Manda a cada quien su link (abajo).</p>
+        <div class="person" style="background:var(--papel)">
+          <div class="row"><div class="grow"><b>Revelar Santas</b><div class="muted small">El día del intercambio, cada quien verá quién le regaló.</div></div>
+          <button class="btn sm ${g.revelado ? 'ghost' : 'oro'}" id="revelar">${g.revelado ? 'Ocultar' : 'Revelar'}</button></div>
+        </div>
+        <button class="btn danger sm mt" id="reiniciar">↺ Reiniciar sorteo</button>
+      ` : `
+        <p class="muted mt0">Agrega mínimo 3 personas. Puedes mandar los links desde antes para que llenen su lista; cuando sortees, en el mismo link verán a quién les tocó.</p>
+        <label class="row" style="font-weight:600"><input type="checkbox" id="evitar" checked style="width:auto"> Evitar que dos personas se regalen entre sí</label>
+        <button class="btn rojo full mt" id="sortear" ${ps.length < 3 ? 'disabled' : ''}>🎲 Hacer el sorteo</button>
+      `}
+    </div>
+
+    <div class="card">
+      <h2>👨‍👩‍👧‍👦 Participantes <span class="chip">${ps.length}</span></h2>
+      ${ps.length ? ps.map(p => `
+        <div class="person">
+          <div class="row"><div class="grow"><div class="name">${esc(p.nombre)}</div>
+            <div class="muted small">${p.telefono ? '📱 ' + esc(p.telefono) : 'Sin teléfono'} · Código <span class="pin">${esc(p.pin)}</span></div></div></div>
+          <div class="chips">
+            ${p.abrio ? '<span class="chip ok">Abrió su link</span>' : '<span class="chip">Sin abrir</span>'}
+            ${p.deseos ? `<span class="chip oro">🎁 ${p.deseos} deseo${p.deseos > 1 ? 's' : ''}</span>` : '<span class="chip">Sin lista</span>'}
+            ${g.sorteado ? (p.vio ? '<span class="chip ok">✓ Vio su resultado</span>' : '<span class="chip rojo">No ha visto resultado</span>') : ''}
+          </div>
+          <div class="actions">
+            <a class="btn sm wa" target="_blank" href="${esc(waLink(p.telefono, this.mensaje(p)))}">WhatsApp</a>
+            <button class="btn sm ghost" data-copiar="${esc(p.id)}">Copiar mensaje</button>
+            <button class="btn sm ghost" data-editp="${esc(p.id)}">Editar</button>
+            ${g.sorteado ? '' : `<button class="btn sm danger" data-quitar="${esc(p.id)}">Quitar</button>`}
+          </div>
+        </div>`).join('') : `<div class="empty"><div class="e">🧑‍🎄</div>Aún no hay nadie. ¡Agrega a la familia!</div>`}
+      ${g.sorteado ? '' : `
+        <h3>Agregar persona</h3>
+        <div class="row wrapr"><input id="np_nombre" class="grow" maxlength="40" placeholder="Nombre" style="flex:1 1 140px">
+        <input id="np_tel" type="tel" inputmode="tel" placeholder="WhatsApp (10 dígitos)" style="flex:1 1 140px"></div>
+        <button class="btn verde full mt" id="agregar">+ Agregar</button>
+        <div class="hint">El teléfono es opcional; sin él, WhatsApp te deja elegir el contacto.</div>`}
+    </div>
+
+    <div class="card">
+      <h2>🚫 Exclusiones</h2>
+      <p class="muted mt0">Parejas que no se pueden tocar entre sí (ej. esposos).</p>
+      ${ex.length ? ex.map(e => `<div class="row" style="padding:8px 0;border-bottom:1px dashed var(--linea)">
+          <span class="grow"><b>${esc(nombre(e.a))}</b> ✕ <b>${esc(nombre(e.b))}</b></span>
+          ${g.sorteado ? '' : `<button class="btn xs danger" data-exq="${esc(e.a)}|${esc(e.b)}">Quitar</button>`}</div>`).join('') : '<div class="muted small">Sin exclusiones.</div>'}
+      ${!g.sorteado && ps.length >= 2 ? `
+        <div class="row mt"><select id="ex_a" class="grow">${ps.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select>
+        <span>✕</span><select id="ex_b" class="grow">${ps.map((p, i) => `<option value="${esc(p.id)}" ${i === 1 ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('')}</select></div>
+        <button class="btn ghost full mt" id="exAdd">+ Agregar exclusión</button>` : ''}
+    </div>
+
+    <div class="card">
+      <details><summary>⚙️ Más opciones</summary>
+        <p class="muted small">Tu link de organizador:</p>
+        <div class="code" style="background:var(--papel)">${esc(this.linkAdmin())}</div>
+        <button class="btn sm ghost" id="copAdmin2">Copiar link de organizador</button>
+        <hr style="border:0;border-top:1px dashed var(--linea);margin:16px 0">
+        <button class="btn sm danger" id="borrar">🗑️ Borrar este intercambio</button>
+      </details>
+    </div>
+    ${pie()}`;
+
+    const on = (sel, fn) => { const el = $(sel); if (el) el.onclick = fn; };
+    on('#recargar', () => this.cargar());
+    on('#copAdmin', () => copiar(this.linkAdmin()));
+    on('#copAdmin2', () => copiar(this.linkAdmin()));
+    on('#okNuevo', () => { store.del('ix_nuevo_' + this.code); this.render(); });
+    on('#editar', () => this.editar());
+    on('#agregar', e => this.agregar(e.currentTarget));
+    const tel = $('#np_tel'); if (tel) tel.onkeydown = e => { if (e.key === 'Enter') this.agregar($('#agregar')); };
+    on('#exAdd', e => hacer(e.currentTarget, async () => {
+      await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: $('#ex_a').value, p_b: $('#ex_b').value, p_activa: true});
+      await this.cargar();
+    }));
+    on('#sortear', e => this.sortear(e.currentTarget));
+    on('#reiniciar', async () => {
+      if (!await confirmar('¿Reiniciar el sorteo?', 'Se borran las asignaciones y los mensajes anónimos. Las listas de deseos se conservan. Tendrás que volver a avisar a todos.', 'Sí, reiniciar')) return;
+      await hacer(null, () => rpc('ix_admin_reiniciar', {p_admin: this.code})); toast('Sorteo reiniciado'); this.cargar();
+    });
+    on('#revelar', e => hacer(e.currentTarget, async () => {
+      await rpc('ix_admin_revelar', {p_admin: this.code, p_revelar: !this.d.grupo.revelado});
+      toast(this.d.grupo.revelado ? 'Santas ocultos de nuevo' : '🎉 ¡Santas revelados!'); await this.cargar();
+    }));
+    on('#borrar', async () => {
+      if (!await confirmar('¿Borrar el intercambio?', 'Se elimina todo: participantes, listas y mensajes. No se puede deshacer.', 'Borrar todo')) return;
+      await hacer(null, () => rpc('ix_admin_borrar_grupo', {p_admin: this.code}));
+      store.set('ix_admins', store.get('ix_admins', []).filter(m => m.code !== this.code));
+      location.href = './';
+    });
+    app.querySelectorAll('[data-copiar]').forEach(b => b.onclick = () => copiar(this.mensaje(ps.find(p => p.id === b.dataset.copiar))));
+    app.querySelectorAll('[data-editp]').forEach(b => b.onclick = () => this.editarP(ps.find(p => p.id === b.dataset.editp)));
+    app.querySelectorAll('[data-quitar]').forEach(b => b.onclick = async () => {
+      const p = ps.find(x => x.id === b.dataset.quitar);
+      if (!await confirmar('¿Quitar a ' + esc(p.nombre) + '?', 'Se borra su lista de deseos.', 'Quitar')) return;
+      await hacer(null, () => rpc('ix_admin_quitar', {p_admin: this.code, p_id: p.id})); this.cargar();
+    });
+    app.querySelectorAll('[data-exq]').forEach(b => b.onclick = () => hacer(b, async () => {
+      const [a, c] = b.dataset.exq.split('|');
+      await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: a, p_b: c, p_activa: false}); await this.cargar();
+    }));
+  },
+  async agregar(btn){
+    const nombre = $('#np_nombre').value.trim(), tel = $('#np_tel').value.trim();
+    if (!nombre) return toast('Escribe el nombre', true);
+    await hacer(btn, () => rpc('ix_admin_agregar', {p_admin: this.code, p_nombre: nombre, p_telefono: tel || null}));
+    await this.cargar();
+    const n = $('#np_nombre'); if (n) n.focus();
+  },
+  async sortear(btn){
+    const evitar = $('#evitar').checked;
+    if (!await confirmar('¿Hacer el sorteo?', `Se sortea entre ${this.d.participantes.length} personas. Después ya no podrás agregar ni quitar gente (a menos que reinicies).`, '🎲 Sortear', 'rojo')) return;
+    const r = await hacer(btn, () => rpc('ix_sortear', {p_admin: this.code, p_evitar_parejas: evitar}));
+    await this.cargar();
+    modal(`<div class="center"><div style="font-size:60px">🎉</div><h2 style="justify-content:center">¡Sorteo listo!</h2>
+      <p class="muted">${evitar && !r.sin_parejas ? 'No se pudo evitar que dos personas se regalen entre sí con estas exclusiones, pero el sorteo es válido. ' : ''}Ahora manda a cada quien su link por WhatsApp con el botón verde.</p>
+      <button class="btn verde full" onclick="closeModal()">Entendido</button></div>`);
+  },
+  editar(){
+    const r = modal(`<h2>✏️ Editar detalles</h2>${formGrupo(this.d.grupo)}
+      <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn rojo grow" data-x="si">Guardar</button></div>`);
+    r.querySelector('[data-x=no]').onclick = closeModal;
+    r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
+      await rpc('ix_admin_editar', Object.assign({p_admin: this.code}, leerGrupo()));
+      closeModal(); toast('Guardado ✅'); await this.cargar();
+    });
+  },
+  editarP(p){
+    const r = modal(`<h2>✏️ Editar participante</h2>
+      <label>Nombre</label><input id="ep_n" maxlength="40" value="${esc(p.nombre)}">
+      <label>WhatsApp</label><input id="ep_t" type="tel" value="${esc(p.telefono || '')}">
+      <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn rojo grow" data-x="si">Guardar</button></div>`);
+    r.querySelector('[data-x=no]').onclick = closeModal;
+    r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
+      await rpc('ix_admin_editar_participante', {p_admin: this.code, p_id: p.id, p_nombre: $('#ep_n').value, p_telefono: $('#ep_t').value || null});
+      closeModal(); await this.cargar();
+    });
+  }
+};
+
+/* ============================ PARTICIPANTE ============================ */
+const Part = {
+  token: null, pin: null, d: null, tab: 'amigo', chatCon: 'santa', timer: null,
+  iniciar(token){
+    this.token = token;
+    const guardado = store.get('ix_pin_' + token, null);
+    if (guardado){ this.pin = guardado; this.entrar(true); }
+    else this.pantallaPin();
+  },
+  pantallaPin(error){
+    $('#nav').hidden = true;
+    app.innerHTML = `
+      <div class="hero"><div class="emoji">🎅🔐</div><h1>¡Hola! Escribe tu <em>código</em></h1>
+      <p>Son los 4 dígitos que te llegaron por WhatsApp</p></div>
+      <div class="card ribbon center">
+        <div class="pinbox">${[0,1,2,3].map(i => `<input inputmode="numeric" maxlength="1" pattern="[0-9]*" data-i="${i}" aria-label="Dígito ${i+1}">`).join('')}</div>
+        ${error ? `<p style="color:var(--rojo);font-weight:800">${esc(error)}</p>` : ''}
+        <button class="btn rojo full" id="entrar">Entrar 🎁</button>
+      </div>${pie()}`;
+    const ins = [...app.querySelectorAll('.pinbox input')];
+    ins.forEach((inp, i) => {
+      inp.oninput = () => {
+        inp.value = inp.value.replace(/\D/g,'').slice(-1);
+        if (inp.value && i < 3) ins[i+1].focus();
+        if (ins.every(x => x.value)) $('#entrar').click();
+      };
+      inp.onkeydown = e => { if (e.key === 'Backspace' && !inp.value && i > 0) ins[i-1].focus(); };
+      inp.onpaste = e => {
+        const t = (e.clipboardData.getData('text') || '').replace(/\D/g,'').slice(0,4);
+        if (t.length){ e.preventDefault(); t.split('').forEach((c, j) => ins[j] && (ins[j].value = c)); if (t.length === 4) $('#entrar').click(); }
+      };
+    });
+    ins[0].focus();
+    $('#entrar').onclick = () => {
+      const pin = ins.map(x => x.value).join('');
+      if (pin.length < 4) return toast('Escribe los 4 dígitos', true);
+      this.pin = pin; this.entrar();
+    };
+  },
+  async entrar(auto){
+    try{
+      this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin});
+      store.set('ix_pin_' + this.token, this.pin);
+      if (!this._listo){
+        this._listo = true;
+        if (!this.d.grupo.sorteado) this.tab = 'lista';
+        window.addEventListener('focus', () => this.refrescar());
+      }
+      this.render();
+    }catch(e){
+      if (/código/i.test(e.message)){ store.del('ix_pin_' + this.token); this.pantallaPin(auto ? null : 'Código incorrecto, revisa tu WhatsApp'); }
+      else if (/link/i.test(e.message)){ app.innerHTML = `<div class="hero"><div class="emoji">😕</div><h1>Link no válido</h1><p>${esc(e.message)}</p></div>`; }
+      else if (auto && this.d){ toast(e.message, true); }
+      else { this.pantallaPin(e.message); }
+    }
+  },
+  async refrescar(){
+    if (!this.d) return;
+    try{ this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin}); this.render(true); }catch(e){}
+  },
+  nav(){
+    const n = $('#nav'); n.hidden = false;
+    const visto = store.get('ix_chatvisto_' + this.token, 0);
+    const recibidos = [...this.d.chat_santa.filter(m => m.autor === 'santa'), ...this.d.chat_amigo.filter(m => m.autor === 'amigo')];
+    const nuevos = recibidos.some(m => new Date(m.fecha).getTime() > visto);
+    const tabs = [['amigo','🎁','Mi amigo'],['lista','📝','Mi lista'],['chat','💬','Mensajes'],['evento','📅','Evento']];
+    n.innerHTML = `<div class="in">${tabs.map(([k, i, t]) => `<button class="${this.tab === k ? 'on' : ''}" data-tab="${k}"><span class="i">${i}</span>${t}${k === 'chat' && nuevos && this.tab !== 'chat' ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
+    n.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { this.tab = b.dataset.tab; this.render(); window.scrollTo(0, 0); });
+  },
+  render(suave){
+    const y = window.scrollY;
+    const g = this.d.grupo;
+    clearInterval(this.timer);
+    if (this.tab === 'chat'){
+      store.set('ix_chatvisto_' + this.token, Date.now());
+      this.timer = setInterval(() => this.refrescar(), 20000);
+    }
+    const cuerpo = {amigo: () => this.vAmigo(), lista: () => this.vLista(), chat: () => this.vChat(), evento: () => this.vEvento()}[this.tab]();
+    app.innerHTML = `
+      <div class="top"><div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">Hola, ${esc(this.d.yo.nombre)} 👋</div></div>
+      <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
+      ${cuerpo}${pie()}`;
+    this.nav();
+    $('#recargar').onclick = () => { this.refrescar(); toast('Actualizado'); };
+    this.enlazar();
+    if (suave) window.scrollTo(0, y);
+  },
+  perfilHTML(pf, vacio){
+    const campos = [['talla','👕','Talla de ropa'],['calzado','👟','Calzado'],['colores','🎨','Colores favoritos'],['gustos','⭐','Le gusta'],['evitar','🚫','Por favor no regalar']];
+    const items = campos.filter(([k]) => pf && pf[k]);
+    if (!items.length) return `<div class="muted small">${vacio}</div>`;
+    return `<div class="info">${items.map(([k, i, t]) => `<span class="k">${i}</span><span><span class="muted small">${t}</span><br><b>${esc(pf[k])}</b></span>`).join('')}</div>`;
+  },
+  vAmigo(){
+    const g = this.d.grupo, a = this.d.amigo;
+    if (!g.sorteado || !a) return `
+      <div class="card ribbon center"><div style="font-size:60px">⏳</div><h2 style="justify-content:center">El sorteo aún no se hace</h2>
+      <p class="muted">Somos ${g.total} en el intercambio. Cuando el organizador sortee, aquí verás a quién le regalas.</p>
+      <p><b>Mientras, llena tu lista</b> para que tu Santa sepa qué regalarte.</p>
+      <button class="btn rojo full" data-ir="lista">📝 Llenar mi lista de deseos</button></div>`;
+    const revelado = store.get('ix_rev_' + this.token, false);
+    if (!revelado) return `
+      <div class="card ribbon center">
+        <h2 style="justify-content:center">¡Ya se hizo el sorteo! 🎉</h2>
+        <p class="muted">Toca el regalo para descubrir a quién le regalas</p>
+        <button class="gift" id="gift" aria-label="Abrir regalo"><span class="box"></span><span class="rv"></span><span class="lid"></span><span class="bow">🎀</span></button>
+        <p class="muted small">Asegúrate de que nadie esté viendo tu pantalla 👀</p>
+      </div>`;
+    const comprados = a.deseos.filter(d => d.comprado).length;
+    return `
+      <div class="card ribbon center">
+        <div class="muted">Te tocó regalarle a</div>
+        <div class="big-name">${esc(a.nombre)}</div>
+        ${g.monto ? `<span class="chip oro">💰 Monto: ${money(g.monto, g.moneda)}</span>` : ''}
+      </div>
+      <div class="card"><h2>📏 Sus datos</h2>${this.perfilHTML(a.perfil, 'Aún no llena sus datos. ¡Pregúntale de forma anónima en Mensajes!')}</div>
+      <div class="card">
+        <h2>🎁 Su lista de deseos ${a.deseos.length ? `<span class="chip ${comprados ? 'ok' : ''}">${comprados}/${a.deseos.length}</span>` : ''}</h2>
+        ${a.deseos.length ? a.deseos.map(d => `
+          <div class="wish ${d.comprado ? 'bought' : ''}">
+            <button class="chk ${d.comprado ? 'on' : ''}" data-comprar="${esc(d.id)}" data-v="${d.comprado ? 0 : 1}" title="Ya lo compré">${d.comprado ? '✓' : ''}</button>
+            <div class="grow"><div class="t">${esc(d.texto)}</div>
+              <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `· <a href="${esc(d.link)}" target="_blank" rel="noopener">Ver dónde comprar ↗</a>` : ''}</div></div>
+          </div>`).join('') + '<p class="hint">Marca ✓ lo que ya compraste. Solo tú lo ves.</p>'
+        : `<div class="empty"><div class="e">🤔</div>Aún no agrega deseos.<br><button class="btn sm verde mt" data-ir="chat" data-con="amigo">💬 Preguntarle en secreto</button></div>`}
+      </div>`;
+  },
+  vLista(){
+    const pf = this.d.yo.perfil || {};
+    const ds = this.d.mis_deseos;
+    return `
+      <div class="card ribbon">
+        <h2>🎁 Mis deseos</h2>
+        <p class="muted mt0">Tu Santa verá esta lista. Tú nunca sabrás si ya compró algo 😉</p>
+        ${ds.length ? ds.map(d => `<div class="wish"><span style="font-size:20px">🎀</span>
+          <div class="grow"><div class="t">${esc(d.texto)}</div>
+          <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `· <a href="${esc(d.link)}" target="_blank" rel="noopener">Link ↗</a>` : ''}</div></div>
+          <button class="btn xs danger" data-borrard="${esc(d.id)}">Quitar</button></div>`).join('') : '<div class="empty"><div class="e">✨</div>Aún no agregas nada</div>'}
+        <h3>Agregar deseo</h3>
+        <input id="d_txt" maxlength="200" placeholder="¿Qué te gustaría? Ej. Termo para café">
+        <div class="row mt"><input id="d_link" type="url" class="grow" placeholder="Link (opcional)"><input id="d_precio" type="number" inputmode="decimal" placeholder="$ aprox" style="width:110px"></div>
+        <button class="btn verde full mt" id="d_add">+ Agregar a mi lista</button>
+        ${this.d.grupo.monto ? `<div class="hint">Recuerda: el monto es de ${money(this.d.grupo.monto, this.d.grupo.moneda)}.</div>` : ''}
+      </div>
+      <div class="card">
+        <h2>📏 Mis datos para mi Santa</h2>
+        <label>👕 Talla de ropa</label><input id="pf_talla" maxlength="200" placeholder="Ej. M / 32" value="${esc(pf.talla)}">
+        <label>👟 Calzado</label><input id="pf_calzado" maxlength="200" placeholder="Ej. 26 MX" value="${esc(pf.calzado)}">
+        <label>🎨 Colores favoritos</label><input id="pf_colores" maxlength="200" placeholder="Ej. Verde, negro" value="${esc(pf.colores)}">
+        <label>⭐ Me gusta</label><textarea id="pf_gustos" maxlength="200" placeholder="Ej. Café, fútbol, cocinar">${esc(pf.gustos)}</textarea>
+        <label>🚫 Por favor no me regalen</label><input id="pf_evitar" maxlength="200" placeholder="Ej. Perfumes, chocolate" value="${esc(pf.evitar)}">
+        <button class="btn rojo full mt" id="pf_save">Guardar mis datos</button>
+      </div>`;
+  },
+  vChat(){
+    const g = this.d.grupo;
+    if (!g.sorteado) return `<div class="card ribbon center"><div style="font-size:50px">💬</div><h2 style="justify-content:center">Mensajes anónimos</h2>
+      <p class="muted">Cuando se haga el sorteo podrás preguntarle cosas a tu amigo secreto sin que sepa quién eres, y contestarle a tu Santa.</p></div>`;
+    const con = this.chatCon;
+    const lista = con === 'santa' ? this.d.chat_santa : this.d.chat_amigo;
+    const yoAutor = con === 'santa' ? 'amigo' : 'santa';
+    const quien = con === 'santa' ? 'Tu Santa (anónimo)' : this.d.amigo.nombre;
+    return `
+      <div class="seg"><button class="${con === 'santa' ? 'on' : ''}" data-con="santa">🎅 Mi Santa</button><button class="${con === 'amigo' ? 'on' : ''}" data-con="amigo">🎁 ${esc(this.d.amigo.nombre)}</button></div>
+      <div class="card ribbon">
+        <p class="muted mt0 small">${con === 'santa'
+          ? 'Aquí te escribe quien te va a regalar. Tú no sabes quién es 🤫'
+          : `Pregúntale a <b>${esc(this.d.amigo.nombre)}</b> lo que quieras. <b>No sabrá que eres tú.</b>`}</p>
+        <div class="chat" id="chat">
+          ${lista.length ? lista.map(m => `<div class="msg ${m.autor === yoAutor ? 'me' : 'them'}">${esc(m.texto)}<time>${m.autor === yoAutor ? 'Tú' : esc(quien)} · ${esc(hora(m.fecha))}</time></div>`).join('')
+            : `<div class="empty small">${con === 'santa' ? 'Tu Santa aún no te escribe.' : 'Ej. “¿Prefieres algo para la casa o para ti?”'}</div>`}
+        </div>
+        <div class="row mt"><input id="m_txt" class="grow" maxlength="400" placeholder="${con === 'santa' ? 'Escríbele a tu Santa…' : 'Pregunta anónima…'}"><button class="btn rojo" id="m_send">Enviar</button></div>
+      </div>`;
+  },
+  vEvento(){
+    const g = this.d.grupo;
+    return `
+      ${g.revelado && this.d.santa_nombre ? `<div class="banner center"><div style="font-size:40px">🎅</div><b>¡Tu Santa fue ${esc(this.d.santa_nombre)}!</b></div>` : ''}
+      <div class="card ribbon">
+        <h2>📅 El intercambio</h2>
+        <div class="info">
+          ${g.monto ? `<span class="k">💰</span><span><b>${money(g.monto, g.moneda)}</b> por regalo</span>` : ''}
+          ${g.fecha ? `<span class="k">📅</span><span>${esc(fechaLarga(g.fecha))}</span>` : '<span class="k">📅</span><span class="muted">Fecha por definir</span>'}
+          ${g.lugar ? `<span class="k">📍</span><span>${esc(g.lugar)}</span>` : ''}
+          <span class="k">👨‍👩‍👧‍👦</span><span>${g.total} participantes</span>
+          ${g.notas ? `<span class="k">📝</span><span>${esc(g.notas)}</span>` : ''}
+        </div>
+        ${countdownHTML(g.fecha)}
+      </div>
+      <div class="card"><h2>🤫 Reglas</h2>
+        <ul class="muted" style="padding-left:18px;margin:0">
+          <li>No le digas a nadie a quién te tocó.</li>
+          ${g.monto ? `<li>Respeta el monto de ${money(g.monto, g.moneda)}.</li>` : ''}
+          <li>Usa los mensajes anónimos si tienes dudas.</li>
+          <li>Guarda tu link de WhatsApp para volver a entrar.</li>
+        </ul>
+        <button class="btn ghost sm mt" id="salir">Cerrar sesión en este celular</button>
+      </div>`;
+  },
+  enlazar(){
+    const on = (sel, fn) => { const el = $(sel); if (el) el.onclick = fn; };
+    const base = () => ({p_token: this.token, p_pin: this.pin});
+    app.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => { this.tab = b.dataset.ir; if (b.dataset.con) this.chatCon = b.dataset.con; this.render(); window.scrollTo(0,0); });
+    app.querySelectorAll('.seg [data-con]').forEach(b => b.onclick = () => { this.chatCon = b.dataset.con; this.render(); });
+    on('#gift', e => {
+      const gft = e.currentTarget; gft.classList.add('shake');
+      setTimeout(() => { gft.classList.remove('shake'); gft.classList.add('open'); }, 1000);
+      setTimeout(() => { store.set('ix_rev_' + this.token, true); this.render(); }, 1600);
+    });
+    app.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_deseo_comprado', Object.assign(base(), {p_id: b.dataset.comprar, p_comprado: b.dataset.v === '1'}));
+      await this.refrescar();
+    }));
+    on('#d_add', e => hacer(e.currentTarget, async () => {
+      const t = $('#d_txt').value.trim(); if (!t) throw new Error('Escribe qué te gustaría');
+      let link = $('#d_link').value.trim(); if (link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
+      const pr = $('#d_precio').value;
+      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: link || null, p_precio: pr === '' ? null : Number(pr)}));
+      toast('¡Agregado a tu lista! 🎁'); await this.refrescar(); const n = $('#d_txt'); if (n) n.focus();
+    }));
+    const dt = $('#d_txt'); if (dt) dt.onkeydown = e => { if (e.key === 'Enter') $('#d_add').click(); };
+    app.querySelectorAll('[data-borrard]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_deseo_quitar', Object.assign(base(), {p_id: b.dataset.borrard})); await this.refrescar();
+    }));
+    on('#pf_save', e => hacer(e.currentTarget, async () => {
+      const pf = {}; ['talla','calzado','colores','gustos','evitar'].forEach(k => pf[k] = $('#pf_' + k).value.trim());
+      await rpc('ix_perfil', Object.assign(base(), {p_perfil: pf})); toast('Datos guardados ✅'); await this.refrescar();
+    }));
+    const send = e => hacer(e && e.currentTarget, async () => {
+      const t = $('#m_txt').value.trim(); if (!t) return;
+      await rpc('ix_mensaje', Object.assign(base(), {p_hacia: this.chatCon, p_texto: t}));
+      await this.refrescar(); const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
+    });
+    on('#m_send', send);
+    const mt = $('#m_txt'); if (mt) mt.onkeydown = e => { if (e.key === 'Enter') send({currentTarget: $('#m_send')}); };
+    const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
+    on('#salir', () => { store.del('ix_pin_' + this.token); location.reload(); });
+  }
+};
+
+arrancar();
+</script>
+</body>
+</html>
