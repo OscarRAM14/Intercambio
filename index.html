@@ -23,25 +23,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script>
 /* =====================================================================
-   CONFIGURACIÓN — pega aquí los datos de tu proyecto de Supabase
-   (Supabase > Project Settings > API: "Project URL" y "Publishable key")
+   CONFIGURACIÓN — datos de tu proyecto de Supabase
+   (Supabase > Connect, o Settings > API Keys: "Project URL" y "Publishable key")
    ===================================================================== */
 const SUPABASE_URL = "https://wmazcnmvyuvhggbxcpgc.supabase.co";
 const SUPABASE_KEY = "sb_publishable_JuLGkmTtGgDCuyA-CGQDBA_vLaUEEIH";
-const APP_VERSION  = "1.1";
+const APP_VERSION  = "2.0";
 </script>
 <style>
 :root{
-  --noche:#0d2418; --pino:#173d2a; --pino2:#1e5b3a; --rojo:#c0262d; --rojo2:#9e1c22;
+  --noche:#0d2418; --pino:#173d2a; --pino2:#1e5b3a; --rojo:#c0262d; --rojo2:#9e1c22; --rojoA:#d4343b; --rojoS:#7a141a;
   --oro:#d9a93a; --oro2:#f3d27a; --crema:#fffaf0; --papel:#fff4e0; --tinta:#2a1f17; --gris:#7a6e62;
-  --linea:#ead9bd; --ok:#2f8a4f; --sombra:0 10px 30px rgba(0,0,0,.25);
+  --linea:#ead9bd; --ok:#2f8a4f; --glow:#24563a; --navtx:#9fbfaa; --sub:#b9d3c1;
+  --sombra:0 10px 30px rgba(0,0,0,.25);
 }
+/* ---------- Modo trabajo (elegante) ---------- */
+body.trabajo{
+  --noche:#0e1726; --pino:#1b2a42; --pino2:#24406b; --rojo:#24406b; --rojo2:#1a3054; --rojoA:#2f5288; --rojoS:#101f38;
+  --oro:#c9a54e; --oro2:#e8cf8a; --crema:#ffffff; --papel:#f2f4f8; --tinta:#16202e; --gris:#667085;
+  --linea:#dfe4ec; --glow:#22385c; --navtx:#9fb0c8; --sub:#b7c4d8;
+}
+body.trabajo #snow{display:none}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
   font-family:Nunito,system-ui,sans-serif; color:var(--tinta); min-height:100vh;
   background:
-    radial-gradient(1200px 600px at 50% -200px, #24563a 0%, transparent 70%),
+    radial-gradient(1200px 600px at 50% -200px, var(--glow) 0%, transparent 70%),
     radial-gradient(circle at 20% 80%, rgba(217,169,58,.06) 0 2px, transparent 3px) 0 0/38px 38px,
     var(--noche);
   padding-bottom:calc(90px + env(safe-area-inset-bottom));
@@ -56,21 +64,23 @@ a{color:var(--rojo)}
 @media (prefers-reduced-motion:reduce){#snow{display:none}}
 
 .hero{text-align:center;color:var(--crema);padding:18px 0 8px}
+body.trabajo .hero{color:#fff}
 .hero .emoji{font-size:54px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
 .hero .logo{width:112px;height:112px;border-radius:26px;box-shadow:0 14px 30px rgba(0,0,0,.45);display:block;margin:0 auto 10px}
 .hero h1{font-size:34px;font-weight:800;letter-spacing:-.5px}
 .hero h1 em{font-style:normal;color:var(--oro2)}
-.hero p{color:#cfe2d4;margin:6px 0 0}
-.top{display:flex;align-items:center;gap:10px;color:var(--crema);margin-bottom:12px}
+.hero p{color:var(--sub);margin:6px 0 0}
+.top{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:12px}
 .top h1{font-size:22px;flex:1}
-.top .sub{font-size:13px;color:#b9d3c1}
-.iconbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:var(--crema);
+.top .sub{font-size:13px;color:var(--sub)}
+.iconbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;text-decoration:none;
   width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:18px;flex:none}
 
 .card{background:var(--crema);border-radius:20px;padding:18px;margin:14px 0;box-shadow:var(--sombra);position:relative}
 .card.ribbon{border-top:6px solid var(--rojo)}
+body.trabajo .card.ribbon{border-top-color:var(--oro)}
 .card h2{font-size:20px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.card h3{font-size:16px;margin:14px 0 8px}
+.card h3{font-size:16px;margin:16px 0 8px}
 .muted{color:var(--gris);font-size:14px}
 .small{font-size:13px}
 .center{text-align:center}
@@ -78,11 +88,14 @@ a{color:var(--rojo)}
 .row.wrapr{flex-wrap:wrap}
 .grow{flex:1;min-width:0}
 .mt{margin-top:12px}.mt0{margin-top:0}
+hr.sep{border:0;border-top:1px dashed var(--linea);margin:16px 0}
 
 label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
 input,textarea,select{width:100%;border:2px solid var(--linea);background:#fff;border-radius:12px;padding:11px 12px;color:var(--tinta);outline:none}
 input:focus,textarea:focus,select:focus{border-color:var(--oro)}
 textarea{resize:vertical;min-height:70px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--rojo);flex:none}
+.check{display:flex;gap:10px;align-items:center;font-weight:600;margin:10px 0}
 .hint{font-size:12px;color:var(--gris);margin-top:4px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 16px;
@@ -90,20 +103,22 @@ textarea{resize:vertical;min-height:70px}
 .btn:active{transform:scale(.97)}
 .btn[disabled]{opacity:.5;pointer-events:none}
 .btn.full{width:100%}
-.btn.rojo{background:linear-gradient(180deg,#d4343b,var(--rojo2));color:#fff;box-shadow:0 4px 0 #7a141a}
-.btn.verde{background:linear-gradient(180deg,#2a7a4d,var(--pino2));color:#fff;box-shadow:0 4px 0 #0f3b23}
+.btn.rojo{background:linear-gradient(180deg,var(--rojoA),var(--rojo2));color:#fff;box-shadow:0 4px 0 var(--rojoS)}
+.btn.verde{background:linear-gradient(180deg,#2a7a4d,#1e5b3a);color:#fff;box-shadow:0 4px 0 #0f3b23}
 .btn.oro{background:linear-gradient(180deg,var(--oro2),var(--oro));color:#3b2a06;box-shadow:0 4px 0 #a07a1f}
 .btn.wa{background:#25d366;color:#053d1c;box-shadow:0 4px 0 #128c4a}
 .btn.ghost{background:transparent;border:2px solid var(--linea);color:var(--tinta)}
 .btn.sm{padding:8px 11px;font-size:13px;border-radius:11px}
 .btn.xs{padding:6px 9px;font-size:12px;border-radius:9px;box-shadow:none}
-.btn.danger{background:#fff;color:var(--rojo);border:2px solid #f0c5c7}
+.btn.danger{background:#fff;color:#b3202a;border:2px solid #f0c5c7}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.chip{font-size:12px;font-weight:800;border-radius:999px;padding:3px 9px;background:#efe6d6;color:#6b5c4c}
+.chip{font-size:12px;font-weight:800;border-radius:999px;padding:3px 9px;background:#efe6d6;color:#6b5c4c;display:inline-block}
+body.trabajo .chip{background:#e8ecf3;color:#4a5568}
 .chip.ok{background:#dcf1e3;color:#1e6b3b}
 .chip.oro{background:#fbecc4;color:#7a5a0c}
 .chip.rojo{background:#fbe0e1;color:#9e1c22}
+button.chip{border:0;cursor:pointer}
 
 .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .stat div{background:var(--papel);border-radius:14px;padding:10px;text-align:center}
@@ -114,9 +129,9 @@ textarea{resize:vertical;min-height:70px}
 .info .k{font-size:18px}
 
 .count{display:flex;gap:8px;justify-content:center;margin-top:12px}
-.count div{background:var(--pino);color:var(--crema);border-radius:12px;padding:8px 10px;min-width:62px;text-align:center}
+.count div{background:var(--pino);color:#fff;border-radius:12px;padding:8px 10px;min-width:62px;text-align:center}
 .count b{display:block;font-size:22px;font-family:Fraunces,serif;color:var(--oro2)}
-.count span{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#b9d3c1}
+.count span{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--sub)}
 
 .person{border:2px solid var(--linea);border-radius:16px;padding:12px;margin:10px 0;background:#fff}
 .person .name{font-weight:800;font-size:16px}
@@ -127,15 +142,22 @@ textarea{resize:vertical;min-height:70px}
 .wish:last-child{border-bottom:0}
 .wish .t{font-weight:700}
 .wish.bought .t{text-decoration:line-through;color:var(--gris)}
+.wish .ph{width:58px;height:58px;border-radius:12px;object-fit:cover;flex:none;cursor:zoom-in;border:2px solid var(--linea)}
 .chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--linea);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none;font-size:15px}
 .chk.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.star{background:none;border:0;font-size:22px;cursor:pointer;padding:0 2px;filter:grayscale(1);opacity:.45}
+.star.on{filter:none;opacity:1}
+.foto-prev{display:flex;align-items:center;gap:10px;margin-top:10px}
+.foto-prev img{width:70px;height:70px;object-fit:cover;border-radius:12px;border:2px solid var(--linea)}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
 
 .pinbox{display:flex;gap:10px;justify-content:center;margin:18px 0}
 .pinbox input{width:58px;height:66px;text-align:center;font-size:30px;font-weight:800;border-radius:14px;padding:0}
 
 .gift{width:180px;height:180px;margin:10px auto;cursor:pointer;position:relative;border:0;background:none;display:block}
 .gift .box{position:absolute;bottom:0;left:15px;width:150px;height:110px;background:var(--rojo);border-radius:10px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.15)}
-.gift .lid{position:absolute;bottom:105px;left:5px;width:170px;height:38px;background:#d9343b;border-radius:10px;transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
+.gift .lid{position:absolute;bottom:105px;left:5px;width:170px;height:38px;background:var(--rojoA);border-radius:10px;transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
 .gift .rv{position:absolute;bottom:0;left:80px;width:20px;height:143px;background:var(--oro)}
 .gift .bow{position:absolute;bottom:138px;left:62px;font-size:44px;transition:transform .5s}
 .gift.shake{animation:shake .5s ease-in-out 2}
@@ -152,47 +174,86 @@ textarea{resize:vertical;min-height:70px}
 .msg.them{align-self:flex-start;background:var(--papel);border-bottom-left-radius:4px}
 .msg time{display:block;font-size:11px;opacity:.7;margin-top:3px}
 
+.pista{background:var(--papel);border-radius:14px;padding:10px 12px;margin:8px 0;display:flex;gap:10px;align-items:flex-start}
+.pista .n{font-family:Fraunces,serif;font-weight:800;font-size:18px;color:var(--rojo);flex:none}
+.pista.lock{opacity:.75}
+
+.idea{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--linea)}
+.idea:last-child{border-bottom:0}
+.idea .e{font-size:22px;flex:none}
+
 .seg{display:flex;background:var(--papel);border-radius:14px;padding:4px;gap:4px}
 .seg button{flex:1;border:0;background:transparent;padding:9px;border-radius:10px;font-weight:800;color:var(--gris);cursor:pointer}
 .seg button.on{background:#fff;color:var(--tinta);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:rgba(13,36,24,.96);backdrop-filter:blur(8px);
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:color-mix(in srgb, var(--noche) 96%, transparent);backdrop-filter:blur(8px);
   border-top:1px solid rgba(255,255,255,.1);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
 .nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.nav button{background:none;border:0;color:#9fbfaa;font-weight:800;font-size:11px;padding:6px 0;border-radius:12px;cursor:pointer;position:relative}
+.nav button{background:none;border:0;color:var(--navtx);font-weight:800;font-size:11px;padding:6px 0;border-radius:12px;cursor:pointer;position:relative}
 .nav button .i{display:block;font-size:22px;margin-bottom:2px}
 .nav button.on{color:var(--oro2);background:rgba(255,255,255,.06)}
-.dot{position:absolute;top:4px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:var(--rojo);border:2px solid var(--noche)}
+.dot{position:absolute;top:4px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:#e23b42;border:2px solid var(--noche)}
+
+#fab{position:fixed;right:14px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:6;width:46px;height:46px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.25);background:color-mix(in srgb, var(--pino) 90%, transparent);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+#fab.on{background:var(--oro);color:#3b2a06;border-color:var(--oro2)}
+body.sin-nav #fab{bottom:calc(18px + env(safe-area-inset-bottom))}
+body.sin-nav{padding-bottom:30px}
 
 .banner{background:linear-gradient(135deg,var(--oro2),var(--oro));color:#3b2a06;border-radius:18px;padding:14px;margin:14px 0;box-shadow:var(--sombra)}
 .banner b{font-family:Fraunces,serif;font-size:17px}
+.banner.azul{background:linear-gradient(135deg,#cfe3ff,#9cc2f5);color:#10294d}
 .code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:rgba(255,255,255,.6);border-radius:8px;padding:8px;word-break:break-all;margin:8px 0}
 
 .empty{text-align:center;padding:14px;color:var(--gris)}
 .empty .e{font-size:40px}
 
-.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;
-  background:var(--tinta);color:#fff;padding:11px 16px;border-radius:14px;font-weight:700;z-index:20;transition:.25s;max-width:90vw;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
+  background:#2a1f17;color:#fff;padding:11px 16px;border-radius:14px;font-weight:700;z-index:40;transition:.25s;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.err{background:var(--rojo2)}
+.toast.err{background:#9e1c22}
 
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30;display:grid;place-items:center;padding:20px}
-.modal .card{max-width:420px;width:100%;margin:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:30;display:grid;place-items:center;padding:20px;overflow:auto}
+.modal .card{max-width:440px;width:100%;margin:0;max-height:88vh;overflow:auto}
+.modal img.full{width:100%;border-radius:14px;display:block}
 
 .spinner{width:36px;height:36px;border:4px solid rgba(255,255,255,.2);border-top-color:var(--oro2);border-radius:50%;animation:spin 1s linear infinite;margin:60px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 .foot{text-align:center;color:#7fa18a;font-size:12px;margin-top:20px}
+body.trabajo .foot{color:#8090a8}
 .list-link{display:flex;align-items:center;gap:10px;padding:12px;border:2px solid var(--linea);border-radius:14px;margin:8px 0;text-decoration:none;color:var(--tinta);background:#fff}
 .list-link b{flex:1}
-details summary{cursor:pointer;font-weight:800}
+details summary{cursor:pointer;font-weight:800;font-size:16px}
+details > div{margin-top:10px}
+.opt{border:2px solid var(--linea);border-radius:14px;padding:12px;margin:10px 0;background:#fff}
+.opt b{display:block}
+
+/* ---------- Manual ---------- */
+.paso{display:flex;gap:12px;margin:16px 0}
+.paso .num{width:32px;height:32px;border-radius:50%;background:var(--rojo);color:#fff;font-weight:800;display:grid;place-items:center;flex:none}
+.paso img{width:100%;max-width:260px;border-radius:16px;border:3px solid var(--linea);margin-top:8px;display:block}
+
+/* ---------- Pantalla de TV ---------- */
+.tv{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;padding:4vh 4vw;z-index:2}
+.tv .t1{font-size:clamp(18px,3vw,34px);color:var(--sub);font-weight:700}
+.tv .t2{font-family:Fraunces,serif;font-weight:800;font-size:clamp(44px,9vw,120px);line-height:1.05;margin:1vh 0;text-shadow:0 8px 30px rgba(0,0,0,.4)}
+.tv .t2.oro{color:var(--oro2)}
+.tv .t3{font-family:Fraunces,serif;font-weight:800;font-size:clamp(60px,12vw,170px);color:var(--oro2);animation:pop .8s cubic-bezier(.2,1.6,.4,1);text-shadow:0 10px 40px rgba(0,0,0,.45)}
+.tv .ctrl{position:fixed;bottom:3vh;left:0;right:0;display:flex;gap:12px;justify-content:center;align-items:center}
+.tv .btn{font-size:clamp(16px,2vw,24px);padding:14px 28px}
+.tv .prog{position:fixed;top:3vh;right:3vw;font-weight:800;color:var(--sub);font-size:clamp(14px,1.6vw,22px)}
+.tv .redoble{font-size:clamp(60px,10vw,140px);animation:shake .25s infinite}
+#confeti{position:fixed;inset:0;pointer-events:none;z-index:50}
 </style>
 </head>
 <body>
 <div id="snow"></div>
 <div class="wrap" id="app"><div class="spinner"></div></div>
 <div class="nav" id="nav" hidden></div>
+<button id="fab" title="Música navideña" aria-label="Música navideña">🎵</button>
 <div class="toast" id="toast"></div>
 <div id="modalRoot"></div>
+<canvas id="confeti"></canvas>
 
 <script>
 /* ============================ UTILIDADES ============================ */
@@ -208,7 +269,7 @@ const store = {
 };
 function toast(msg, err){
   const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : '');
-  clearTimeout(toast._t); toast._t = setTimeout(() => t.className = 'toast', 2600);
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.className = 'toast', 2800);
 }
 function money(n, cur){
   if (n === null || n === undefined || n === '') return '';
@@ -221,22 +282,21 @@ function fechaLarga(iso){
   const h = d.toLocaleTimeString('es-MX', {hour:'numeric', minute:'2-digit'});
   return s.charAt(0).toUpperCase() + s.slice(1) + ' · ' + h;
 }
+function fechaCorta(iso){ return new Date(iso).toLocaleDateString('es-MX', {weekday:'short', day:'numeric', month:'short'}); }
 function hora(iso){ const d = new Date(iso); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit'}); }
 function toLocalInput(iso){
   if (!iso) return '';
   const d = new Date(iso); const p = n => String(n).padStart(2,'0');
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 }
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function waPhone(t){
   const d = String(t || '').replace(/\D/g,'');
   if (!d) return '';
   if (d.length === 10) return '52' + d;
   return d;
 }
-function waLink(tel, text){
-  const p = waPhone(tel);
-  return 'https://wa.me/' + (p || '') + '?text=' + encodeURIComponent(text);
-}
+function waLink(tel, text){ return 'https://wa.me/' + (waPhone(tel) || '') + '?text=' + encodeURIComponent(text); }
 async function copiar(text){
   try{ await navigator.clipboard.writeText(text); toast('Copiado ✅'); return; }catch(e){}
   const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
@@ -259,6 +319,7 @@ function confirmar(titulo, texto, btn = 'Sí, continuar', clase = 'rojo'){
     r.querySelector('[data-x=si]').onclick = () => { closeModal(); res(true); };
   });
 }
+function verFoto(src){ modal(`<img class="full" src="${esc(src)}" alt=""><button class="btn ghost full mt" onclick="closeModal()">Cerrar</button>`); }
 function countdownHTML(iso){
   if (!iso) return '';
   const ms = new Date(iso) - Date.now();
@@ -278,6 +339,156 @@ function snow(){
     s.appendChild(f);
   }
 }
+function aplicarTema(t){
+  const trabajo = t === 'trabajo';
+  document.body.classList.toggle('trabajo', trabajo);
+  document.querySelector('meta[name=theme-color]').setAttribute('content', trabajo ? '#0e1726' : '#0d2418');
+}
+const palabra = t => t === 'trabajo' ? {gente:'tus compañeros', grupo:'el equipo', ico:'🎁'} : {gente:'la familia', grupo:'la familia', ico:'🎄'};
+
+/* Conserva lo que el usuario está escribiendo cuando la pantalla se actualiza sola */
+function conservar(fn){
+  const vals = {}; let foco = null, sel = null;
+  app.querySelectorAll('input[id],textarea[id],select[id]').forEach(el => { if (el.type !== 'file' && el.type !== 'checkbox' && el.dataset.keep !== 'no') vals[el.id] = el.value; });
+  const a = document.activeElement;
+  if (a && a.id && app.contains(a)){ foco = a.id; try{ sel = [a.selectionStart, a.selectionEnd]; }catch(e){} }
+  fn();
+  Object.entries(vals).forEach(([id, v]) => { const el = document.getElementById(id); if (el && v && el.value !== v) el.value = v; });
+  if (foco){ const el = document.getElementById(foco); if (el){ el.focus(); try{ sel && el.setSelectionRange(sel[0], sel[1]); }catch(e){} } }
+}
+
+/* Reduce una foto a ~600px en JPEG para guardarla ligera */
+function reducirFoto(file){
+  return new Promise((res, rej) => {
+    if (!file || !/^image\//.test(file.type)) return rej(new Error('Elige una imagen'));
+    const fr = new FileReader();
+    fr.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let q = .78, max = 600, out;
+        for (let i = 0; i < 5; i++){
+          const s = Math.min(1, max / Math.max(img.width, img.height));
+          const c = document.createElement('canvas'); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+          const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img, 0, 0, c.width, c.height);
+          out = c.toDataURL('image/jpeg', q);
+          if (out.length < 200000) break;
+          q -= .12; max -= 100;
+        }
+        out.length < 240000 ? res(out) : rej(new Error('La foto es muy pesada'));
+      };
+      img.onerror = () => rej(new Error('No se pudo leer la imagen'));
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+/* ============================ CONFETI ============================ */
+function confeti(n = 160){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = $('#confeti'), x = c.getContext('2d');
+  c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio; x.scale(devicePixelRatio, devicePixelRatio);
+  const cols = document.body.classList.contains('trabajo') ? ['#e8cf8a','#c9a54e','#ffffff','#9cc2f5','#2f5288'] : ['#d4343b','#f3d27a','#2a7a4d','#ffffff','#d9a93a'];
+  const ps = Array.from({length:n}, () => ({x: innerWidth/2 + (Math.random()-.5)*innerWidth*.4, y: innerHeight*.35, vx:(Math.random()-.5)*14, vy: -Math.random()*14-4,
+    w: 6+Math.random()*7, h: 8+Math.random()*10, r: Math.random()*6, vr:(Math.random()-.5)*.3, c: cols[Math.floor(Math.random()*cols.length)]}));
+  const t0 = performance.now();
+  (function paso(t){
+    x.clearRect(0,0,innerWidth,innerHeight);
+    ps.forEach(p => { p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.w/2, -p.h/2, p.w, p.h*Math.abs(Math.cos(p.r*2))); x.restore(); });
+    if (t - t0 < 4200) requestAnimationFrame(paso); else x.clearRect(0,0,innerWidth,innerHeight);
+  })(t0);
+}
+
+/* ============================ MÚSICA (villancicos de dominio público, sintetizados) ============================ */
+const Musica = {
+  ctx: null, master: null, on: false, timer: null, t: 0, i: 0, cancion: 0,
+  N: (() => { const m = {C:0,D:2,E:4,F:5,G:7,A:9,B:11}; return s => { const n = m[s[0]] + (s[1]==='#'?1:0); const o = +s[s.length-1]; return 440*Math.pow(2, (n + (o-4)*12 - 9)/12); }; })(),
+  canciones: [
+    // Jingle Bells (James Lord Pierpont, 1857)
+    {tempo:.28, notas:'E4:1 E4:1 E4:2 E4:1 E4:1 E4:2 E4:1 G4:1 C4:1.5 D4:.5 E4:4 F4:1 F4:1 F4:1.5 F4:.5 F4:1 E4:1 E4:1 E4:.5 E4:.5 E4:1 D4:1 D4:1 E4:1 D4:2 G4:2 E4:1 E4:1 E4:2 E4:1 E4:1 E4:2 E4:1 G4:1 C4:1.5 D4:.5 E4:4 F4:1 F4:1 F4:1.5 F4:.5 F4:1 E4:1 E4:1 E4:.5 E4:.5 G4:1 G4:1 F4:1 D4:1 C4:4 -:2'},
+    // Noche de Paz (Franz Gruber, 1818)
+    {tempo:.24, notas:'G4:3 A4:1 G4:2 E4:6 G4:3 A4:1 G4:2 E4:6 D5:4 D5:2 B4:6 C5:4 C5:2 G4:6 A4:4 A4:2 C5:3 B4:1 A4:2 G4:3 A4:1 G4:2 E4:6 A4:4 A4:2 C5:3 B4:1 A4:2 G4:3 A4:1 G4:2 E4:6 D5:4 D5:2 F5:3 D5:1 B4:2 C5:6 E5:6 C5:3 G4:1 E4:2 G4:3 F4:1 D4:2 C4:12 -:4'}
+  ],
+  iniciar(){
+    if (this.ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    this.ctx = new AC(); this.master = this.ctx.createGain(); this.master.gain.value = .13; this.master.connect(this.ctx.destination);
+    return true;
+  },
+  campana(freq, t, dur, vol = 1){
+    const c = this.ctx, g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .012); g.gain.exponentialRampToValueAtTime(0.0008, t + Math.max(.45, dur*1.1));
+    g.connect(this.master);
+    [[1,'sine',1],[2,'sine',.35],[3,'triangle',.12]].forEach(([m, tipo, v]) => {
+      const o = c.createOscillator(), og = c.createGain(); o.type = tipo; o.frequency.value = freq*m; og.gain.value = v;
+      o.connect(og); og.connect(g); o.start(t); o.stop(t + Math.max(.5, dur*1.2));
+    });
+  },
+  programar(){
+    const c = this.ctx;
+    while (this.t < c.currentTime + .6){
+      const song = this.canciones[this.cancion], notas = song.notas.split(' ');
+      if (this.i >= notas.length){ this.i = 0; this.cancion = (this.cancion + 1) % this.canciones.length; continue; }
+      const [n, b] = notas[this.i].split(':'); const dur = +b * song.tempo;
+      if (n !== '-'){ this.campana(this.N(n), this.t, dur); if (this.i % 4 === 0) this.campana(this.N(n)/2, this.t, dur, .35); }
+      this.t += dur; this.i++;
+    }
+  },
+  alternar(){
+    if (!this.iniciar()) return toast('Tu navegador no permite música', true);
+    this.on = !this.on;
+    if (this.on){ this.ctx.resume(); this.t = this.ctx.currentTime + .1; this.programar(); this.timer = setInterval(() => this.programar(), 150); }
+    else clearInterval(this.timer);
+    this.pintar();
+  },
+  pintar(){ const f = $('#fab'); f.classList.toggle('on', this.on); f.textContent = this.on ? '🔊' : '🎵'; },
+  efecto(tipo){
+    if (!this.iniciar()) return; const c = this.ctx; c.resume(); const t = c.currentTime;
+    if (tipo === 'redoble'){
+      const len = 2.2, buf = c.createBuffer(1, c.sampleRate*len, c.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++){ const s = i / c.sampleRate; d[i] = (Math.random()*2-1) * (.35 + .65*Math.abs(Math.sin(s*Math.PI*22))) * (s/len*.8 + .2); }
+      const src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); f.type = 'bandpass'; f.frequency.value = 900; g.gain.value = 1.4;
+      src.buffer = buf; src.connect(f); f.connect(g); g.connect(this.master); src.start(t);
+    } else {
+      ['C5','E5','G5','C6'].forEach((n, k) => this.campana(this.N(n), t + k*.09, .9, .9));
+    }
+  }
+};
+$('#fab').onclick = () => Musica.alternar();
+
+/* ============================ IDEAS DE REGALO ============================ */
+const IDEAS = [
+  // [emoji, idea, precio aprox MXN, palabras clave]
+  ['☕','Taza térmica de acero',300,'cafe te termo'],['☕','Café de especialidad de Chiapas o Veracruz',280,'cafe'],['☕','Prensa francesa',420,'cafe te'],['🍵','Caja de tés e infusiones',250,'te cafe relajarse'],
+  ['🍳','Set de utensilios de silicón',350,'cocina cocinar comida reposteria'],['📕','Libro de recetas mexicanas',380,'cocina cocinar comida recetas leer'],['🧑‍🍳','Mandil personalizado',260,'cocina cocinar parrilla asar'],['🧁','Kit de repostería (moldes y duyas)',320,'reposteria hornear pasteles cocina postres'],['🥩','Set de pinzas y especias para asador',420,'carne asada parrilla asar cocina'],
+  ['⚽','Balón de futbol',420,'futbol deporte'],['🏐','Balón de voleibol',480,'voleibol volley deporte'],['💪','Bandas de resistencia',260,'gym ejercicio fitness deporte'],['🥤','Botella deportiva térmica',300,'gym deporte correr ejercicio fitness'],['🎧','Audífonos deportivos inalámbricos',490,'correr gym musica deporte tecnologia'],['🧘','Tapete de yoga',380,'yoga ejercicio fitness relajarse'],
+  ['📚','Libro best seller',350,'leer lectura libros novela'],['💡','Lámpara para leer',240,'leer lectura libros'],['📓','Libreta bonita y plumas',180,'escribir leer dibujar oficina'],
+  ['🔊','Bocina bluetooth',480,'musica fiesta tecnologia'],['🎸','Accesorios para guitarra (púas, correa)',250,'guitarra musica'],['🎤','Micrófono de karaoke bluetooth',450,'cantar karaoke musica fiesta'],
+  ['🪴','Suculentas en maceta decorada',230,'plantas jardin naturaleza'],['🌱','Kit de jardinería',330,'plantas jardin jardineria'],
+  ['🔋','Cargador portátil (power bank)',380,'celular tecnologia viajar'],['📱','Soporte para celular de escritorio',180,'celular tecnologia oficina'],['🖱️','Mouse inalámbrico',320,'computadora tecnologia oficina gamer'],['🎮','Tarjeta de regalo de videojuegos',500,'videojuegos gamer juegos xbox playstation nintendo'],
+  ['🕯️','Set de velas aromáticas',280,'velas relajarse casa hogar decoracion spa'],['🧴','Kit de cuidado de la piel',420,'belleza skincare cremas spa maquillaje'],['🛁','Kit de spa (sales y mascarillas)',380,'spa relajarse belleza'],['🩴','Pantuflas calientitas',300,'casa descansar frio relajarse'],['💄','Set de maquillaje',450,'maquillaje belleza'],
+  ['🧣','Bufanda y gorro tejidos',320,'ropa moda frio invierno'],['👛','Cartera o monedero',380,'moda accesorios'],['🧦','Calcetines navideños divertidos',150,'ropa moda navidad'],['💍','Accesorio de bisutería',300,'joyeria accesorios moda'],
+  ['🎲','Juego de mesa',450,'juegos mesa familia amigos'],['🧩','Rompecabezas de 1000 piezas',330,'rompecabezas juegos'],['🃏','Lotería mexicana artesanal',220,'juegos loteria familia tradiciones'],['🎴','UNO o juego de cartas',150,'juegos cartas'],
+  ['🛋️','Cobija suave',420,'casa hogar frio descansar'],['🖼️','Portarretratos',200,'casa hogar decoracion familia fotos'],['🌸','Difusor de aromas',340,'casa hogar relajarse decoracion'],
+  ['🐶','Juguete para mascota',200,'perro gato mascota mascotas'],['🐾','Cama para mascota',460,'perro gato mascota mascotas'],
+  ['🎨','Set de acuarelas',330,'pintar dibujar arte manualidades'],['✏️','Plumones o lápices de colores profesionales',300,'dibujar arte pintar colorear'],
+  ['🧳','Neceser de viaje',290,'viajar viajes'],['😴','Almohada de viaje',240,'viajar viajes'],['⛺','Lámpara para acampar',300,'acampar viajar naturaleza'],
+  ['🍫','Chocolates finos',260,'chocolate dulces postres'],['🍬','Canasta de dulces mexicanos',300,'dulces botanas'],['🍷','Vino o licor artesanal',450,'vino tequila mezcal bebidas'],
+  ['🚗','Organizador para el auto',300,'carro coche auto manejar'],['📍','Soporte de celular para auto',230,'carro coche auto manejar celular'],
+  ['🔧','Juego de desarmadores de precisión',320,'herramientas taller electronica mecatronica arreglar'],['🧰','Multiherramienta',450,'herramientas taller acampar arreglar'],
+  ['🎁','Tarjeta de regalo de Amazon o Liverpool',500,''],['☕','Taza personalizada con foto',220,''],['🧸','Peluche navideño',200,'']
+];
+function ideasPara(perfil, monto, max = 6){
+  const p = perfil || {};
+  const txt = norm([p.gustos, p.colores].join(' '));
+  const evitar = norm(p.evitar);
+  const maxP = monto ? monto * 1.1 : 600, minP = monto ? monto * .35 : 0;
+  const lista = IDEAS.filter(([e, t, pr, k]) => pr <= maxP && pr >= minP && !(evitar && (norm(t).split(/\s+/).some(w => w.length > 3 && evitar.includes(w)) || k.split(' ').some(w => w && evitar.includes(w)))))
+    .map(i => ({i, s: i[3].split(' ').filter(w => w && txt.includes(w)).length + Math.random()*.5}))
+    .sort((a, b) => b.s - a.s).slice(0, max).map(x => x.i);
+  return lista;
+}
 
 /* ============================ SUPABASE ============================ */
 const configurado = !SUPABASE_URL.includes('PEGA_') && !SUPABASE_KEY.includes('PEGA_');
@@ -290,7 +501,11 @@ async function rpc(fn, args = {}){
   }catch(e){ throw new Error('Sin conexión. Revisa tu internet.'); }
   const txt = await r.text();
   let data = null; try{ data = txt ? JSON.parse(txt) : null; }catch(e){}
-  if (!r.ok) throw new Error((data && data.message) || 'Error del servidor (' + r.status + ')');
+  if (!r.ok){
+    const m = (data && data.message) || '';
+    if (/Could not find the function|schema cache/i.test(m)) throw new Error('Falta actualizar la base de datos: corre intercambio.sql en Supabase');
+    throw new Error(m || 'Error del servidor (' + r.status + ')');
+  }
   return data;
 }
 async function hacer(btn, fn){
@@ -304,29 +519,26 @@ async function hacer(btn, fn){
 function arrancar(){
   snow();
   if (!configurado) return vistaConfig();
+  if (params.get('tv')) return TV.iniciar(params.get('tv'));
   if (params.get('admin')) return Admin.iniciar(params.get('admin'));
   if (params.get('p')) return Part.iniciar(params.get('p'));
   if (params.get('nuevo') !== null) return vistaCrear();
+  if (params.get('ayuda') !== null) return vistaManual();
   vistaInicio();
 }
-
 function pie(){ return `<div class="foot">Intercambio Navideño · v${APP_VERSION}</div>`; }
+function sinNav(){ $('#nav').hidden = true; document.body.classList.add('sin-nav'); }
 
 function vistaConfig(){
+  sinNav();
   app.innerHTML = `
   <div class="hero"><div class="emoji">🛠️</div><h1>Falta <em>conectar</em> Supabase</h1></div>
-  <div class="card ribbon">
-    <p>Abre <b>index.html</b> en GitHub (lápiz ✏️ para editar) y al inicio del archivo pega:</p>
-    <ol class="muted">
-      <li><b>SUPABASE_URL</b>: tu Project URL</li>
-      <li><b>SUPABASE_KEY</b>: tu Publishable key (o anon key)</li>
-    </ol>
-    <p class="muted">Los encuentras en Supabase → Project Settings → API. Guarda el cambio (Commit) y recarga esta página en 1 minuto.</p>
-  </div>${pie()}`;
+  <div class="card ribbon"><p>Abre <b>index.html</b> y al inicio pega tu <b>SUPABASE_URL</b> y tu <b>SUPABASE_KEY</b> (publishable). Guarda y recarga.</p></div>${pie()}`;
 }
 
 /* ============================ INICIO ============================ */
 function vistaInicio(){
+  sinNav(); aplicarTema('familia');
   const mios = store.get('ix_admins', []);
   app.innerHTML = `
   <div class="hero">
@@ -336,27 +548,35 @@ function vistaInicio(){
   </div>
   <div class="card ribbon">
     <h2>🎅 Organiza un intercambio</h2>
-    <p class="muted mt0">Pon el monto, agrega a tu familia, haz el sorteo y manda a cada quien su link con código por WhatsApp.</p>
+    <p class="muted mt0">Pon el monto, agrega a los participantes, haz el sorteo y manda a cada quien su link con código por WhatsApp.</p>
     <a class="btn rojo full mt" href="?nuevo">Crear intercambio</a>
   </div>
   ${mios.length ? `<div class="card"><h2>📋 Mis intercambios</h2>
-    ${mios.map(m => `<a class="list-link" href="?admin=${esc(m.code)}"><span>🎄</span><b>${esc(m.nombre)}</b><span class="muted">Abrir ›</span></a>`).join('')}
+    ${mios.map(m => `<a class="list-link" href="?admin=${esc(m.code)}"><span>${m.tema === 'trabajo' ? '💼' : '🎄'}</span><b>${esc(m.nombre)}</b><span class="muted">Abrir ›</span></a>`).join('')}
   </div>` : ''}
   <div class="card">
     <h2>📩 ¿Te invitaron?</h2>
     <p class="muted mt0">Abre el link que te llegó por WhatsApp y escribe tu código de 4 dígitos.</p>
   </div>
+  <a class="btn ghost full" style="color:#fff;border-color:rgba(255,255,255,.25)" href="?ayuda">📖 ¿Cómo funciona?</a>
   ${pie()}`;
 }
 
 function formGrupo(g = {}){
+  const tema = g.tema || 'familia';
   return `
     <label>Nombre del intercambio</label>
     <input id="f_nombre" maxlength="80" placeholder="Ej. Intercambio Familia Ramírez 2026" value="${esc(g.nombre)}">
+    <label>Estilo</label>
+    <select id="f_tema">
+      <option value="familia" ${tema === 'familia' ? 'selected' : ''}>🎄 Familia · navideño clásico</option>
+      <option value="trabajo" ${tema === 'trabajo' ? 'selected' : ''}>💼 Trabajo · elegante y sobrio</option>
+    </select>
     <label>Monto del regalo (MXN)</label>
     <input id="f_monto" type="number" inputmode="decimal" min="0" step="50" placeholder="Ej. 500" value="${esc(g.monto ?? '')}">
     <label>Fecha y hora del intercambio</label>
     <input id="f_fecha" type="datetime-local" value="${esc(toLocalInput(g.fecha))}">
+    <div class="hint">Las pistas del Santa se desbloquean con base en esta fecha.</div>
     <label>Lugar</label>
     <input id="f_lugar" maxlength="120" placeholder="Ej. Casa de la abuela" value="${esc(g.lugar)}">
     <label>Notas para todos <span class="muted">(opcional)</span></label>
@@ -369,24 +589,61 @@ function leerGrupo(){
     p_monto: m === '' ? null : Number(m),
     p_fecha: f ? new Date(f).toISOString() : null,
     p_lugar: $('#f_lugar').value.trim() || null,
-    p_notas: $('#f_notas').value.trim() || null
+    p_notas: $('#f_notas').value.trim() || null,
+    p_tema: $('#f_tema').value
   };
 }
+function guardarMio(code, nombre, tema){
+  const mios = store.get('ix_admins', []);
+  const i = mios.findIndex(m => m.code === code);
+  if (i === -1) mios.unshift({code, nombre, tema}); else Object.assign(mios[i], {nombre, tema});
+  store.set('ix_admins', mios.slice(0, 20));
+}
 function vistaCrear(){
+  sinNav();
   app.innerHTML = `
   <div class="top"><a class="iconbtn" href="./">‹</a><h1>Nuevo intercambio</h1></div>
   <div class="card ribbon">${formGrupo({})}
     <button class="btn rojo full mt" id="crear">🎄 Crear y agregar participantes</button>
   </div>${pie()}`;
+  $('#f_tema').onchange = e => aplicarTema(e.target.value);
   $('#crear').onclick = e => hacer(e.currentTarget, async () => {
     const args = leerGrupo();
     if (!args.p_nombre) throw new Error('Ponle nombre al intercambio');
     const r = await rpc('ix_crear_grupo', args);
-    const mios = store.get('ix_admins', []);
-    mios.unshift({code: r.admin_code, nombre: args.p_nombre});
-    store.set('ix_admins', mios.slice(0, 20));
+    guardarMio(r.admin_code, args.p_nombre, args.p_tema);
     store.set('ix_nuevo_' + r.admin_code, true);
     location.href = '?admin=' + r.admin_code;
+  });
+}
+
+/* ============================ MANUAL ============================ */
+function vistaManual(){
+  sinNav();
+  const pasos = (arr) => arr.map(([img, t, d], i) => `<div class="paso"><div class="num">${i+1}</div><div class="grow"><b>${t}</b><div class="muted">${d}</div>${img ? `<img src="${img}" alt="" loading="lazy">` : ''}</div></div>`).join('');
+  app.innerHTML = `
+  <div class="top"><a class="iconbtn" href="javascript:history.length>1?history.back():location.href='./'">‹</a><h1>¿Cómo funciona?</h1></div>
+  <div class="card ribbon">
+    <div class="seg" id="mseg"><button class="on" data-m="org">🎅 Organizador</button><button data-m="part">🎁 Participante</button></div>
+    <div id="m-org">${pasos([
+      ['manual-org-1.jpg','Crea el intercambio','Pon nombre, estilo (familia o trabajo), monto, fecha y lugar. Guarda tu link de organizador: con él vuelves a tu panel.'],
+      ['manual-org-2.jpg','Agrega a los participantes','Nombre y WhatsApp (opcional). Cada quien recibe un código de 4 dígitos. Marca exclusiones para que, por ejemplo, los esposos no se toquen.'],
+      ['manual-org-3.jpg','Manda los links por WhatsApp','El botón verde abre WhatsApp con el mensaje listo. Puedes mandarlos desde antes del sorteo para que llenen su lista.'],
+      ['manual-org-4.jpg','Haz el sorteo','Se hace en secreto: ni tú ves quién le tocó a quién. Si duplicaste el intercambio del año pasado, la app evita repetir parejas.'],
+      ['manual-org-5.jpg','Recuerda y organiza la cena','Con Recordatorios avisas a quien no ha llenado su lista. En Cena anotas qué se necesita y cada quien aparta lo que llevará.'],
+      ['manual-org-6.jpg','Revela en la TV','El día del evento activa «Revelar Santas» y abre la pantalla de TV: muestra uno por uno quién le regaló a quién, con redoble y confeti.']
+    ])}</div>
+    <div id="m-part" hidden>${pasos([
+      ['manual-part-1.jpg','Entra con tu código','Abre el link que te llegó por WhatsApp y escribe tus 4 dígitos. Tu celular lo recuerda.'],
+      ['manual-part-2.jpg','Llena tu lista','Agrega deseos con foto, link y precio. Marca con ⭐ lo que más quieres y llena tus tallas y gustos.'],
+      ['manual-part-3.jpg','Descubre a quién le regalas','Toca el regalo para abrirlo. Verás su lista, sus datos e ideas de regalo según sus gustos y el monto.'],
+      ['manual-part-4.jpg','Pregunta en secreto y deja pistas','En Mensajes le preguntas a tu amigo sin que sepa quién eres. Deja hasta 3 pistas que se desbloquean conforme se acerca la fecha.'],
+      ['manual-part-5.jpg','Aparta tu platillo','En Evento ves la fecha, el lugar y la lista de la cena. Toca «Yo lo llevo» para apartar un platillo.']
+    ])}</div>
+  </div>${pie()}`;
+  app.querySelectorAll('#mseg button').forEach(b => b.onclick = () => {
+    app.querySelectorAll('#mseg button').forEach(x => x.classList.toggle('on', x === b));
+    $('#m-org').hidden = b.dataset.m !== 'org'; $('#m-part').hidden = b.dataset.m !== 'part';
   });
 }
 
@@ -394,47 +651,53 @@ function vistaCrear(){
 const Admin = {
   code: null, d: null,
   async iniciar(code){
-    this.code = code;
+    this.code = code; sinNav();
     await this.cargar();
     window.addEventListener('focus', () => this.cargar(true));
   },
   async cargar(silencioso){
     try{
       this.d = await rpc('ix_admin_get', {p_admin: this.code});
-      const mios = store.get('ix_admins', []);
-      const i = mios.findIndex(m => m.code === this.code);
-      if (i === -1) mios.unshift({code: this.code, nombre: this.d.grupo.nombre}); else mios[i].nombre = this.d.grupo.nombre;
-      store.set('ix_admins', mios.slice(0, 20));
-      this.render();
+      guardarMio(this.code, this.d.grupo.nombre, this.d.grupo.tema);
+      aplicarTema(this.d.grupo.tema);
+      conservar(() => this.render());
     }catch(e){
       if (!silencioso) app.innerHTML = `<div class="hero"><div class="emoji">😕</div><h1>No encontramos el intercambio</h1><p>${esc(e.message)}</p></div><div class="center"><a class="btn oro" href="./">Ir al inicio</a></div>`;
     }
   },
-  linkAdmin(){ return BASE + '?admin=' + this.code; },
+  linkAdmin(c){ return BASE + '?admin=' + (c || this.code); },
   linkPart(p){ return BASE + '?p=' + p.token; },
-  mensaje(p){
-    const g = this.d.grupo;
-    const lineas = [`🎄 ¡Hola ${p.nombre}!`, `Estás en el intercambio navideño *${g.nombre}* 🎁`, ''];
-    if (g.monto) lineas.push(`💰 Monto: ${money(g.monto, g.moneda)}`);
-    if (g.fecha) lineas.push(`📅 ${fechaLarga(g.fecha)}`);
-    if (g.lugar) lineas.push(`📍 ${g.lugar}`);
-    lineas.push('');
-    lineas.push(g.sorteado
-      ? '👉 ¡Ya se hizo el sorteo! Entra aquí para ver a quién te tocó y qué le gustaría:'
-      : '👉 Entra aquí para llenar tu lista de deseos. Cuando se haga el sorteo, en este mismo link verás a quién te tocó:');
-    lineas.push(this.linkPart(p), '', `🔐 Tu código: *${p.pin}*`, '🤫 ¡Es secreto, no se lo enseñes a nadie!');
-    return lineas.join('\n');
+  encabezado(){
+    const g = this.d.grupo, w = palabra(g.tema), l = [];
+    if (g.monto) l.push(`💰 Monto: ${money(g.monto, g.moneda)}`);
+    if (g.fecha) l.push(`📅 ${fechaLarga(g.fecha)}`);
+    if (g.lugar) l.push(`📍 ${g.lugar}`);
+    return {w, l};
+  },
+  mensaje(p, tipo = 'invitar'){
+    const g = this.d.grupo, {w, l} = this.encabezado();
+    const cierre = [this.linkPart(p), '', `🔐 Tu código: *${p.pin}*`, '🤫 ¡Es secreto, no se lo enseñes a nadie!'];
+    if (tipo === 'lista') return [`🎁 ¡Hola ${p.nombre}! Aún no llenas tu lista de deseos para *${g.nombre}*.`, 'Tu Santa necesita ideas para atinarle 😉', '', '👉 Agrégala aquí (tarda 2 minutos):', ...cierre].join('\n');
+    if (tipo === 'ver') return [`🎅 ¡Hola ${p.nombre}! Ya se hizo el sorteo de *${g.nombre}* y aún no ves a quién te tocó.`, '', '👉 Entra aquí y toca el regalo:', ...cierre].join('\n');
+    return [`${w.ico} ¡Hola ${p.nombre}!`, `Estás en el intercambio navideño *${g.nombre}* 🎁`, '', ...l, '',
+      g.sorteado ? '👉 ¡Ya se hizo el sorteo! Entra aquí para ver a quién te tocó y qué le gustaría:'
+                 : '👉 Entra aquí para llenar tu lista de deseos. Cuando se haga el sorteo, en este mismo link verás a quién te tocó:',
+      ...cierre].join('\n');
   },
   render(){
-    const {grupo: g, participantes: ps, exclusiones: ex} = this.d;
+    const {grupo: g, participantes: ps, exclusiones: ex, cena, mejoras} = this.d;
+    const principal = this.d.es_principal;
+    const w = palabra(g.tema);
     const nombre = id => (ps.find(p => p.id === id) || {}).nombre || '¿?';
-    const conLista = ps.filter(p => p.deseos > 0).length;
-    const vieron = ps.filter(p => p.vio).length;
+    const sinLista = ps.filter(p => !p.deseos);
+    const sinVer = ps.filter(p => !p.vio);
+    const vieron = ps.length - sinVer.length;
     const nuevo = store.get('ix_nuevo_' + this.code, false);
 
     app.innerHTML = `
     <div class="top"><a class="iconbtn" href="./">‹</a>
-      <div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">Panel del organizador</div></div>
+      <div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">${principal ? 'Panel del organizador' : '👥 Eres coorganizador'}</div></div>
+      <a class="iconbtn" href="?ayuda" title="¿Cómo funciona?">?</a>
       <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
 
     ${nuevo ? `<div class="banner"><b>⭐ Guarda tu link de organizador</b>
@@ -447,13 +710,14 @@ const Admin = {
     <div class="card ribbon">
       <div class="row"><h2 class="grow" style="margin:0">🎁 Detalles</h2><button class="btn xs ghost" id="editar">Editar</button></div>
       <div class="info mt">
+        <span class="k">${g.tema === 'trabajo' ? '💼' : '🎄'}</span><span>Estilo ${g.tema === 'trabajo' ? 'trabajo' : 'familia'}</span>
         ${g.monto ? `<span class="k">💰</span><span><b>${money(g.monto, g.moneda)}</b> por regalo</span>` : ''}
         ${g.fecha ? `<span class="k">📅</span><span>${esc(fechaLarga(g.fecha))}</span>` : ''}
         ${g.lugar ? `<span class="k">📍</span><span>${esc(g.lugar)}</span>` : ''}
         ${g.notas ? `<span class="k">📝</span><span>${esc(g.notas)}</span>` : ''}
       </div>
       ${countdownHTML(g.fecha)}
-      <div class="stat"><div><b>${ps.length}</b><span>participantes</span></div><div><b>${conLista}</b><span>con lista</span></div><div><b>${g.sorteado ? vieron : '—'}</b><span>vieron resultado</span></div></div>
+      <div class="stat"><div><b>${ps.length}</b><span>participantes</span></div><div><b>${ps.length - sinLista.length}</b><span>con lista</span></div><div><b>${g.sorteado ? vieron : '—'}</b><span>vieron resultado</span></div></div>
     </div>
 
     <div class="card">
@@ -461,24 +725,36 @@ const Admin = {
       ${g.sorteado ? `
         <p class="mt0"><span class="chip ok">✓ Sorteo hecho</span> <span class="muted small">${esc(hora(g.sorteado_at))}</span></p>
         <p class="muted">Nadie, ni tú, puede ver quién le tocó a quién en este panel. Manda a cada quien su link (abajo).</p>
-        <div class="person" style="background:var(--papel)">
-          <div class="row"><div class="grow"><b>Revelar Santas</b><div class="muted small">El día del intercambio, cada quien verá quién le regaló.</div></div>
+        <div class="opt">
+          <div class="row"><div class="grow"><b>🎅 Revelar Santas</b><div class="muted small">Cada quien verá en su celular quién le regaló, y se activa la pantalla de TV.</div></div>
           <button class="btn sm ${g.revelado ? 'ghost' : 'oro'}" id="revelar">${g.revelado ? 'Ocultar' : 'Revelar'}</button></div>
+          <a class="btn ${g.revelado ? 'rojo' : 'ghost'} full mt" target="_blank" href="?tv=${esc(this.code)}">📺 Abrir pantalla de TV</a>
+          <div class="hint">Ábrela en el navegador de la TV o en una laptop conectada. ${g.revelado ? '' : 'Primero toca «Revelar».'}</div>
         </div>
         <button class="btn danger sm mt" id="reiniciar">↺ Reiniciar sorteo</button>
       ` : `
         <p class="muted mt0">Agrega mínimo 3 personas. Puedes mandar los links desde antes para que llenen su lista; cuando sortees, en el mismo link verán a quién les tocó.</p>
-        <label class="row" style="font-weight:600"><input type="checkbox" id="evitar" checked style="width:auto"> Evitar que dos personas se regalen entre sí</label>
+        <label class="check"><input type="checkbox" id="evitar" checked> Evitar que dos personas se regalen entre sí</label>
+        ${g.tiene_anterior ? `<label class="check"><input type="checkbox" id="norepetir" checked> No repetir a quien le tocó el año pasado</label>` : ''}
         <button class="btn rojo full mt" id="sortear" ${ps.length < 3 ? 'disabled' : ''}>🎲 Hacer el sorteo</button>
       `}
     </div>
 
+    ${ps.length ? `<div class="card">
+      <h2>📣 Recordatorios</h2>
+      <p class="muted mt0">Avísale por WhatsApp a quien le falte algo.</p>
+      <div class="row wrapr">
+        <button class="btn sm ${sinLista.length ? 'oro' : 'ghost'} grow" id="recLista" ${sinLista.length ? '' : 'disabled'}>📝 Sin lista (${sinLista.length})</button>
+        ${g.sorteado ? `<button class="btn sm ${sinVer.length ? 'oro' : 'ghost'} grow" id="recVer" ${sinVer.length ? '' : 'disabled'}>👀 Sin ver resultado (${sinVer.length})</button>` : ''}
+      </div>
+    </div>` : ''}
+
     <div class="card">
-      <h2>👨‍👩‍👧‍👦 Participantes <span class="chip">${ps.length}</span></h2>
+      <h2>${g.tema === 'trabajo' ? '👥' : '👨‍👩‍👧‍👦'} Participantes <span class="chip">${ps.length}</span></h2>
       ${ps.length ? ps.map(p => `
         <div class="person">
-          <div class="row"><div class="grow"><div class="name">${esc(p.nombre)}</div>
-            <div class="muted small">${p.telefono ? '📱 ' + esc(p.telefono) : 'Sin teléfono'} · Código <span class="pin">${esc(p.pin)}</span></div></div></div>
+          <div class="name">${esc(p.nombre)}</div>
+          <div class="muted small">${p.telefono ? '📱 ' + esc(p.telefono) : 'Sin teléfono'} · Código <span class="pin">${esc(p.pin)}</span></div>
           <div class="chips">
             ${p.abrio ? '<span class="chip ok">Abrió su link</span>' : '<span class="chip">Sin abrir</span>'}
             ${p.deseos ? `<span class="chip oro">🎁 ${p.deseos} deseo${p.deseos > 1 ? 's' : ''}</span>` : '<span class="chip">Sin lista</span>'}
@@ -490,10 +766,10 @@ const Admin = {
             <button class="btn sm ghost" data-editp="${esc(p.id)}">Editar</button>
             ${g.sorteado ? '' : `<button class="btn sm danger" data-quitar="${esc(p.id)}">Quitar</button>`}
           </div>
-        </div>`).join('') : `<div class="empty"><div class="e">🧑‍🎄</div>Aún no hay nadie. ¡Agrega a la familia!</div>`}
+        </div>`).join('') : `<div class="empty"><div class="e">🧑‍🎄</div>Aún no hay nadie. ¡Agrega a ${w.gente}!</div>`}
       ${g.sorteado ? '' : `
         <h3>Agregar persona</h3>
-        <div class="row wrapr"><input id="np_nombre" class="grow" maxlength="40" placeholder="Nombre" style="flex:1 1 140px">
+        <div class="row wrapr"><input id="np_nombre" maxlength="40" placeholder="Nombre" style="flex:1 1 140px">
         <input id="np_tel" type="tel" inputmode="tel" placeholder="WhatsApp (10 dígitos)" style="flex:1 1 140px"></div>
         <button class="btn verde full mt" id="agregar">+ Agregar</button>
         <div class="hint">El teléfono es opcional; sin él, WhatsApp te deja elegir el contacto.</div>`}
@@ -512,18 +788,55 @@ const Admin = {
     </div>
 
     <div class="card">
-      <details><summary>⚙️ Más opciones</summary>
-        <p class="muted small">Tu link de organizador:</p>
-        <div class="code" style="background:var(--papel)">${esc(this.linkAdmin())}</div>
-        <button class="btn sm ghost" id="copAdmin2">Copiar link de organizador</button>
-        <hr style="border:0;border-top:1px dashed var(--linea);margin:16px 0">
-        <button class="btn sm danger" id="borrar">🗑️ Borrar este intercambio</button>
-      </details>
+      <h2>🍽️ ${g.tema === 'trabajo' ? 'Comida' : 'Cena'}: ¿quién lleva qué?</h2>
+      <p class="muted mt0">Anota lo que se necesita; cada quien aparta desde su link.</p>
+      ${cena.length ? cena.map(c => `<div class="row" style="padding:8px 0;border-bottom:1px dashed var(--linea)">
+          <span class="grow"><b>${esc(c.texto)}</b><br>${c.quien ? `<span class="chip ok">${esc(c.quien)}</span>` : '<span class="chip">Nadie aún</span>'}</span>
+          <button class="btn xs danger" data-cenaq="${esc(c.id)}">Quitar</button></div>`).join('') : '<div class="muted small">Aún no hay platillos.</div>'}
+      <div class="row mt"><input id="cena_txt" class="grow" maxlength="80" placeholder="Ej. Tamales, ponche, refrescos…"><button class="btn verde" id="cenaAdd">+</button></div>
+    </div>
+
+    ${principal ? `<div class="card">
+      <h2>🛠️ Mejoras para la app</h2>
+      <p class="muted mt0">Solo tú ves esto. Anota ideas y luego pásamelas como lista.</p>
+      ${mejoras.length ? mejoras.map(m => `<div class="wish">
+          <button class="chk ${m.hecho ? 'on' : ''}" data-mej="${esc(m.id)}" data-v="${m.hecho ? 0 : 1}">${m.hecho ? '✓' : ''}</button>
+          <div class="grow ${m.hecho ? 'muted' : ''}" style="${m.hecho ? 'text-decoration:line-through' : ''}">${esc(m.texto)}</div>
+          <button class="btn xs danger" data-mejq="${esc(m.id)}">✕</button></div>`).join('') : '<div class="muted small">Sin mejoras anotadas.</div>'}
+      <div class="row mt"><input id="mej_txt" class="grow" maxlength="400" placeholder="Ej. Que el monto acepte dólares"><button class="btn verde" id="mejAdd">+</button></div>
+      ${mejoras.some(m => !m.hecho) ? `<button class="btn oro full mt" id="mejCopiar">📋 Copiar lista para Claude</button>` : ''}
+    </div>` : ''}
+
+    <div class="card">
+      <details><summary>⚙️ Más opciones</summary><div>
+        ${principal ? `
+        <div class="opt"><b>👥 Coorganizador</b>
+          <div class="muted small">Comparte el panel con otra persona (puede hacer todo menos borrar el intercambio).</div>
+          ${this.d.coadmin_code ? `
+            <div class="code" style="background:var(--papel)">${esc(this.linkAdmin(this.d.coadmin_code))}</div>
+            <div class="row wrapr"><a class="btn sm wa" target="_blank" href="${esc(waLink('', '👥 Te comparto el panel de coorganizador del intercambio "' + g.nombre + '":\n' + this.linkAdmin(this.d.coadmin_code)))}">Mandar por WhatsApp</a>
+            <button class="btn sm ghost" id="coCopiar">Copiar</button><button class="btn sm danger" id="coQuitar">Quitar acceso</button></div>`
+          : `<button class="btn sm verde mt" id="coCrear">Crear link de coorganizador</button>`}
+        </div>
+        <div class="opt"><b>📋 Duplicar para otro año</b>
+          <div class="muted small">Copia a la misma gente y exclusiones con links nuevos. El sorteo evitará repetir parejas de este.</div>
+          <button class="btn sm verde mt" id="duplicar">Duplicar intercambio</button>
+        </div>` : ''}
+        <div class="opt"><b>🔗 Link de este panel</b>
+          <div class="code" style="background:var(--papel)">${esc(this.linkAdmin())}</div>
+          <button class="btn sm ghost" id="copAdmin2">Copiar link</button>
+        </div>
+        <a class="btn ghost full" href="?ayuda">📖 Manual de uso</a>
+        ${principal ? `<hr class="sep"><button class="btn sm danger" id="borrar">🗑️ Borrar este intercambio</button>` : ''}
+      </div></details>
     </div>
     ${pie()}`;
-
+    this.enlazar();
+  },
+  enlazar(){
+    const {grupo: g, participantes: ps} = this.d;
     const on = (sel, fn) => { const el = $(sel); if (el) el.onclick = fn; };
-    on('#recargar', () => this.cargar());
+    on('#recargar', () => { this.cargar(); toast('Actualizado'); });
     on('#copAdmin', () => copiar(this.linkAdmin()));
     on('#copAdmin2', () => copiar(this.linkAdmin()));
     on('#okNuevo', () => { store.del('ix_nuevo_' + this.code); this.render(); });
@@ -536,15 +849,48 @@ const Admin = {
     }));
     on('#sortear', e => this.sortear(e.currentTarget));
     on('#reiniciar', async () => {
-      if (!await confirmar('¿Reiniciar el sorteo?', 'Se borran las asignaciones y los mensajes anónimos. Las listas de deseos se conservan. Tendrás que volver a avisar a todos.', 'Sí, reiniciar')) return;
+      if (!await confirmar('¿Reiniciar el sorteo?', 'Se borran las asignaciones, los mensajes anónimos y las pistas. Las listas de deseos se conservan. Tendrás que volver a avisar a todos.', 'Sí, reiniciar')) return;
       await hacer(null, () => rpc('ix_admin_reiniciar', {p_admin: this.code})); toast('Sorteo reiniciado'); this.cargar();
     });
     on('#revelar', e => hacer(e.currentTarget, async () => {
-      await rpc('ix_admin_revelar', {p_admin: this.code, p_revelar: !this.d.grupo.revelado});
-      toast(this.d.grupo.revelado ? 'Santas ocultos de nuevo' : '🎉 ¡Santas revelados!'); await this.cargar();
+      await rpc('ix_admin_revelar', {p_admin: this.code, p_revelar: !g.revelado});
+      if (!g.revelado){ toast('🎉 ¡Santas revelados!'); confeti(); } else toast('Santas ocultos de nuevo');
+      await this.cargar();
     }));
+    on('#recLista', () => this.recordatorio('lista'));
+    on('#recVer', () => this.recordatorio('ver'));
+    on('#cenaAdd', e => hacer(e.currentTarget, async () => {
+      const t = $('#cena_txt').value.trim(); if (!t) throw new Error('Escribe el platillo');
+      await rpc('ix_admin_cena_agregar', {p_admin: this.code, p_texto: t}); $('#cena_txt').dataset.keep = 'no'; await this.cargar(); $('#cena_txt').focus();
+    }));
+    const ct = $('#cena_txt'); if (ct) ct.onkeydown = e => { if (e.key === 'Enter') $('#cenaAdd').click(); };
+    app.querySelectorAll('[data-cenaq]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_admin_cena_borrar', {p_admin: this.code, p_id: b.dataset.cenaq}); await this.cargar();
+    }));
+    on('#mejAdd', e => hacer(e.currentTarget, async () => {
+      const t = $('#mej_txt').value.trim(); if (!t) throw new Error('Escribe la mejora');
+      await rpc('ix_mejora_agregar', {p_admin: this.code, p_texto: t}); $('#mej_txt').dataset.keep = 'no'; await this.cargar(); $('#mej_txt').focus();
+    }));
+    const mt = $('#mej_txt'); if (mt) mt.onkeydown = e => { if (e.key === 'Enter') $('#mejAdd').click(); };
+    app.querySelectorAll('[data-mej]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_mejora_estado', {p_admin: this.code, p_id: b.dataset.mej, p_hecho: b.dataset.v === '1'}); await this.cargar();
+    }));
+    app.querySelectorAll('[data-mejq]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_mejora_borrar', {p_admin: this.code, p_id: b.dataset.mejq}); await this.cargar();
+    }));
+    on('#mejCopiar', () => {
+      const pend = this.d.mejoras.filter(m => !m.hecho);
+      copiar(`Mejoras para la app Intercambio Navideño (v${APP_VERSION}):\n` + pend.map((m, i) => `${i+1}. ${m.texto}`).join('\n'));
+    });
+    on('#coCrear', e => hacer(e.currentTarget, async () => { await rpc('ix_admin_coorg', {p_admin: this.code, p_activar: true}); await this.cargar(); toast('Link de coorganizador creado'); }));
+    on('#coCopiar', () => copiar(this.linkAdmin(this.d.coadmin_code)));
+    on('#coQuitar', async () => {
+      if (!await confirmar('¿Quitar acceso al coorganizador?', 'Su link dejará de funcionar.', 'Quitar acceso')) return;
+      await hacer(null, () => rpc('ix_admin_coorg', {p_admin: this.code, p_activar: false})); this.cargar();
+    });
+    on('#duplicar', () => this.duplicar());
     on('#borrar', async () => {
-      if (!await confirmar('¿Borrar el intercambio?', 'Se elimina todo: participantes, listas y mensajes. No se puede deshacer.', 'Borrar todo')) return;
+      if (!await confirmar('¿Borrar el intercambio?', 'Se elimina todo: participantes, listas, mensajes y cena. No se puede deshacer.', 'Borrar todo')) return;
       await hacer(null, () => rpc('ix_admin_borrar_grupo', {p_admin: this.code}));
       store.set('ix_admins', store.get('ix_admins', []).filter(m => m.code !== this.code));
       location.href = './';
@@ -561,26 +907,39 @@ const Admin = {
       await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: a, p_b: c, p_activa: false}); await this.cargar();
     }));
   },
+  recordatorio(tipo){
+    const ps = this.d.participantes.filter(p => tipo === 'lista' ? !p.deseos : !p.vio);
+    modal(`<h2>${tipo === 'lista' ? '📝 Les falta su lista' : '👀 No han visto su resultado'}</h2>
+      <p class="muted">Toca cada botón para mandarle el recordatorio por WhatsApp.</p>
+      ${ps.map(p => `<div class="row" style="padding:8px 0;border-bottom:1px dashed var(--linea)"><b class="grow">${esc(p.nombre)}</b>
+        <a class="btn sm wa" target="_blank" href="${esc(waLink(p.telefono, this.mensaje(p, tipo)))}">Recordar</a></div>`).join('')}
+      <button class="btn ghost full mt" onclick="closeModal()">Listo</button>`);
+  },
   async agregar(btn){
     const nombre = $('#np_nombre').value.trim(), tel = $('#np_tel').value.trim();
     if (!nombre) return toast('Escribe el nombre', true);
     await hacer(btn, () => rpc('ix_admin_agregar', {p_admin: this.code, p_nombre: nombre, p_telefono: tel || null}));
+    $('#np_nombre').dataset.keep = 'no'; $('#np_tel').dataset.keep = 'no';
     await this.cargar();
     const n = $('#np_nombre'); if (n) n.focus();
   },
   async sortear(btn){
-    const evitar = $('#evitar').checked;
+    const evitar = $('#evitar').checked, norep = $('#norepetir') ? $('#norepetir').checked : false;
     if (!await confirmar('¿Hacer el sorteo?', `Se sortea entre ${this.d.participantes.length} personas. Después ya no podrás agregar ni quitar gente (a menos que reinicies).`, '🎲 Sortear', 'rojo')) return;
-    const r = await hacer(btn, () => rpc('ix_sortear', {p_admin: this.code, p_evitar_parejas: evitar}));
-    await this.cargar();
+    const r = await hacer(btn, () => rpc('ix_sortear', {p_admin: this.code, p_evitar_parejas: evitar, p_evitar_repetir: norep}));
+    await this.cargar(); confeti(); Musica.efecto('campanas');
+    const avisos = [];
+    if (evitar && !r.sin_parejas) avisos.push('No se pudo evitar que dos personas se regalen entre sí con estas exclusiones.');
+    if (norep && !r.sin_repetir) avisos.push('No se pudo evitar repetir todas las parejas del año pasado.');
     modal(`<div class="center"><div style="font-size:60px">🎉</div><h2 style="justify-content:center">¡Sorteo listo!</h2>
-      <p class="muted">${evitar && !r.sin_parejas ? 'No se pudo evitar que dos personas se regalen entre sí con estas exclusiones, pero el sorteo es válido. ' : ''}Ahora manda a cada quien su link por WhatsApp con el botón verde.</p>
+      <p class="muted">${avisos.join(' ')} ${avisos.length ? 'Aun así, el sorteo es válido. ' : ''}Ahora manda a cada quien su link por WhatsApp con el botón verde.</p>
       <button class="btn verde full" onclick="closeModal()">Entendido</button></div>`);
   },
   editar(){
     const r = modal(`<h2>✏️ Editar detalles</h2>${formGrupo(this.d.grupo)}
       <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn rojo grow" data-x="si">Guardar</button></div>`);
-    r.querySelector('[data-x=no]').onclick = closeModal;
+    r.querySelector('[data-x=no]').onclick = () => { closeModal(); aplicarTema(this.d.grupo.tema); };
+    $('#f_tema').onchange = e => aplicarTema(e.target.value);
     r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
       await rpc('ix_admin_editar', Object.assign({p_admin: this.code}, leerGrupo()));
       closeModal(); toast('Guardado ✅'); await this.cargar();
@@ -596,12 +955,69 @@ const Admin = {
       await rpc('ix_admin_editar_participante', {p_admin: this.code, p_id: p.id, p_nombre: $('#ep_n').value, p_telefono: $('#ep_t').value || null});
       closeModal(); await this.cargar();
     });
+  },
+  duplicar(){
+    const g = this.d.grupo;
+    const sug = /20\d\d/.test(g.nombre) ? g.nombre.replace(/20\d\d/, m => +m + 1) : g.nombre + ' ' + (new Date().getFullYear() + 1);
+    const r = modal(`<h2>📋 Duplicar intercambio</h2>
+      <p class="muted">Se copian ${this.d.participantes.length} personas, sus tallas y gustos, y las exclusiones. Cada quien tendrá link y código nuevos. Las listas de deseos empiezan vacías.</p>
+      <label>Nombre del nuevo intercambio</label><input id="dup_n" maxlength="80" value="${esc(sug)}">
+      <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn verde grow" data-x="si">Duplicar</button></div>`);
+    r.querySelector('[data-x=no]').onclick = closeModal;
+    r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
+      const n = $('#dup_n').value.trim();
+      const res = await rpc('ix_admin_duplicar', {p_admin: this.code, p_nombre: n});
+      guardarMio(res.admin_code, n, g.tema); store.set('ix_nuevo_' + res.admin_code, true);
+      location.href = '?admin=' + res.admin_code;
+    });
+  }
+};
+
+/* ============================ PANTALLA DE TV ============================ */
+const TV = {
+  d: null, i: -1, fase: 'inicio',
+  async iniciar(code){
+    sinNav(); $('#fab').style.display = 'none';
+    try{ this.d = await rpc('ix_tv', {p_admin: code}); }
+    catch(e){
+      app.innerHTML = `<div class="hero"><div class="emoji">📺</div><h1>Pantalla de TV</h1><p>${esc(e.message)}</p></div><div class="center"><a class="btn oro" href="?admin=${esc(code)}">Ir al panel</a></div>`;
+      return;
+    }
+    aplicarTema(this.d.tema);
+    document.addEventListener('keydown', e => { if ([' ', 'Enter', 'ArrowRight', 'PageDown'].includes(e.key)){ e.preventDefault(); this.avanzar(); } });
+    this.render();
+  },
+  avanzar(){
+    if (this.fase === 'inicio'){ if (!Musica.on) Musica.alternar(); this.i = 0; this.fase = 'pregunta'; }
+    else if (this.fase === 'pregunta'){ this.fase = 'redoble'; this.render(); if (Musica.on){ Musica.alternar(); this._musica = true; } Musica.efecto('redoble');
+      setTimeout(() => { this.fase = 'revelado'; this.render(); confeti(220); Musica.efecto('campanas'); }, 2300); return; }
+    else if (this.fase === 'revelado'){ this.i++; this.fase = this.i >= this.d.pares.length ? 'fin' : 'pregunta'; if (this._musica && !Musica.on){ Musica.alternar(); } if (this.fase === 'fin') confeti(260); }
+    else if (this.fase === 'fin'){ this.fase = 'inicio'; this.i = -1; }
+    else return;
+    this.render();
+  },
+  render(){
+    const p = this.d.pares[this.i] || {}, total = this.d.pares.length;
+    const prog = this.i >= 0 && this.i < total ? `<div class="prog">${this.i + 1} de ${total}</div>` : '';
+    let h = '';
+    if (this.fase === 'inicio') h = `<img src="icon-512.png" alt="" style="width:min(22vh,200px);border-radius:24%;box-shadow:0 20px 50px rgba(0,0,0,.5)">
+      <div class="t2">${esc(this.d.nombre)}</div><div class="t1">Revelación de Santas · ${total} participantes</div>
+      <div class="ctrl"><button class="btn oro" id="go">▶ Comenzar</button></div>`;
+    else if (this.fase === 'pregunta') h = `<div class="t1">¿Quién le regaló a…</div><div class="t2">${esc(p.para)}?</div>
+      <div class="ctrl"><button class="btn rojo" id="go">🥁 Revelar</button></div>`;
+    else if (this.fase === 'redoble') h = `<div class="t1">El Santa de ${esc(p.para)} es…</div><div class="redoble">🥁</div>`;
+    else if (this.fase === 'revelado') h = `<div class="t1">El Santa de <b>${esc(p.para)}</b> fue</div><div class="t3">${esc(p.de)}</div>
+      <div class="ctrl"><button class="btn oro" id="go">${this.i + 1 < total ? 'Siguiente ›' : 'Terminar 🎉'}</button></div>`;
+    else h = `<div style="font-size:min(16vh,140px)">🎄</div><div class="t2 oro">¡Feliz Navidad!</div><div class="t1">Gracias por participar en ${esc(this.d.nombre)}</div>
+      <div class="ctrl"><button class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" id="go">↺ Volver a empezar</button></div>`;
+    app.innerHTML = `<div class="tv">${prog}${h}</div>`;
+    const go = $('#go'); if (go) go.onclick = () => this.avanzar();
   }
 };
 
 /* ============================ PARTICIPANTE ============================ */
 const Part = {
-  token: null, pin: null, d: null, tab: 'amigo', chatCon: 'santa', timer: null,
+  token: null, pin: null, d: null, tab: 'amigo', chatCon: 'santa', timer: null, foto: null, prio: 2,
   iniciar(token){
     this.token = token;
     const guardado = store.get('ix_pin_' + token, null);
@@ -609,13 +1025,13 @@ const Part = {
     else this.pantallaPin();
   },
   pantallaPin(error){
-    $('#nav').hidden = true;
+    sinNav();
     app.innerHTML = `
       <div class="hero"><img class="logo" src="icon-512.png" alt=""><h1>¡Hola! Escribe tu <em>código</em></h1>
       <p>Son los 4 dígitos que te llegaron por WhatsApp</p></div>
       <div class="card ribbon center">
         <div class="pinbox">${[0,1,2,3].map(i => `<input inputmode="numeric" maxlength="1" pattern="[0-9]*" data-i="${i}" aria-label="Dígito ${i+1}">`).join('')}</div>
-        ${error ? `<p style="color:var(--rojo);font-weight:800">${esc(error)}</p>` : ''}
+        ${error ? `<p style="color:#b3202a;font-weight:800">${esc(error)}</p>` : ''}
         <button class="btn rojo full" id="entrar">Entrar 🎁</button>
       </div>${pie()}`;
     const ins = [...app.querySelectorAll('.pinbox input')];
@@ -642,6 +1058,7 @@ const Part = {
     try{
       this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin});
       store.set('ix_pin_' + this.token, this.pin);
+      aplicarTema(this.d.grupo.tema);
       if (!this._listo){
         this._listo = true;
         if (!this.d.grupo.sorteado) this.tab = 'lista';
@@ -650,8 +1067,7 @@ const Part = {
       this.render();
     }catch(e){
       if (/código/i.test(e.message)){ store.del('ix_pin_' + this.token); this.pantallaPin(auto ? null : 'Código incorrecto, revisa tu WhatsApp'); }
-      else if (/link/i.test(e.message)){ app.innerHTML = `<div class="hero"><div class="emoji">😕</div><h1>Link no válido</h1><p>${esc(e.message)}</p></div>`; }
-      else if (auto && this.d){ toast(e.message, true); }
+      else if (/link/i.test(e.message)){ sinNav(); app.innerHTML = `<div class="hero"><div class="emoji">😕</div><h1>Link no válido</h1><p>${esc(e.message)}</p></div>`; }
       else { this.pantallaPin(e.message); }
     }
   },
@@ -660,7 +1076,7 @@ const Part = {
     try{ this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin}); this.render(true); }catch(e){}
   },
   nav(){
-    const n = $('#nav'); n.hidden = false;
+    const n = $('#nav'); n.hidden = false; document.body.classList.remove('sin-nav');
     const visto = store.get('ix_chatvisto_' + this.token, 0);
     const recibidos = [...this.d.chat_santa.filter(m => m.autor === 'santa'), ...this.d.chat_amigo.filter(m => m.autor === 'amigo')];
     const nuevos = recibidos.some(m => new Date(m.fecha).getTime() > visto);
@@ -674,13 +1090,15 @@ const Part = {
     clearInterval(this.timer);
     if (this.tab === 'chat'){
       store.set('ix_chatvisto_' + this.token, Date.now());
-      this.timer = setInterval(() => this.refrescar(), 20000);
+      this.timer = setInterval(() => this.refrescar(), 25000);
     }
     const cuerpo = {amigo: () => this.vAmigo(), lista: () => this.vLista(), chat: () => this.vChat(), evento: () => this.vEvento()}[this.tab]();
-    app.innerHTML = `
-      <div class="top"><div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">Hola, ${esc(this.d.yo.nombre)} 👋</div></div>
-      <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
-      ${cuerpo}${pie()}`;
+    conservar(() => {
+      app.innerHTML = `
+        <div class="top"><div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">Hola, ${esc(this.d.yo.nombre)} 👋</div></div>
+        <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
+        ${cuerpo}${pie()}`;
+    });
     this.nav();
     $('#recargar').onclick = () => { this.refrescar(); toast('Actualizado'); };
     this.enlazar();
@@ -691,6 +1109,17 @@ const Part = {
     const items = campos.filter(([k]) => pf && pf[k]);
     if (!items.length) return `<div class="muted small">${vacio}</div>`;
     return `<div class="info">${items.map(([k, i, t]) => `<span class="k">${i}</span><span><span class="muted small">${t}</span><br><b>${esc(pf[k])}</b></span>`).join('')}</div>`;
+  },
+  deseoHTML(d, modo){
+    return `<div class="wish ${modo === 'amigo' && d.comprado ? 'bought' : ''}">
+      ${modo === 'amigo' ? `<button class="chk ${d.comprado ? 'on' : ''}" data-comprar="${esc(d.id)}" data-v="${d.comprado ? 0 : 1}" title="Ya lo compré">${d.comprado ? '✓' : ''}</button>`
+        : `<button class="star ${d.prioridad === 1 ? 'on' : ''}" data-prio="${esc(d.id)}" data-v="${d.prioridad === 1 ? 2 : 1}" title="Lo quiero mucho">⭐</button>`}
+      ${d.foto ? `<img class="ph" src="${esc(d.foto)}" alt="" data-foto="1">` : ''}
+      <div class="grow"><div class="t">${esc(d.texto)}</div>
+        ${d.prioridad === 1 ? `<span class="chip oro" style="margin:3px 0">${modo === 'amigo' ? '⭐ Lo que más quiere' : '⭐ Lo quiero mucho'}</span>` : ''}
+        <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `${d.precio ? '· ' : ''}<a href="${esc(d.link)}" target="_blank" rel="noopener">${modo === 'amigo' ? 'Ver dónde comprar' : 'Link'} ↗</a>` : ''}</div></div>
+      ${modo === 'mio' ? `<button class="btn xs danger" data-borrard="${esc(d.id)}">Quitar</button>` : ''}
+    </div>`;
   },
   vAmigo(){
     const g = this.d.grupo, a = this.d.amigo;
@@ -708,6 +1137,8 @@ const Part = {
         <p class="muted small">Asegúrate de que nadie esté viendo tu pantalla 👀</p>
       </div>`;
     const comprados = a.deseos.filter(d => d.comprado).length;
+    const ideas = a.deseos.length < 3 ? ideasPara(a.perfil, g.monto) : [];
+    const pm = this.d.pistas_mias || [];
     return `
       <div class="card ribbon center">
         <div class="muted">Te tocó regalarle a</div>
@@ -717,38 +1148,52 @@ const Part = {
       <div class="card"><h2>📏 Sus datos</h2>${this.perfilHTML(a.perfil, 'Aún no llena sus datos. ¡Pregúntale de forma anónima en Mensajes!')}</div>
       <div class="card">
         <h2>🎁 Su lista de deseos ${a.deseos.length ? `<span class="chip ${comprados ? 'ok' : ''}">${comprados}/${a.deseos.length}</span>` : ''}</h2>
-        ${a.deseos.length ? a.deseos.map(d => `
-          <div class="wish ${d.comprado ? 'bought' : ''}">
-            <button class="chk ${d.comprado ? 'on' : ''}" data-comprar="${esc(d.id)}" data-v="${d.comprado ? 0 : 1}" title="Ya lo compré">${d.comprado ? '✓' : ''}</button>
-            <div class="grow"><div class="t">${esc(d.texto)}</div>
-              <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `· <a href="${esc(d.link)}" target="_blank" rel="noopener">Ver dónde comprar ↗</a>` : ''}</div></div>
-          </div>`).join('') + '<p class="hint">Marca ✓ lo que ya compraste. Solo tú lo ves.</p>'
+        ${a.deseos.length ? a.deseos.map(d => this.deseoHTML(d, 'amigo')).join('') + '<p class="hint">Marca ✓ lo que ya compraste. Solo tú lo ves.</p>'
         : `<div class="empty"><div class="e">🤔</div>Aún no agrega deseos.<br><button class="btn sm verde mt" data-ir="chat" data-con="amigo">💬 Preguntarle en secreto</button></div>`}
+      </div>
+      ${ideas.length ? `<div class="card"><h2>💡 Ideas para ${esc(a.nombre)}</h2>
+        <p class="muted mt0 small">Según ${a.perfil && a.perfil.gustos ? 'sus gustos' : 'lo más popular'}${g.monto ? ' y el monto' : ''}. Precios aproximados.</p>
+        ${ideas.map(([e, t, pr]) => `<div class="idea"><span class="e">${e}</span><span class="grow">${esc(t)}</span><span class="muted small">≈ ${money(pr)}</span></div>`).join('')}
+      </div>` : ''}
+      <div class="card"><h2>🕵️ Tus pistas para ${esc(a.nombre)}</h2>
+        <p class="muted mt0 small">Déjale hasta 3 pistas sobre quién eres. ${g.fecha ? 'Se van desbloqueando conforme se acerca el intercambio.' : 'Se verán de inmediato (no hay fecha definida).'}</p>
+        ${[1,2,3].map(n => { const p = pm.find(x => x.n === n) || {}; return `
+          <label>Pista ${n} <span class="muted small">· ${p.desbloquea ? 'se ve el ' + esc(fechaCorta(p.desbloquea)) : 'se ve de inmediato'}</span></label>
+          <input id="pista${n}" maxlength="200" placeholder="${['Ej. Me gusta el café','Ej. Uso lentes','Ej. Siempre llego tarde 😅'][n-1]}" value="${esc(p.texto || '')}">`; }).join('')}
+        <button class="btn verde full mt" id="pistasSave">Guardar pistas</button>
       </div>`;
   },
   vLista(){
     const pf = this.d.yo.perfil || {};
-    const ds = this.d.mis_deseos;
+    const ds = this.d.mis_deseos, g = this.d.grupo;
+    const ya = ds.map(d => norm(d.texto));
+    const ideas = this.ideasLista = ideasPara(pf, g.monto, 8).filter(i => !ya.includes(norm(i[1]))).slice(0, 5);
     return `
       <div class="card ribbon">
         <h2>🎁 Mis deseos</h2>
-        <p class="muted mt0">Tu Santa verá esta lista. Tú nunca sabrás si ya compró algo 😉</p>
-        ${ds.length ? ds.map(d => `<div class="wish"><span style="font-size:20px">🎀</span>
-          <div class="grow"><div class="t">${esc(d.texto)}</div>
-          <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `· <a href="${esc(d.link)}" target="_blank" rel="noopener">Link ↗</a>` : ''}</div></div>
-          <button class="btn xs danger" data-borrard="${esc(d.id)}">Quitar</button></div>`).join('') : '<div class="empty"><div class="e">✨</div>Aún no agregas nada</div>'}
+        <p class="muted mt0">Tu Santa verá esta lista. Tú nunca sabrás si ya compró algo 😉 Toca ⭐ en lo que más quieres.</p>
+        ${ds.length ? ds.map(d => this.deseoHTML(d, 'mio')).join('') : '<div class="empty"><div class="e">✨</div>Aún no agregas nada</div>'}
         <h3>Agregar deseo</h3>
         <input id="d_txt" maxlength="200" placeholder="¿Qué te gustaría? Ej. Termo para café">
         <div class="row mt"><input id="d_link" type="url" class="grow" placeholder="Link (opcional)"><input id="d_precio" type="number" inputmode="decimal" placeholder="$ aprox" style="width:110px"></div>
+        <div class="row mt wrapr">
+          <span class="btn sm ghost filebtn">📷 ${this.foto ? 'Cambiar foto' : 'Agregar foto'}<input type="file" accept="image/*" id="d_foto"></span>
+          <button class="btn sm ${this.prio === 1 ? 'oro' : 'ghost'}" id="d_prio">⭐ ${this.prio === 1 ? '¡Lo quiero mucho!' : 'Lo quiero mucho'}</button>
+        </div>
+        ${this.foto ? `<div class="foto-prev"><img src="${esc(this.foto)}" alt=""><button class="btn xs danger" id="d_fotoq">Quitar foto</button></div>` : ''}
         <button class="btn verde full mt" id="d_add">+ Agregar a mi lista</button>
-        ${this.d.grupo.monto ? `<div class="hint">Recuerda: el monto es de ${money(this.d.grupo.monto, this.d.grupo.moneda)}.</div>` : ''}
+        ${g.monto ? `<div class="hint">Recuerda: el monto es de ${money(g.monto, g.moneda)}.</div>` : ''}
       </div>
+      ${ideas.length && ds.length < 5 ? `<div class="card"><h2>💡 ¿Sin ideas?</h2>
+        <p class="muted mt0 small">Toca una para agregarla a tu lista${pf.gustos ? ' (según tus gustos)' : '; llena tus gustos abajo para que te sugiera mejor'}.</p>
+        ${ideas.map(([e, t, pr], i) => `<div class="idea"><span class="e">${e}</span><span class="grow">${esc(t)}<br><span class="muted small">≈ ${money(pr)}</span></span><button class="btn xs ghost" data-idea="${i}">+ Agregar</button></div>`).join('')}
+      </div>` : ''}
       <div class="card">
         <h2>📏 Mis datos para mi Santa</h2>
         <label>👕 Talla de ropa</label><input id="pf_talla" maxlength="200" placeholder="Ej. M / 32" value="${esc(pf.talla)}">
         <label>👟 Calzado</label><input id="pf_calzado" maxlength="200" placeholder="Ej. 26 MX" value="${esc(pf.calzado)}">
         <label>🎨 Colores favoritos</label><input id="pf_colores" maxlength="200" placeholder="Ej. Verde, negro" value="${esc(pf.colores)}">
-        <label>⭐ Me gusta</label><textarea id="pf_gustos" maxlength="200" placeholder="Ej. Café, fútbol, cocinar">${esc(pf.gustos)}</textarea>
+        <label>⭐ Me gusta</label><textarea id="pf_gustos" maxlength="200" placeholder="Ej. Café, futbol, cocinar, plantas">${esc(pf.gustos)}</textarea>
         <label>🚫 Por favor no me regalen</label><input id="pf_evitar" maxlength="200" placeholder="Ej. Perfumes, chocolate" value="${esc(pf.evitar)}">
         <button class="btn rojo full mt" id="pf_save">Guardar mis datos</button>
       </div>`;
@@ -756,13 +1201,19 @@ const Part = {
   vChat(){
     const g = this.d.grupo;
     if (!g.sorteado) return `<div class="card ribbon center"><div style="font-size:50px">💬</div><h2 style="justify-content:center">Mensajes anónimos</h2>
-      <p class="muted">Cuando se haga el sorteo podrás preguntarle cosas a tu amigo secreto sin que sepa quién eres, y contestarle a tu Santa.</p></div>`;
+      <p class="muted">Cuando se haga el sorteo podrás preguntarle cosas a tu amigo secreto sin que sepa quién eres, contestarle a tu Santa y ver sus pistas.</p></div>`;
     const con = this.chatCon;
     const lista = con === 'santa' ? this.d.chat_santa : this.d.chat_amigo;
     const yoAutor = con === 'santa' ? 'amigo' : 'santa';
     const quien = con === 'santa' ? 'Tu Santa (anónimo)' : this.d.amigo.nombre;
+    const ps = this.d.pistas_santa || [];
     return `
       <div class="seg"><button class="${con === 'santa' ? 'on' : ''}" data-con="santa">🎅 Mi Santa</button><button class="${con === 'amigo' ? 'on' : ''}" data-con="amigo">🎁 ${esc(this.d.amigo.nombre)}</button></div>
+      ${con === 'santa' ? `<div class="card"><h2>🔍 Pistas de tu Santa</h2>
+        ${ps.length ? ps.map(p => p.texto ? `<div class="pista"><span class="n">${p.n}</span><span>${esc(p.texto)}</span></div>`
+            : `<div class="pista lock"><span class="n">🔒</span><span class="muted">La pista ${p.n} se desbloquea el <b>${esc(fechaCorta(p.desbloquea))}</b></span></div>`).join('')
+          : '<div class="muted small">Tu Santa aún no deja pistas. ¡Pídeselas! 👇</div>'}
+      </div>` : ''}
       <div class="card ribbon">
         <p class="muted mt0 small">${con === 'santa'
           ? 'Aquí te escribe quien te va a regalar. Tú no sabes quién es 🤫'
@@ -775,7 +1226,7 @@ const Part = {
       </div>`;
   },
   vEvento(){
-    const g = this.d.grupo;
+    const g = this.d.grupo, cena = this.d.cena || [], yo = this.d.yo.id;
     return `
       ${g.revelado && this.d.santa_nombre ? `<div class="banner center"><div style="font-size:40px">🎅</div><b>¡Tu Santa fue ${esc(this.d.santa_nombre)}!</b></div>` : ''}
       <div class="card ribbon">
@@ -784,10 +1235,17 @@ const Part = {
           ${g.monto ? `<span class="k">💰</span><span><b>${money(g.monto, g.moneda)}</b> por regalo</span>` : ''}
           ${g.fecha ? `<span class="k">📅</span><span>${esc(fechaLarga(g.fecha))}</span>` : '<span class="k">📅</span><span class="muted">Fecha por definir</span>'}
           ${g.lugar ? `<span class="k">📍</span><span>${esc(g.lugar)}</span>` : ''}
-          <span class="k">👨‍👩‍👧‍👦</span><span>${g.total} participantes</span>
+          <span class="k">${g.tema === 'trabajo' ? '👥' : '👨‍👩‍👧‍👦'}</span><span>${g.total} participantes</span>
           ${g.notas ? `<span class="k">📝</span><span>${esc(g.notas)}</span>` : ''}
         </div>
         ${countdownHTML(g.fecha)}
+      </div>
+      <div class="card"><h2>🍽️ ¿Quién lleva qué?</h2>
+        ${cena.length ? cena.map(c => `<div class="row" style="padding:9px 0;border-bottom:1px dashed var(--linea)">
+            <span class="grow"><b>${esc(c.texto)}</b><br>${c.quien_id === yo ? '<span class="chip ok">Lo llevas tú ✓</span>' : c.quien ? `<span class="chip">${esc(c.quien)}</span>` : '<span class="chip rojo">Falta quién</span>'}</span>
+            ${c.quien_id === yo ? `<button class="btn xs ghost" data-cena="${esc(c.id)}" data-v="0">Soltar</button>` : c.quien ? '' : `<button class="btn xs verde" data-cena="${esc(c.id)}" data-v="1">Yo lo llevo</button>`}
+          </div>`).join('') : '<div class="muted small">El organizador aún no anota platillos. Puedes proponer uno.</div>'}
+        <div class="row mt"><input id="cena_txt" class="grow" maxlength="80" placeholder="Yo llevo… (ej. postre)"><button class="btn verde" id="cenaAdd">+</button></div>
       </div>
       <div class="card"><h2>🤫 Reglas</h2>
         <ul class="muted" style="padding-left:18px;margin:0">
@@ -796,7 +1254,7 @@ const Part = {
           <li>Usa los mensajes anónimos si tienes dudas.</li>
           <li>Guarda tu link de WhatsApp para volver a entrar.</li>
         </ul>
-        <button class="btn ghost sm mt" id="salir">Cerrar sesión en este celular</button>
+        <div class="row wrapr mt"><a class="btn ghost sm" href="?ayuda">📖 ¿Cómo funciona?</a><button class="btn ghost sm" id="salir">Cerrar sesión en este celular</button></div>
       </div>`;
   },
   enlazar(){
@@ -804,23 +1262,41 @@ const Part = {
     const base = () => ({p_token: this.token, p_pin: this.pin});
     app.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => { this.tab = b.dataset.ir; if (b.dataset.con) this.chatCon = b.dataset.con; this.render(); window.scrollTo(0,0); });
     app.querySelectorAll('.seg [data-con]').forEach(b => b.onclick = () => { this.chatCon = b.dataset.con; this.render(); });
+    app.querySelectorAll('img[data-foto]').forEach(i => i.onclick = () => verFoto(i.src));
     on('#gift', e => {
-      const gft = e.currentTarget; gft.classList.add('shake');
+      const gft = e.currentTarget; gft.classList.add('shake'); Musica.efecto('redoble');
       setTimeout(() => { gft.classList.remove('shake'); gft.classList.add('open'); }, 1000);
-      setTimeout(() => { store.set('ix_rev_' + this.token, true); this.render(); }, 1600);
+      setTimeout(() => { store.set('ix_rev_' + this.token, true); this.render(); confeti(); Musica.efecto('campanas'); }, 1600);
     });
     app.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => hacer(b, async () => {
       await rpc('ix_deseo_comprado', Object.assign(base(), {p_id: b.dataset.comprar, p_comprado: b.dataset.v === '1'}));
       await this.refrescar();
     }));
+    app.querySelectorAll('[data-prio]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_deseo_prioridad', Object.assign(base(), {p_id: b.dataset.prio, p_prioridad: +b.dataset.v}));
+      await this.refrescar();
+    }));
+    const fi = $('#d_foto'); if (fi) fi.onchange = async () => {
+      try{ this.foto = await reducirFoto(fi.files[0]); this.render(true); }catch(e){ toast(e.message, true); }
+    };
+    on('#d_fotoq', () => { this.foto = null; this.render(true); });
+    on('#d_prio', () => { this.prio = this.prio === 1 ? 2 : 1; this.render(true); });
     on('#d_add', e => hacer(e.currentTarget, async () => {
       const t = $('#d_txt').value.trim(); if (!t) throw new Error('Escribe qué te gustaría');
       let link = $('#d_link').value.trim(); if (link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
       const pr = $('#d_precio').value;
-      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: link || null, p_precio: pr === '' ? null : Number(pr)}));
+      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: link || null, p_precio: pr === '' ? null : Number(pr), p_foto: this.foto, p_prioridad: this.prio}));
+      this.foto = null; this.prio = 2;
+      ['d_txt','d_link','d_precio'].forEach(id => { const el = $('#' + id); el.value = ''; el.dataset.keep = 'no'; });
       toast('¡Agregado a tu lista! 🎁'); await this.refrescar(); const n = $('#d_txt'); if (n) n.focus();
     }));
     const dt = $('#d_txt'); if (dt) dt.onkeydown = e => { if (e.key === 'Enter') $('#d_add').click(); };
+    app.querySelectorAll('[data-idea]').forEach(b => b.onclick = () => hacer(b, async () => {
+      const [e, t, pr] = (this.ideasLista || [])[+b.dataset.idea] || [];
+      if (!t) return;
+      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2}));
+      toast('¡Agregado! ' + e); await this.refrescar();
+    }));
     app.querySelectorAll('[data-borrard]').forEach(b => b.onclick = () => hacer(b, async () => {
       await rpc('ix_deseo_quitar', Object.assign(base(), {p_id: b.dataset.borrard})); await this.refrescar();
     }));
@@ -828,14 +1304,31 @@ const Part = {
       const pf = {}; ['talla','calzado','colores','gustos','evitar'].forEach(k => pf[k] = $('#pf_' + k).value.trim());
       await rpc('ix_perfil', Object.assign(base(), {p_perfil: pf})); toast('Datos guardados ✅'); await this.refrescar();
     }));
-    const send = e => hacer(e && e.currentTarget, async () => {
+    on('#pistasSave', e => hacer(e.currentTarget, async () => {
+      for (const n of [1,2,3]){
+        const nuevo = $('#pista' + n).value.trim(), viejo = ((this.d.pistas_mias || []).find(x => x.n === n) || {}).texto || '';
+        if (nuevo !== viejo) await rpc('ix_pista_guardar', Object.assign(base(), {p_n: n, p_texto: nuevo}));
+      }
+      toast('Pistas guardadas 🕵️'); await this.refrescar();
+    }));
+    const send = btn => hacer(btn, async () => {
       const t = $('#m_txt').value.trim(); if (!t) return;
       await rpc('ix_mensaje', Object.assign(base(), {p_hacia: this.chatCon, p_texto: t}));
+      $('#m_txt').value = ''; $('#m_txt').dataset.keep = 'no';
       await this.refrescar(); const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
     });
-    on('#m_send', send);
-    const mt = $('#m_txt'); if (mt) mt.onkeydown = e => { if (e.key === 'Enter') send({currentTarget: $('#m_send')}); };
+    on('#m_send', e => send(e.currentTarget));
+    const mt = $('#m_txt'); if (mt) mt.onkeydown = e => { if (e.key === 'Enter') send($('#m_send')); };
     const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
+    app.querySelectorAll('[data-cena]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_cena_tomar', Object.assign(base(), {p_id: b.dataset.cena, p_tomar: b.dataset.v === '1'}));
+      toast(b.dataset.v === '1' ? '¡Apartado! 🍽️' : 'Listo, lo soltaste'); await this.refrescar();
+    }));
+    on('#cenaAdd', e => hacer(e.currentTarget, async () => {
+      const t = $('#cena_txt').value.trim(); if (!t) throw new Error('Escribe qué vas a llevar');
+      await rpc('ix_cena_agregar', Object.assign(base(), {p_texto: t}));
+      $('#cena_txt').value = ''; $('#cena_txt').dataset.keep = 'no'; toast('¡Anotado! 🍽️'); await this.refrescar();
+    }));
     on('#salir', () => { store.del('ix_pin_' + this.token); location.reload(); });
   }
 };
