@@ -28,7 +28,7 @@
    ===================================================================== */
 const SUPABASE_URL = "https://wmazcnmvyuvhggbxcpgc.supabase.co";
 const SUPABASE_KEY = "sb_publishable_JuLGkmTtGgDCuyA-CGQDBA_vLaUEEIH";
-const APP_VERSION  = "2.0";
+const APP_VERSION  = "2.3";
 </script>
 <style>
 :root{
@@ -188,7 +188,18 @@ button.chip{border:0;cursor:pointer}
 
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:color-mix(in srgb, var(--noche) 96%, transparent);backdrop-filter:blur(8px);
   border-top:1px solid rgba(255,255,255,.1);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
-.nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.adv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.adv button{aspect-ratio:1;border-radius:14px;border:2px solid var(--linea);background:#fff;font-family:Fraunces,serif;font-weight:800;font-size:22px;color:var(--rojo);cursor:pointer;position:relative}
+.adv button.hoy{background:linear-gradient(180deg,var(--oro2),var(--oro));color:#3b2a06;border-color:var(--oro);animation:latido 1.6s ease-in-out infinite}
+.adv button.abierto{background:var(--papel);color:var(--gris)}
+.adv button.abierto::after{content:attr(data-ico);position:absolute;right:4px;bottom:2px;font-size:13px}
+.adv button[disabled]{opacity:.45;cursor:default;color:var(--gris)}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.adv button.hoy{animation:none}}
+.opcion{display:block;width:100%;text-align:left;margin:8px 0}
+.tiendas{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tiendas a{font-size:11.5px;font-weight:800;text-decoration:none;border-radius:999px;padding:3px 9px;background:#eef3ff;color:#24406b}
 .nav button{background:none;border:0;color:var(--navtx);font-weight:800;font-size:11px;padding:6px 0;border-radius:12px;cursor:pointer;position:relative}
 .nav button .i{display:block;font-size:22px;margin-bottom:2px}
 .nav button.on{color:var(--oro2);background:rgba(255,255,255,.06)}
@@ -383,6 +394,32 @@ function reducirFoto(file){
   });
 }
 
+/* ============================ INSTALAR COMO APP ============================ */
+let avisoInstalar = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); avisoInstalar = e; });
+const esApp = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function guiaInstalar(){
+  modal(`<h2>📲 Instálala como app</h2>
+    <p class="muted mt0">Hazlo desde <b>tu propio link</b>, en Chrome (Android) o Safari (iPhone), no dentro de WhatsApp.</p>
+    <img class="full" src="como-instalar.png" alt="Pasos para instalar en Android y iPhone">
+    <button class="btn ghost full mt" onclick="closeModal()">Entendido</button>`);
+}
+async function instalar(){
+  if (avisoInstalar){ avisoInstalar.prompt(); const r = await avisoInstalar.userChoice; avisoInstalar = null; if (r.outcome === 'accepted') toast('¡Instalada! 🎉'); return; }
+  guiaInstalar();
+}
+function tarjetaInstalar(){
+  if (esApp() || store.get('ix_inst_no', false)) return '';
+  return `<div class="banner" style="margin-top:0;display:flex;gap:10px;align-items:center">
+    <span style="font-size:30px">📲</span><span class="grow small"><b style="font-size:15px">Instala la app</b><br>Ábrela desde tu pantalla de inicio, sin buscar el link.</span>
+    <span style="display:flex;flex-direction:column;gap:6px"><button class="btn xs rojo" id="instSi">Instalar</button><button class="btn xs ghost" id="instNo" style="border-color:rgba(0,0,0,.15)">Ahora no</button></span></div>`;
+}
+function enlazarInstalar(){
+  const si = document.getElementById('instSi'), no = document.getElementById('instNo');
+  if (si) si.onclick = () => instalar();
+  if (no) no.onclick = () => { store.set('ix_inst_no', true); const b = si.closest('.banner'); if (b) b.remove(); };
+}
+
 /* ============================ CONFETI ============================ */
 function confeti(n = 160){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -482,12 +519,57 @@ const IDEAS = [
 function ideasPara(perfil, monto, max = 6){
   const p = perfil || {};
   const txt = norm([p.gustos, p.colores].join(' '));
-  const evitar = norm(p.evitar);
+  const evitar = norm([p.evitar, p.yatengo].join(' '));
   const maxP = monto ? monto * 1.1 : 600, minP = monto ? monto * .35 : 0;
   const lista = IDEAS.filter(([e, t, pr, k]) => pr <= maxP && pr >= minP && !(evitar && (norm(t).split(/\s+/).some(w => w.length > 3 && evitar.includes(w)) || k.split(' ').some(w => w && evitar.includes(w)))))
     .map(i => ({i, s: i[3].split(' ').filter(w => w && txt.includes(w)).length + Math.random()*.5}))
     .sort((a, b) => b.s - a.s).slice(0, max).map(x => x.i);
   return lista;
+}
+
+/* ============================ BUSCAR EN TIENDAS ============================ */
+function tiendas(q){
+  const t = String(q || '').trim(); if (!t) return '';
+  const slug = norm(t).replace(/[^a-z0-9ñ ]/g, ' ').trim().replace(/\s+/g, '-');
+  return `<div class="tiendas">🔎
+    <a target="_blank" rel="noopener" href="https://www.amazon.com.mx/s?k=${encodeURIComponent(t)}">Amazon</a>
+    <a target="_blank" rel="noopener" href="https://listado.mercadolibre.com.mx/${encodeURIComponent(slug)}">Mercado Libre</a>
+    <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=shop&q=${encodeURIComponent(t)}">Comparar precios</a></div>`;
+}
+
+/* ============================ CALENDARIO DE ADVIENTO ============================ */
+// tipo: dato | trivia | chiste | reto. En trivia, "ok" es el índice de la respuesta correcta.
+const ADVIENTO = [
+  {t:'dato', ico:'🎄', x:'¡Empieza la cuenta regresiva! Durante 24 días aquí habrá trivias, datos curiosos, chistes y retos. Las trivias suman puntos al ranking de la familia.'},
+  {t:'trivia', ico:'🌺', q:'¿Cómo llamaban los mexicas a la flor de Nochebuena?', o:['Cuetlaxóchitl','Cempasúchil','Xoconostle'], ok:0, x:'Es originaria de México y los mexicas la llamaban cuetlaxóchitl.'},
+  {t:'chiste', ico:'😄', x:'—¿Qué le dijo una esfera a otra?\n—¡Nos vemos colgadas en el árbol! 🎄'},
+  {t:'reto', ico:'💬', x:'Reto del día: mándale una pregunta anónima a tu amigo secreto para atinarle al regalo.', ir:'chat'},
+  {t:'trivia', ico:'🪅', q:'Según la tradición, ¿qué representan los 7 picos de la piñata?', o:['Los 7 pecados capitales','Los 7 días de la semana','Los 7 Reyes de Oriente'], ok:0, x:'Romper la piñata simboliza vencer al mal; los dulces son la recompensa.'},
+  {t:'dato', ico:'🎅', x:'Hoy, 6 de diciembre, es el día de San Nicolás: un obispo del siglo IV de Mira (en la actual Turquía), famoso por dar regalos en secreto. De él viene Santa Claus.'},
+  {t:'trivia', ico:'🎶', q:'¿En qué país se cantó por primera vez «Noche de paz» (1818)?', o:['Alemania','Austria','Inglaterra'], ok:1, x:'Se estrenó en Oberndorf, Austria; música de Franz Xaver Gruber y letra de Joseph Mohr.'},
+  {t:'chiste', ico:'☃️', x:'¿Por qué el muñeco de nieve no usa celular?\n¡Porque se le congela la pantalla! 📱'},
+  {t:'trivia', ico:'🍲', q:'¿Qué fruta le da su sabor característico al ponche navideño mexicano?', o:['Mango','Tejocote','Pitaya'], ok:1, x:'El tejocote, junto con guayaba, caña y canela, es el alma del ponche.'},
+  {t:'reto', ico:'🕵️', x:'Reto del día: deja (o mejora) tus 3 pistas para tu amigo secreto. ¡Que no sean tan obvias!', ir:'amigo'},
+  {t:'dato', ico:'🇺🇸', x:'En inglés la Nochebuena se llama «poinsettia» por Joel R. Poinsett, primer representante de Estados Unidos en México, que la llevó a su país en el siglo XIX.'},
+  {t:'trivia', ico:'🌹', q:'¿Qué se celebra en México el 12 de diciembre?', o:['La Independencia','El día de la Virgen de Guadalupe','El día de los Santos Inocentes'], ok:1, x:'Es una de las fiestas más grandes del país; millones visitan la Basílica de Guadalupe.'},
+  {t:'chiste', ico:'🎅', x:'¿Cuál es el colmo de Santa Claus?\n¡Tenerle miedo a las alturas y trabajar en los techos! 🏠'},
+  {t:'trivia', ico:'👑', q:'¿Qué le toca hacer a quien encuentra el muñequito en la Rosca de Reyes?', o:['Pagar la rosca','Invitar los tamales el 2 de febrero','Cantar un villancico'], ok:1, x:'El 2 de febrero, día de la Candelaria, se pagan con tamales 🫔.'},
+  {t:'reto', ico:'📝', x:'Reto del día: revisa tu lista de deseos. ¿Ya llenaste «Ya tengo esto» para que no te regalen algo repetido?', ir:'lista'},
+  {t:'dato', ico:'🕯️', x:'¡Hoy empiezan las posadas! Son nueve noches, del 16 al 24, que recuerdan a María y José pidiendo posada camino a Belén.'},
+  {t:'trivia', ico:'🐪', q:'¿Cómo se llaman los Reyes Magos?', o:['Melchor, Gabriel y Baltasar','Melchor, Gaspar y Baltasar','Gaspar, Miguel y Rafael'], ok:1, x:'Melchor, Gaspar y Baltasar llegan el 6 de enero.'},
+  {t:'chiste', ico:'🦌', x:'¿Qué le dijo el reno a Santa en diciembre?\n—¡Ya llegó mi temporada alta! ✈️'},
+  {t:'trivia', ico:'🎭', q:'¿Qué es una pastorela?', o:['Un postre de piloncillo','Una obra de teatro sobre los pastores que van a Belén','Un canto para pedir posada'], ok:1, x:'Mezclan humor, pastores, ángeles y diablos que intentan desviarlos del camino.'},
+  {t:'reto', ico:'🔍', x:'Reto del día: ¿ya votaste quién crees que es tu Santa? Ve a Mensajes → Mi Santa. ¡En la revelación se verá si le atinaste!', ir:'chat'},
+  {t:'dato', ico:'🌙', x:'Alrededor del 21 de diciembre es el solsticio de invierno: la noche más larga del año en el hemisferio norte.'},
+  {t:'trivia', ico:'🌿', q:'¿Qué platillo navideño lleva unas hierbas parecidas al romero, mole y tortitas de camarón?', o:['Romeritos','Bacalao','Pozole'], ok:0, x:'Los romeritos son un clásico de la cena de Nochebuena en el centro de México.'},
+  {t:'chiste', ico:'🌲', x:'¿Por qué el árbol de Navidad no sabe tejer?\n¡Porque siempre se le caen las agujas! 🧶'},
+  {t:'dato', ico:'⭐', x:'¡Feliz Nochebuena! Gracias por ser parte de este intercambio. Que esta noche esté llena de abrazos, risas y buena comida. 🎁🎄', fin:true}
+];
+function diaAdviento(){
+  const h = new Date(), m = h.getMonth();
+  if (m === 11) return Math.min(h.getDate(), 24);
+  if (m === 0) return 24;
+  return 0;
 }
 
 /* ============================ SUPABASE ============================ */
@@ -624,10 +706,10 @@ function vistaManual(){
   app.innerHTML = `
   <div class="top"><a class="iconbtn" href="javascript:history.length>1?history.back():location.href='./'">‹</a><h1>¿Cómo funciona?</h1></div>
   <div class="card ribbon">
-    <div class="seg" id="mseg"><button class="on" data-m="org">🎅 Organizador</button><button data-m="part">🎁 Participante</button></div>
+    <div class="seg" id="mseg"><button class="on" data-m="org">🎅 Organizador</button><button data-m="part">🎁 Participante</button><button data-m="inst">📲 Instalar</button></div>
     <div id="m-org">${pasos([
       ['manual-org-1.jpg','Crea el intercambio','Pon nombre, estilo (familia o trabajo), monto, fecha y lugar. Guarda tu link de organizador: con él vuelves a tu panel.'],
-      ['manual-org-2.jpg','Agrega a los participantes','Nombre y WhatsApp (opcional). Cada quien recibe un código de 4 dígitos. Marca exclusiones para que, por ejemplo, los esposos no se toquen.'],
+      ['manual-org-2.jpg','Agrega a los participantes','Nombre y WhatsApp (opcional). Cada quien recibe un código de 4 dígitos. Si alguien no tiene celular (niños o abuelitos), márcalo y elige quién lo maneja desde su link. Marca exclusiones para que, por ejemplo, los esposos no se toquen.'],
       ['manual-org-3.jpg','Manda los links por WhatsApp','El botón verde abre WhatsApp con el mensaje listo. Puedes mandarlos desde antes del sorteo para que llenen su lista.'],
       ['manual-org-4.jpg','Haz el sorteo','Se hace en secreto: ni tú ves quién le tocó a quién. Si duplicaste el intercambio del año pasado, la app evita repetir parejas.'],
       ['manual-org-5.jpg','Recuerda y organiza la cena','Con Recordatorios avisas a quien no ha llenado su lista. En Cena anotas qué se necesita y cada quien aparta lo que llevará.'],
@@ -640,10 +722,14 @@ function vistaManual(){
       ['manual-part-4.jpg','Pregunta en secreto y deja pistas','En Mensajes le preguntas a tu amigo sin que sepa quién eres. Deja hasta 3 pistas que se desbloquean conforme se acerca la fecha.'],
       ['manual-part-5.jpg','Aparta tu platillo','En Evento ves la fecha, el lugar y la lista de la cena. Toca «Yo lo llevo» para apartar un platillo.']
     ])}</div>
+    <div id="m-inst" hidden><p class="muted">Instálala desde <b>tu propio link</b> para que se abra directo en tu intercambio.</p>
+      <img src="como-instalar.png" alt="Cómo instalar en Android y iPhone" style="width:100%;border-radius:16px">
+      ${esApp() ? '' : '<button class="btn rojo full mt" id="mInst">📲 Instalar ahora</button>'}</div>
   </div>${pie()}`;
+  const mi = $('#mInst'); if (mi) mi.onclick = () => instalar();
   app.querySelectorAll('#mseg button').forEach(b => b.onclick = () => {
     app.querySelectorAll('#mseg button').forEach(x => x.classList.toggle('on', x === b));
-    $('#m-org').hidden = b.dataset.m !== 'org'; $('#m-part').hidden = b.dataset.m !== 'part';
+    $('#m-org').hidden = b.dataset.m !== 'org'; $('#m-part').hidden = b.dataset.m !== 'part'; $('#m-inst').hidden = b.dataset.m !== 'inst';
   });
 }
 
@@ -674,9 +760,22 @@ const Admin = {
     if (g.lugar) l.push(`📍 ${g.lugar}`);
     return {w, l};
   },
+  lineaPin(p){ return p.pin_propio ? '🔐 Tu código: el que tú elegiste 🔒' : `🔐 Tu código: *${p.pin}*`; },
+  resp(p){ return p && p.responsable_id ? this.d.participantes.find(x => x.id === p.responsable_id) : null; },
+  telDe(p){ const r = this.resp(p); return r ? r.telefono : p.telefono; },
   mensaje(p, tipo = 'invitar'){
     const g = this.d.grupo, {w, l} = this.encabezado();
-    const cierre = [this.linkPart(p), '', `🔐 Tu código: *${p.pin}*`, '🤫 ¡Es secreto, no se lo enseñes a nadie!'];
+    const r = this.resp(p);
+    if (r){
+      const cierreR = ['', '👉 Entra con *tu* link de siempre y toca el nombre de ' + p.nombre + ' arriba para cambiar a su cuenta:', this.linkPart(r), '', this.lineaPin(r)];
+      if (tipo === 'lista') return [`🎁 ¡Hola ${r.nombre}! A *${p.nombre}* le falta su lista de deseos para *${g.nombre}*.`, 'Ayúdale a llenarla para que su Santa le atine 😉', ...cierreR].join('\n');
+      if (tipo === 'ver') return [`🎅 ¡Hola ${r.nombre}! Ya se hizo el sorteo de *${g.nombre}* y aún no ven a quién le tocó a *${p.nombre}*.`, ...cierreR].join('\n');
+      if (tipo === 'asis') return [`📅 ¡Hola ${r.nombre}! ¿*${p.nombre}* va a ir al intercambio *${g.nombre}*? Confírmalo desde su cuenta (pestaña Evento).`, ...cierreR].join('\n');
+      return [`${w.ico} ¡Hola ${r.nombre}!`, `Tú vas a manejar la cuenta de *${p.nombre}* en el intercambio *${g.nombre}* 🎁`, '', ...l, '',
+        'Desde tu link puedes llenar su lista de deseos y, cuando se haga el sorteo, ver a quién le regala.', ...cierreR, '🤫 ¡Es secreto!'].join('\n');
+    }
+    const cierre = [this.linkPart(p), '', this.lineaPin(p), '🤫 ¡Es secreto, no se lo enseñes a nadie!'];
+    if (tipo === 'asis') return [`📅 ¡Hola ${p.nombre}! ¿Vas a ir al intercambio *${g.nombre}*?`, ...l, '', '👉 Confirma aquí en 1 toque (pestaña Evento):', ...cierre].join('\n');
     if (tipo === 'lista') return [`🎁 ¡Hola ${p.nombre}! Aún no llenas tu lista de deseos para *${g.nombre}*.`, 'Tu Santa necesita ideas para atinarle 😉', '', '👉 Agrégala aquí (tarda 2 minutos):', ...cierre].join('\n');
     if (tipo === 'ver') return [`🎅 ¡Hola ${p.nombre}! Ya se hizo el sorteo de *${g.nombre}* y aún no ves a quién te tocó.`, '', '👉 Entra aquí y toca el regalo:', ...cierre].join('\n');
     return [`${w.ico} ¡Hola ${p.nombre}!`, `Estás en el intercambio navideño *${g.nombre}* 🎁`, '', ...l, '',
@@ -717,13 +816,18 @@ const Admin = {
         ${g.notas ? `<span class="k">📝</span><span>${esc(g.notas)}</span>` : ''}
       </div>
       ${countdownHTML(g.fecha)}
+      ${ps.length ? `<div class="chips mt" style="justify-content:center">
+        <span class="chip ok">✅ ${ps.filter(p => p.asistencia === 'si').length} van</span>
+        <span class="chip oro">🤔 ${ps.filter(p => p.asistencia === 'talvez').length} tal vez</span>
+        <span class="chip rojo">❌ ${ps.filter(p => p.asistencia === 'no').length} no van</span>
+        <span class="chip">⏳ ${ps.filter(p => !p.asistencia).length} sin responder</span></div>` : ''}
       <div class="stat"><div><b>${ps.length}</b><span>participantes</span></div><div><b>${ps.length - sinLista.length}</b><span>con lista</span></div><div><b>${g.sorteado ? vieron : '—'}</b><span>vieron resultado</span></div></div>
     </div>
 
     <div class="card">
       <h2>🎲 Sorteo</h2>
       ${g.sorteado ? `
-        <p class="mt0"><span class="chip ok">✓ Sorteo hecho</span> <span class="muted small">${esc(hora(g.sorteado_at))}</span></p>
+        <p class="mt0"><span class="chip ok">✓ Sorteo hecho</span> <span class="muted small">${esc(hora(g.sorteado_at))}</span> <span class="chip">🕵️ ${ps.filter(p => p.voto).length} de ${ps.length} votaron por su Santa</span></p>
         <p class="muted">Nadie, ni tú, puede ver quién le tocó a quién en este panel. Manda a cada quien su link (abajo).</p>
         <div class="opt">
           <div class="row"><div class="grow"><b>🎅 Revelar Santas</b><div class="muted small">Cada quien verá en su celular quién le regaló, y se activa la pantalla de TV.</div></div>
@@ -740,12 +844,15 @@ const Admin = {
       `}
     </div>
 
+    ${ps.filter(p => p.asistencia === 'no').map(p => `<div class="banner" style="background:linear-gradient(135deg,#ffd9d9,#f5a3a6);color:#5a0b10">
+      <b>⚠️ ${esc(p.nombre)} dijo que no va</b><div class="small">${g.sorteado ? 'Si se confirma, quítalo en «Cambios de último momento» y la app reacomoda su regalo sin descubrir a nadie.' : 'Si se confirma, quítalo de la lista de participantes antes del sorteo.'}</div></div>`).join('')}
     ${ps.length ? `<div class="card">
       <h2>📣 Recordatorios</h2>
       <p class="muted mt0">Avísale por WhatsApp a quien le falte algo.</p>
       <div class="row wrapr">
         <button class="btn sm ${sinLista.length ? 'oro' : 'ghost'} grow" id="recLista" ${sinLista.length ? '' : 'disabled'}>📝 Sin lista (${sinLista.length})</button>
         ${g.sorteado ? `<button class="btn sm ${sinVer.length ? 'oro' : 'ghost'} grow" id="recVer" ${sinVer.length ? '' : 'disabled'}>👀 Sin ver resultado (${sinVer.length})</button>` : ''}
+        <button class="btn sm ${ps.some(p => !p.asistencia) ? 'oro' : 'ghost'} grow" id="recAsis" ${ps.some(p => !p.asistencia) ? '' : 'disabled'}>📅 Sin confirmar (${ps.filter(p => !p.asistencia).length})</button>
       </div>
     </div>` : ''}
 
@@ -753,26 +860,43 @@ const Admin = {
       <h2>${g.tema === 'trabajo' ? '👥' : '👨‍👩‍👧‍👦'} Participantes <span class="chip">${ps.length}</span></h2>
       ${ps.length ? ps.map(p => `
         <div class="person">
-          <div class="name">${esc(p.nombre)}</div>
-          <div class="muted small">${p.telefono ? '📱 ' + esc(p.telefono) : 'Sin teléfono'} · Código <span class="pin">${esc(p.pin)}</span></div>
+          <div class="name">${p.responsable_id ? '👶 ' : ''}${esc(p.nombre)}</div>
+          <div class="muted small">${p.responsable_id ? `Sin celular · lo maneja <b>${esc((this.resp(p) || {}).nombre)}</b> desde su link` : (p.telefono ? '📱 ' + esc(p.telefono) : 'Sin teléfono') + ` · Código ${p.pin_propio ? '<span class="pin">🔒 propio</span>' : `<span class="pin">${esc(p.pin)}</span>`}`}</div>
           <div class="chips">
+            ${p.asistencia === 'si' ? '<span class="chip ok">✅ Va</span>' : p.asistencia === 'no' ? '<span class="chip rojo">❌ No va</span>' : p.asistencia === 'talvez' ? '<span class="chip oro">🤔 Tal vez</span>' : ''}
             ${p.abrio ? '<span class="chip ok">Abrió su link</span>' : '<span class="chip">Sin abrir</span>'}
             ${p.deseos ? `<span class="chip oro">🎁 ${p.deseos} deseo${p.deseos > 1 ? 's' : ''}</span>` : '<span class="chip">Sin lista</span>'}
             ${g.sorteado ? (p.vio ? '<span class="chip ok">✓ Vio su resultado</span>' : '<span class="chip rojo">No ha visto resultado</span>') : ''}
           </div>
           <div class="actions">
-            <a class="btn sm wa" target="_blank" href="${esc(waLink(p.telefono, this.mensaje(p)))}">WhatsApp</a>
+            <a class="btn sm wa" target="_blank" href="${esc(waLink(this.telDe(p), this.mensaje(p)))}">${p.responsable_id ? 'Avisar a ' + esc((this.resp(p) || {}).nombre) : 'WhatsApp'}</a>
             <button class="btn sm ghost" data-copiar="${esc(p.id)}">Copiar mensaje</button>
             <button class="btn sm ghost" data-editp="${esc(p.id)}">Editar</button>
+            ${p.pin_propio && !p.responsable_id ? `<button class="btn sm ghost" data-resetpin="${esc(p.id)}">🔑 Nuevo código</button>` : ''}
             ${g.sorteado ? '' : `<button class="btn sm danger" data-quitar="${esc(p.id)}">Quitar</button>`}
           </div>
         </div>`).join('') : `<div class="empty"><div class="e">🧑‍🎄</div>Aún no hay nadie. ¡Agrega a ${w.gente}!</div>`}
-      ${g.sorteado ? '' : `
+      ${g.sorteado ? `
+        <h3>🔄 Cambios de último momento</h3>
+        <p class="muted mt0 small">Quita o agrega a alguien sin rehacer el sorteo. La app reacomoda solo a quienes se afectan, sin que tú veas quién le regala a quién; ellos verán un aviso en su app.</p>
+        <div class="opt"><b>➖ Quitar a alguien</b>
+          <div class="row mt"><select id="baja_id" class="grow">${ps.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}${p.asistencia === 'no' ? ' (no va)' : ''}</option>`).join('')}</select>
+          <button class="btn sm danger" id="baja">Quitar</button></div></div>
+        <div class="opt"><b>➕ Agregar a alguien</b>
+          <div class="row wrapr mt"><input id="alta_n" maxlength="40" placeholder="Nombre" style="flex:1 1 130px">
+          <input id="alta_t" type="tel" inputmode="tel" placeholder="WhatsApp (opcional)" style="flex:1 1 130px" ${this.altaSinCel ? 'hidden' : ''}></div>
+          <label class="check"><input type="checkbox" id="alta_sc" ${this.altaSinCel ? 'checked' : ''}> 👶 No tiene celular</label>
+          ${this.altaSinCel ? `<select id="alta_r">${ps.filter(p => !p.responsable_id).map(p => `<option value="${esc(p.id)}">Lo maneja ${esc(p.nombre)}</option>`).join('')}</select>` : ''}
+          <button class="btn sm verde full mt" id="alta">Agregar y acomodar</button></div>` : `
         <h3>Agregar persona</h3>
         <div class="row wrapr"><input id="np_nombre" maxlength="40" placeholder="Nombre" style="flex:1 1 140px">
-        <input id="np_tel" type="tel" inputmode="tel" placeholder="WhatsApp (10 dígitos)" style="flex:1 1 140px"></div>
+        <input id="np_tel" type="tel" inputmode="tel" placeholder="WhatsApp (10 dígitos)" style="flex:1 1 140px" ${this.sinCel ? 'hidden' : ''}></div>
+        ${ps.some(p => !p.responsable_id) ? `<label class="check"><input type="checkbox" id="np_sincel" ${this.sinCel ? 'checked' : ''}> 👶 No tiene celular (niño/a o abuelito/a)</label>
+        ${this.sinCel ? `<label class="mt0">¿Quién lo va a manejar desde su celular?</label>
+        <select id="np_resp">${ps.filter(p => !p.responsable_id).map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select>
+        <div class="hint">Esa persona llenará su lista y verá a quién le regala, desde su propio link. El sorteo nunca los emparejará entre ellos.</div>` : ''}` : ''}
         <button class="btn verde full mt" id="agregar">+ Agregar</button>
-        <div class="hint">El teléfono es opcional; sin él, WhatsApp te deja elegir el contacto.</div>`}
+        ${this.sinCel ? '' : '<div class="hint">El teléfono es opcional; sin él, WhatsApp te deja elegir el contacto.</div>'}`}
     </div>
 
     <div class="card">
@@ -826,6 +950,10 @@ const Admin = {
           <div class="code" style="background:var(--papel)">${esc(this.linkAdmin())}</div>
           <button class="btn sm ghost" id="copAdmin2">Copiar link</button>
         </div>
+        <div class="opt"><b>📲 Guía de instalación</b>
+          <div class="muted small">Ábrela, mantenla presionada y guárdala para mandarla al grupo por WhatsApp.</div>
+          <div class="row wrapr mt"><a class="btn sm verde" target="_blank" href="como-instalar.png">Abrir imagen</a><button class="btn sm ghost" id="instalarYo">Instalar en mi celular</button></div>
+        </div>
         <a class="btn ghost full" href="?ayuda">📖 Manual de uso</a>
         ${principal ? `<hr class="sep"><button class="btn sm danger" id="borrar">🗑️ Borrar este intercambio</button>` : ''}
       </div></details>
@@ -839,10 +967,12 @@ const Admin = {
     on('#recargar', () => { this.cargar(); toast('Actualizado'); });
     on('#copAdmin', () => copiar(this.linkAdmin()));
     on('#copAdmin2', () => copiar(this.linkAdmin()));
+    on('#instalarYo', () => instalar());
     on('#okNuevo', () => { store.del('ix_nuevo_' + this.code); this.render(); });
     on('#editar', () => this.editar());
     on('#agregar', e => this.agregar(e.currentTarget));
     const tel = $('#np_tel'); if (tel) tel.onkeydown = e => { if (e.key === 'Enter') this.agregar($('#agregar')); };
+    const sc = $('#np_sincel'); if (sc) sc.onchange = () => { this.sinCel = sc.checked; conservar(() => this.render()); };
     on('#exAdd', e => hacer(e.currentTarget, async () => {
       await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: $('#ex_a').value, p_b: $('#ex_b').value, p_activa: true});
       await this.cargar();
@@ -858,6 +988,7 @@ const Admin = {
       await this.cargar();
     }));
     on('#recLista', () => this.recordatorio('lista'));
+    on('#recAsis', () => this.recordatorio('asis'));
     on('#recVer', () => this.recordatorio('ver'));
     on('#cenaAdd', e => hacer(e.currentTarget, async () => {
       const t = $('#cena_txt').value.trim(); if (!t) throw new Error('Escribe el platillo');
@@ -889,6 +1020,22 @@ const Admin = {
       await hacer(null, () => rpc('ix_admin_coorg', {p_admin: this.code, p_activar: false})); this.cargar();
     });
     on('#duplicar', () => this.duplicar());
+    const asc = $('#alta_sc'); if (asc) asc.onchange = () => { this.altaSinCel = asc.checked; conservar(() => this.render()); };
+    on('#baja', async () => {
+      const p = ps.find(x => x.id === $('#baja_id').value); if (!p) return;
+      if (!await confirmar('¿Quitar a ' + esc(p.nombre) + '?', 'Se borra su lista y sus mensajes. Quien le iba a regalar recibirá a otra persona, sin rehacer el sorteo.', 'Quitar y reacomodar')) return;
+      const r = await hacer(null, () => rpc('ix_admin_baja', {p_admin: this.code, p_id: p.id}));
+      await this.cargar(); this.avisoCambio(r.afectados, p.nombre + ' salió del intercambio');
+    });
+    on('#alta', e => hacer(e.currentTarget, async () => {
+      const n = $('#alta_n').value.trim(); if (!n) throw new Error('Escribe el nombre');
+      const resp = this.altaSinCel && $('#alta_r') ? $('#alta_r').value : null;
+      const r = await rpc('ix_admin_alta', {p_admin: this.code, p_nombre: n, p_telefono: this.altaSinCel ? null : ($('#alta_t').value.trim() || null), p_responsable: resp});
+      $('#alta_n').dataset.keep = 'no'; $('#alta_t') && ($('#alta_t').dataset.keep = 'no'); this.altaSinCel = false;
+      await this.cargar();
+      const nuevo = this.d.participantes.find(x => x.id === r.id);
+      this.avisoCambio(r.afectados, n + ' entró al intercambio', nuevo);
+    }));
     on('#borrar', async () => {
       if (!await confirmar('¿Borrar el intercambio?', 'Se elimina todo: participantes, listas, mensajes y cena. No se puede deshacer.', 'Borrar todo')) return;
       await hacer(null, () => rpc('ix_admin_borrar_grupo', {p_admin: this.code}));
@@ -896,6 +1043,11 @@ const Admin = {
       location.href = './';
     });
     app.querySelectorAll('[data-copiar]').forEach(b => b.onclick = () => copiar(this.mensaje(ps.find(p => p.id === b.dataset.copiar))));
+    app.querySelectorAll('[data-resetpin]').forEach(b => b.onclick = async () => {
+      const p = ps.find(x => x.id === b.dataset.resetpin);
+      if (!await confirmar('¿Darle un código nuevo a ' + esc(p.nombre) + '?', 'Úsalo si olvidó el código que eligió. Después mándale de nuevo su link por WhatsApp.', 'Generar código', 'oro')) return;
+      await hacer(null, () => rpc('ix_admin_reset_pin', {p_admin: this.code, p_id: p.id})); toast('Código nuevo listo 🔑'); this.cargar();
+    });
     app.querySelectorAll('[data-editp]').forEach(b => b.onclick = () => this.editarP(ps.find(p => p.id === b.dataset.editp)));
     app.querySelectorAll('[data-quitar]').forEach(b => b.onclick = async () => {
       const p = ps.find(x => x.id === b.dataset.quitar);
@@ -907,18 +1059,30 @@ const Admin = {
       await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: a, p_b: c, p_activa: false}); await this.cargar();
     }));
   },
+  avisoCambio(n, titulo, nuevo){
+    const g = this.d.grupo;
+    const general = `🔄 Hubo un cambio en el intercambio *${g.nombre}*: ${titulo}.\nAbran su app para revisar a quién le regalan 🎁 (a la mayoría no le cambia nada).`;
+    modal(`<div class="center"><div style="font-size:50px">🔄</div><h2 style="justify-content:center">¡Listo!</h2></div>
+      <p class="muted">${n ? `Se reacomodó a <b>${n} persona${n > 1 ? 's' : ''}</b>. Verá${n > 1 ? 'n' : ''} un aviso en su app y abrirá${n > 1 ? 'n' : ''} el regalo de nuevo.` : 'No hubo que reacomodar a nadie.'}
+      Para no descubrir a nadie, manda un mensaje general al grupo:</p>
+      <a class="btn wa full" target="_blank" href="${esc(waLink('', general))}">Avisar al grupo por WhatsApp</a>
+      ${nuevo ? `<a class="btn verde full mt" target="_blank" href="${esc(waLink(this.telDe(nuevo), this.mensaje(nuevo)))}">Mandarle su link a ${esc(nuevo.nombre)}</a>` : ''}
+      <button class="btn ghost full mt" onclick="closeModal()">Cerrar</button>`);
+  },
   recordatorio(tipo){
-    const ps = this.d.participantes.filter(p => tipo === 'lista' ? !p.deseos : !p.vio);
-    modal(`<h2>${tipo === 'lista' ? '📝 Les falta su lista' : '👀 No han visto su resultado'}</h2>
+    const ps = this.d.participantes.filter(p => tipo === 'lista' ? !p.deseos : tipo === 'asis' ? !p.asistencia : !p.vio);
+    modal(`<h2>${tipo === 'lista' ? '📝 Les falta su lista' : tipo === 'asis' ? '📅 No han confirmado si van' : '👀 No han visto su resultado'}</h2>
       <p class="muted">Toca cada botón para mandarle el recordatorio por WhatsApp.</p>
-      ${ps.map(p => `<div class="row" style="padding:8px 0;border-bottom:1px dashed var(--linea)"><b class="grow">${esc(p.nombre)}</b>
-        <a class="btn sm wa" target="_blank" href="${esc(waLink(p.telefono, this.mensaje(p, tipo)))}">Recordar</a></div>`).join('')}
+      ${ps.map(p => `<div class="row" style="padding:8px 0;border-bottom:1px dashed var(--linea)"><span class="grow"><b>${esc(p.nombre)}</b>${p.responsable_id ? `<br><span class="muted small">vía ${esc((this.resp(p) || {}).nombre)}</span>` : ''}</span>
+        <a class="btn sm wa" target="_blank" href="${esc(waLink(this.telDe(p), this.mensaje(p, tipo)))}">Recordar</a></div>`).join('')}
       <button class="btn ghost full mt" onclick="closeModal()">Listo</button>`);
   },
   async agregar(btn){
-    const nombre = $('#np_nombre').value.trim(), tel = $('#np_tel').value.trim();
+    const nombre = $('#np_nombre').value.trim(), tel = this.sinCel ? '' : $('#np_tel').value.trim();
+    const resp = this.sinCel && $('#np_resp') ? $('#np_resp').value : null;
     if (!nombre) return toast('Escribe el nombre', true);
-    await hacer(btn, () => rpc('ix_admin_agregar', {p_admin: this.code, p_nombre: nombre, p_telefono: tel || null}));
+    await hacer(btn, () => rpc('ix_admin_agregar', {p_admin: this.code, p_nombre: nombre, p_telefono: tel || null, p_responsable: resp}));
+    this.sinCel = false;
     $('#np_nombre').dataset.keep = 'no'; $('#np_tel').dataset.keep = 'no';
     await this.cargar();
     const n = $('#np_nombre'); if (n) n.focus();
@@ -949,10 +1113,16 @@ const Admin = {
     const r = modal(`<h2>✏️ Editar participante</h2>
       <label>Nombre</label><input id="ep_n" maxlength="40" value="${esc(p.nombre)}">
       <label>WhatsApp</label><input id="ep_t" type="tel" value="${esc(p.telefono || '')}">
+      ${this.d.participantes.some(x => x.responsable_id === p.id) ? `<p class="hint">${esc(p.nombre)} maneja a otra persona, así que usa su propio celular.</p>` : `
+      <label>👶 ¿Lo maneja alguien más?</label>
+      <select id="ep_r"><option value="">No, usa su propio celular</option>
+        ${this.d.participantes.filter(x => x.id !== p.id && !x.responsable_id).map(x => `<option value="${esc(x.id)}" ${p.responsable_id === x.id ? 'selected' : ''}>Sí, lo maneja ${esc(x.nombre)}</option>`).join('')}</select>`}
       <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn rojo grow" data-x="si">Guardar</button></div>`);
     r.querySelector('[data-x=no]').onclick = closeModal;
     r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
-      await rpc('ix_admin_editar_participante', {p_admin: this.code, p_id: p.id, p_nombre: $('#ep_n').value, p_telefono: $('#ep_t').value || null});
+      const er = $('#ep_r');
+      await rpc('ix_admin_editar_participante', {p_admin: this.code, p_id: p.id, p_nombre: $('#ep_n').value, p_telefono: $('#ep_t').value || null,
+        p_responsable: er ? (er.value || null) : (p.responsable_id || null)});
       closeModal(); await this.cargar();
     });
   },
@@ -1007,9 +1177,11 @@ const TV = {
       <div class="ctrl"><button class="btn rojo" id="go">🥁 Revelar</button></div>`;
     else if (this.fase === 'redoble') h = `<div class="t1">El Santa de ${esc(p.para)} es…</div><div class="redoble">🥁</div>`;
     else if (this.fase === 'revelado') h = `<div class="t1">El Santa de <b>${esc(p.para)}</b> fue</div><div class="t3">${esc(p.de)}</div>
+      ${p.voto ? `<div class="t1" style="margin-top:2vh">${p.atino ? `🎯 ¡${esc(p.para)} le atinó!` : `😅 ${esc(p.para)} creía que era ${esc(p.creia)}`}</div>` : ''}
       <div class="ctrl"><button class="btn oro" id="go">${this.i + 1 < total ? 'Siguiente ›' : 'Terminar 🎉'}</button></div>`;
-    else h = `<div style="font-size:min(16vh,140px)">🎄</div><div class="t2 oro">¡Feliz Navidad!</div><div class="t1">Gracias por participar en ${esc(this.d.nombre)}</div>
-      <div class="ctrl"><button class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" id="go">↺ Volver a empezar</button></div>`;
+    else { const at = this.d.pares.filter(x => x.atino); h = `<div style="font-size:min(16vh,140px)">🎄</div><div class="t2 oro">¡Feliz Navidad!</div><div class="t1">Gracias por participar en ${esc(this.d.nombre)}</div>
+      ${at.length ? `<div class="t1" style="margin-top:2vh">🕵️ Detectives que adivinaron a su Santa: <b style="color:var(--oro2)">${at.map(x => esc(x.para)).join(', ')}</b></div>` : ''}`; h += `
+      <div class="ctrl"><button class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" id="go">↺ Volver a empezar</button></div>`; }
     app.innerHTML = `<div class="tv">${prog}${h}</div>`;
     const go = $('#go'); if (go) go.onclick = () => this.avanzar();
   }
@@ -1018,8 +1190,9 @@ const TV = {
 /* ============================ PARTICIPANTE ============================ */
 const Part = {
   token: null, pin: null, d: null, tab: 'amigo', chatCon: 'santa', timer: null, foto: null, prio: 2,
+  familia: [], raiz: null,
   iniciar(token){
-    this.token = token;
+    this.token = token; this.raiz = token;
     const guardado = store.get('ix_pin_' + token, null);
     if (guardado){ this.pin = guardado; this.entrar(true); }
     else this.pantallaPin();
@@ -1059,6 +1232,9 @@ const Part = {
       this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin});
       store.set('ix_pin_' + this.token, this.pin);
       aplicarTema(this.d.grupo.tema);
+      if (this.token === this.raiz)
+        this.familia = this.d.a_cargo && this.d.a_cargo.length
+          ? [{nombre: this.d.yo.nombre, token: this.token, pin: this.pin, yo: true}, ...this.d.a_cargo] : [];
       if (!this._listo){
         this._listo = true;
         if (!this.d.grupo.sorteado) this.tab = 'lista';
@@ -1068,8 +1244,15 @@ const Part = {
     }catch(e){
       if (/código/i.test(e.message)){ store.del('ix_pin_' + this.token); this.pantallaPin(auto ? null : 'Código incorrecto, revisa tu WhatsApp'); }
       else if (/link/i.test(e.message)){ sinNav(); app.innerHTML = `<div class="hero"><div class="emoji">😕</div><h1>Link no válido</h1><p>${esc(e.message)}</p></div>`; }
+      else if (this.token !== this.raiz){ toast(e.message, true); }
       else { this.pantallaPin(e.message); }
     }
+  },
+  async cambiarA(token){
+    const f = this.familia.find(x => x.token === token); if (!f || token === this.token) return;
+    this.token = f.token; this.pin = f.pin; this.foto = null; this.prio = 2;
+    if (!this.d.grupo.sorteado) this.tab = 'lista';
+    await this.entrar(true); window.scrollTo(0, 0);
   },
   async refrescar(){
     if (!this.d) return;
@@ -1080,8 +1263,10 @@ const Part = {
     const visto = store.get('ix_chatvisto_' + this.token, 0);
     const recibidos = [...this.d.chat_santa.filter(m => m.autor === 'santa'), ...this.d.chat_amigo.filter(m => m.autor === 'amigo')];
     const nuevos = recibidos.some(m => new Date(m.fecha).getTime() > visto);
-    const tabs = [['amigo','🎁','Mi amigo'],['lista','📝','Mi lista'],['chat','💬','Mensajes'],['evento','📅','Evento']];
-    n.innerHTML = `<div class="in">${tabs.map(([k, i, t]) => `<button class="${this.tab === k ? 'on' : ''}" data-tab="${k}"><span class="i">${i}</span>${t}${k === 'chat' && nuevos && this.tab !== 'chat' ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
+    const tabs = [['amigo','🎁','Mi amigo'],['lista','📝','Mi lista'],['chat','💬','Mensajes'],['adviento','🎄','Adviento'],['evento','📅','Evento']];
+    const hoy = diaAdviento(), abiertos = store.get('ix_adv_' + this.token, []);
+    const advNuevo = hoy > 0 && !abiertos.includes(hoy);
+    n.innerHTML = `<div class="in">${tabs.map(([k, i, t]) => `<button class="${this.tab === k ? 'on' : ''}" data-tab="${k}"><span class="i">${i}</span>${t}${(k === 'chat' && nuevos && this.tab !== 'chat') || (k === 'evento' && !this.d.yo.asistencia && this.tab !== 'evento') || (k === 'adviento' && advNuevo && this.tab !== 'adviento') ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>`;
     n.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { this.tab = b.dataset.tab; this.render(); window.scrollTo(0, 0); });
   },
   render(suave){
@@ -1092,20 +1277,26 @@ const Part = {
       store.set('ix_chatvisto_' + this.token, Date.now());
       this.timer = setInterval(() => this.refrescar(), 25000);
     }
-    const cuerpo = {amigo: () => this.vAmigo(), lista: () => this.vLista(), chat: () => this.vChat(), evento: () => this.vEvento()}[this.tab]();
+    const cuerpo = {amigo: () => this.vAmigo(), lista: () => this.vLista(), chat: () => this.vChat(), adviento: () => this.vAdviento(), evento: () => this.vEvento()}[this.tab]();
     conservar(() => {
       app.innerHTML = `
-        <div class="top"><div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">Hola, ${esc(this.d.yo.nombre)} 👋</div></div>
+        <div class="top"><div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">${this.token === this.raiz || !this.familia.length ? 'Hola, ' + esc(this.d.yo.nombre) + ' 👋' : 'Manejando la cuenta de ' + esc(this.d.yo.nombre)}</div></div>
         <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
+        ${this.familia.length ? `<div class="seg" style="margin-bottom:10px">${this.familia.map(f => `<button class="${f.token === this.token ? 'on' : ''}" data-cuenta="${esc(f.token)}">${f.yo ? '👤 Yo' : '👶 ' + esc(f.nombre)}</button>`).join('')}</div>` : ''}
+        ${this.familia.length && this.token !== this.raiz ? `<div class="banner azul small" style="margin-top:0">👶 Estás en la cuenta de <b style="font-size:15px">${esc(this.d.yo.nombre)}</b>. Todo lo que hagas aquí (lista, mensajes, pistas) será a su nombre.</div>` : ''}
+        ${!this.familia.length && this.d.responsable ? `<div class="banner azul small" style="margin-top:0">👶 Esta cuenta la maneja <b>${esc(this.d.responsable)}</b> desde su celular.</div>` : ''}
+        ${this.tab === 'amigo' || this.tab === 'lista' ? tarjetaInstalar() : ''}
         ${cuerpo}${pie()}`;
     });
+    enlazarInstalar();
     this.nav();
     $('#recargar').onclick = () => { this.refrescar(); toast('Actualizado'); };
+    app.querySelectorAll('[data-cuenta]').forEach(b => b.onclick = () => this.cambiarA(b.dataset.cuenta));
     this.enlazar();
     if (suave) window.scrollTo(0, y);
   },
   perfilHTML(pf, vacio){
-    const campos = [['talla','👕','Talla de ropa'],['calzado','👟','Calzado'],['colores','🎨','Colores favoritos'],['gustos','⭐','Le gusta'],['evitar','🚫','Por favor no regalar']];
+    const campos = [['talla','👕','Talla de ropa'],['calzado','👟','Calzado'],['colores','🎨','Colores favoritos'],['gustos','⭐','Le gusta'],['evitar','🚫','Por favor no regalar'],['yatengo','✋','Ya tiene (no repetir)']];
     const items = campos.filter(([k]) => pf && pf[k]);
     if (!items.length) return `<div class="muted small">${vacio}</div>`;
     return `<div class="info">${items.map(([k, i, t]) => `<span class="k">${i}</span><span><span class="muted small">${t}</span><br><b>${esc(pf[k])}</b></span>`).join('')}</div>`;
@@ -1117,7 +1308,9 @@ const Part = {
       ${d.foto ? `<img class="ph" src="${esc(d.foto)}" alt="" data-foto="1">` : ''}
       <div class="grow"><div class="t">${esc(d.texto)}</div>
         ${d.prioridad === 1 ? `<span class="chip oro" style="margin:3px 0">${modo === 'amigo' ? '⭐ Lo que más quiere' : '⭐ Lo quiero mucho'}</span>` : ''}
-        <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `${d.precio ? '· ' : ''}<a href="${esc(d.link)}" target="_blank" rel="noopener">${modo === 'amigo' ? 'Ver dónde comprar' : 'Link'} ↗</a>` : ''}</div></div>
+        ${this.d.grupo.monto && d.precio && +d.precio > +this.d.grupo.monto ? `<span class="chip rojo" style="margin:3px 0">⚠️ Pasa del monto${modo === 'amigo' ? ' (puedes buscar algo parecido)' : ''}</span>` : ''}
+        <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `${d.precio ? '· ' : ''}<a href="${esc(d.link)}" target="_blank" rel="noopener">${modo === 'amigo' ? 'Ver dónde comprar' : 'Link'} ↗</a>` : ''}</div>
+        ${modo === 'amigo' && !d.comprado ? tiendas(d.texto) : ''}</div>
       ${modo === 'mio' ? `<button class="btn xs danger" data-borrard="${esc(d.id)}">Quitar</button>` : ''}
     </div>`;
   },
@@ -1128,10 +1321,13 @@ const Part = {
       <p class="muted">Somos ${g.total} en el intercambio. Cuando el organizador sortee, aquí verás a quién le regalas.</p>
       <p><b>Mientras, llena tu lista</b> para que tu Santa sepa qué regalarte.</p>
       <button class="btn rojo full" data-ir="lista">📝 Llenar mi lista de deseos</button></div>`;
-    const revelado = store.get('ix_rev_' + this.token, false);
+    let rev = store.get('ix_rev_' + this.token, false);
+    if (rev === true){ rev = a.nombre; store.set('ix_rev_' + this.token, rev); }
+    const revelado = rev === a.nombre, cambio = rev && !revelado;
     if (!revelado) return `
       <div class="card ribbon center">
-        <h2 style="justify-content:center">¡Ya se hizo el sorteo! 🎉</h2>
+        ${cambio ? `<div class="banner" style="margin-top:0">🔄 <b>¡Hubo un cambio de último momento!</b><br><span class="small">Ahora le regalas a otra persona. Tus pistas y mensajes anteriores se borraron.</span></div>`
+                 : `<h2 style="justify-content:center">¡Ya se hizo el sorteo! 🎉</h2>`}
         <p class="muted">Toca el regalo para descubrir a quién le regalas</p>
         <button class="gift" id="gift" aria-label="Abrir regalo"><span class="box"></span><span class="rv"></span><span class="lid"></span><span class="bow">🎀</span></button>
         <p class="muted small">Asegúrate de que nadie esté viendo tu pantalla 👀</p>
@@ -1153,7 +1349,7 @@ const Part = {
       </div>
       ${ideas.length ? `<div class="card"><h2>💡 Ideas para ${esc(a.nombre)}</h2>
         <p class="muted mt0 small">Según ${a.perfil && a.perfil.gustos ? 'sus gustos' : 'lo más popular'}${g.monto ? ' y el monto' : ''}. Precios aproximados.</p>
-        ${ideas.map(([e, t, pr]) => `<div class="idea"><span class="e">${e}</span><span class="grow">${esc(t)}</span><span class="muted small">≈ ${money(pr)}</span></div>`).join('')}
+        ${ideas.map(([e, t, pr]) => `<div class="idea"><span class="e">${e}</span><span class="grow">${esc(t)} <span class="muted small">≈ ${money(pr)}</span>${tiendas(t)}</span></div>`).join('')}
       </div>` : ''}
       <div class="card"><h2>🕵️ Tus pistas para ${esc(a.nombre)}</h2>
         <p class="muted mt0 small">Déjale hasta 3 pistas sobre quién eres. ${g.fecha ? 'Se van desbloqueando conforme se acerca el intercambio.' : 'Se verán de inmediato (no hay fecha definida).'}</p>
@@ -1181,9 +1377,11 @@ const Part = {
           <button class="btn sm ${this.prio === 1 ? 'oro' : 'ghost'}" id="d_prio">⭐ ${this.prio === 1 ? '¡Lo quiero mucho!' : 'Lo quiero mucho'}</button>
         </div>
         ${this.foto ? `<div class="foto-prev"><img src="${esc(this.foto)}" alt=""><button class="btn xs danger" id="d_fotoq">Quitar foto</button></div>` : ''}
+        <div class="hint" id="d_alerta" style="color:#b3202a;font-weight:700"></div>
         <button class="btn verde full mt" id="d_add">+ Agregar a mi lista</button>
         ${g.monto ? `<div class="hint">Recuerda: el monto es de ${money(g.monto, g.moneda)}.</div>` : ''}
       </div>
+      ${ds.length <= 12 ? `<button class="btn oro full" id="sorprende" style="margin-top:4px">🎲 Sorpréndeme: agrega 3 ideas a mi lista</button>` : ''}
       ${ideas.length && ds.length < 5 ? `<div class="card"><h2>💡 ¿Sin ideas?</h2>
         <p class="muted mt0 small">Toca una para agregarla a tu lista${pf.gustos ? ' (según tus gustos)' : '; llena tus gustos abajo para que te sugiera mejor'}.</p>
         ${ideas.map(([e, t, pr], i) => `<div class="idea"><span class="e">${e}</span><span class="grow">${esc(t)}<br><span class="muted small">≈ ${money(pr)}</span></span><button class="btn xs ghost" data-idea="${i}">+ Agregar</button></div>`).join('')}
@@ -1195,6 +1393,7 @@ const Part = {
         <label>🎨 Colores favoritos</label><input id="pf_colores" maxlength="200" placeholder="Ej. Verde, negro" value="${esc(pf.colores)}">
         <label>⭐ Me gusta</label><textarea id="pf_gustos" maxlength="200" placeholder="Ej. Café, futbol, cocinar, plantas">${esc(pf.gustos)}</textarea>
         <label>🚫 Por favor no me regalen</label><input id="pf_evitar" maxlength="200" placeholder="Ej. Perfumes, chocolate" value="${esc(pf.evitar)}">
+        <label>✋ Ya tengo esto <span class="muted small">(para que no te lo repitan)</span></label><textarea id="pf_yatengo" maxlength="200" placeholder="Ej. Termo, audífonos, cafetera, bufanda roja">${esc(pf.yatengo)}</textarea>
         <button class="btn rojo full mt" id="pf_save">Guardar mis datos</button>
       </div>`;
   },
@@ -1209,7 +1408,12 @@ const Part = {
     const ps = this.d.pistas_santa || [];
     return `
       <div class="seg"><button class="${con === 'santa' ? 'on' : ''}" data-con="santa">🎅 Mi Santa</button><button class="${con === 'amigo' ? 'on' : ''}" data-con="amigo">🎁 ${esc(this.d.amigo.nombre)}</button></div>
-      ${con === 'santa' ? `<div class="card"><h2>🔍 Pistas de tu Santa</h2>
+      ${con === 'santa' ? `<div class="card"><h2>🤔 ¿Quién crees que es tu Santa?</h2>
+        ${g.revelado ? (this.d.adivino === true ? '<div class="chip ok">🎯 ¡Le atinaste!</div>' : this.d.adivino === false ? '<div class="chip rojo">Esta vez no le atinaste 😅</div>' : '<div class="muted small">No votaste.</div>')
+        : `<p class="muted mt0 small">Usa las pistas y los mensajes. Puedes cambiar tu voto hasta la revelación; en la pantalla de TV se verá si le atinaste.</p>
+          <select id="adivina"><option value="">— Aún no sé —</option>${(this.d.personas || []).map(o => `<option value="${esc(o.id)}" ${this.d.yo.adivina === o.id ? 'selected' : ''}>${esc(o.nombre)}</option>`).join('')}</select>`}
+      </div>
+      <div class="card"><h2>🔍 Pistas de tu Santa</h2>
         ${ps.length ? ps.map(p => p.texto ? `<div class="pista"><span class="n">${p.n}</span><span>${esc(p.texto)}</span></div>`
             : `<div class="pista lock"><span class="n">🔒</span><span class="muted">La pista ${p.n} se desbloquea el <b>${esc(fechaCorta(p.desbloquea))}</b></span></div>`).join('')
           : '<div class="muted small">Tu Santa aún no deja pistas. ¡Pídeselas! 👇</div>'}
@@ -1225,10 +1429,61 @@ const Part = {
         <div class="row mt"><input id="m_txt" class="grow" maxlength="400" placeholder="${con === 'santa' ? 'Escríbele a tu Santa…' : 'Pregunta anónima…'}"><button class="btn rojo" id="m_send">Enviar</button></div>
       </div>`;
   },
-  vEvento(){
-    const g = this.d.grupo, cena = this.d.cena || [], yo = this.d.yo.id;
+  vAdviento(){
+    const hoy = diaAdviento(), abiertos = store.get('ix_adv_' + this.token, []);
+    const resp = this.d.adviento || {mios: [], ranking: []};
+    const triv = ADVIENTO.filter(a => a.t === 'trivia').length;
+    const mias = resp.mios.filter(m => m.correcta).length;
+    const falta = Math.ceil((new Date(new Date().getFullYear(), 11, 1) - new Date()) / 864e5);
     return `
-      ${g.revelado && this.d.santa_nombre ? `<div class="banner center"><div style="font-size:40px">🎅</div><b>¡Tu Santa fue ${esc(this.d.santa_nombre)}!</b></div>` : ''}
+      <div class="card ribbon"><h2>🎄 Calendario de adviento</h2>
+        ${hoy ? `<p class="muted mt0 small">Abre una casilla cada día. Las trivias suman puntos: llevas <b>${mias} de ${triv}</b>.</p>`
+              : `<p class="muted mt0">Empieza el <b>1 de diciembre</b>${falta > 0 ? ` · faltan ${falta} día${falta > 1 ? 's' : ''}` : ''}. Cada día se abre una casilla con trivia, dato curioso, chiste o reto.</p>`}
+        <div class="adv">${ADVIENTO.map((a, i) => { const d = i + 1, ab = abiertos.includes(d);
+          return `<button data-dia="${d}" class="${d === hoy && !ab ? 'hoy' : ab ? 'abierto' : ''}" data-ico="${a.ico}" ${d > hoy ? 'disabled' : ''}>${d}</button>`; }).join('')}</div>
+      </div>
+      <div class="card"><h2>🏆 Ranking de trivias</h2>
+        ${resp.ranking.length ? resp.ranking.map((r, i) => `<div class="row" style="padding:7px 0;border-bottom:1px dashed var(--linea)">
+          <span style="width:28px;font-size:18px">${['🥇','🥈','🥉'][i] || (i + 1) + '.'}</span><b class="grow">${esc(r.nombre)}</b><span class="chip oro">${r.puntos} pts</span></div>`).join('')
+        : '<div class="muted small">Aún nadie suma puntos. ¡Sé el primero!</div>'}
+      </div>`;
+  },
+  abrirDia(d){
+    const a = ADVIENTO[d - 1], mio = (this.d.adviento.mios || []).find(m => m.dia === d);
+    const abiertos = store.get('ix_adv_' + this.token, []);
+    if (!abiertos.includes(d)){ abiertos.push(d); store.set('ix_adv_' + this.token, abiertos); }
+    const titulo = {dato:'💡 Dato curioso', trivia:'❓ Trivia', chiste:'😄 Chiste del día', reto:'🎯 Reto del día'}[a.t];
+    const texto = esc(a.x).replace(/\n/g, '<br>');
+    let cuerpo;
+    if (a.t === 'trivia'){
+      cuerpo = `<p style="font-weight:800;font-size:17px">${esc(a.q)}</p>
+        ${mio ? `<p class="chip ${mio.correcta ? 'ok' : 'rojo'}">${mio.correcta ? '✅ La contestaste bien' : '❌ Esta no la atinaste'}</p><p><b>Respuesta:</b> ${esc(a.o[a.ok])}</p><p class="muted">${texto}</p>`
+             : a.o.map((o, i) => `<button class="btn ghost opcion" data-op="${i}">${esc(o)}</button>`).join('')}`;
+    } else cuerpo = `<p style="font-size:17px;line-height:1.45">${texto}</p>${a.ir ? `<button class="btn verde full" data-irr="${a.ir}">¡Vamos!</button>` : ''}`;
+    const r = modal(`<div class="center" style="font-size:44px">${a.ico}</div><h2 style="justify-content:center">${d} de diciembre</h2>
+      <p class="center muted mt0">${titulo}</p>${cuerpo}<div id="trivRes"></div><button class="btn ghost full mt" data-x="cerrar">Cerrar</button>`);
+    r.querySelector('[data-x=cerrar]').onclick = () => { closeModal(); this.render(true); };
+    const ir = r.querySelector('[data-irr]'); if (ir) ir.onclick = () => { closeModal(); this.tab = ir.dataset.irr; if (this.tab === 'chat') this.chatCon = 'amigo'; this.render(); };
+    r.querySelectorAll('[data-op]').forEach(b => b.onclick = () => hacer(null, async () => {
+      const ok = +b.dataset.op === a.ok;
+      r.querySelectorAll('[data-op]').forEach(x => { x.disabled = true; if (+x.dataset.op === a.ok) x.className = 'btn verde opcion'; else if (x === b) x.className = 'btn rojo opcion'; });
+      $('#trivRes').innerHTML = `<p style="font-weight:800">${ok ? '🎉 ¡Correcto! +1 punto' : '😅 ¡Casi!'}</p><p class="muted">${texto}</p>`;
+      if (ok){ confeti(90); Musica.efecto('campanas'); }
+      await rpc('ix_adviento', Object.assign({p_token: this.token, p_pin: this.pin}, {p_dia: d, p_correcta: ok}));
+      try{ this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin}); }catch(e){}
+    }));
+    if (a.fin) confeti(220);
+  },
+  vEvento(){
+    const g = this.d.grupo, cena = this.d.cena || [], yo = this.d.yo.id, as = this.d.yo.asistencia;
+    return `
+      <div class="card ribbon"><h2>🙋 ¿Vas a ir?</h2>
+        ${as ? '' : '<p class="muted mt0 small">Confírmale al organizador para que pueda planear el intercambio.</p>'}
+        <div class="row">${[['si','✅ Sí voy','verde'],['talvez','🤔 Tal vez','oro'],['no','❌ No voy','rojo']].map(([v, t, c]) =>
+          `<button class="btn sm grow ${as === v ? c : 'ghost'}" data-asis="${v}">${t}</button>`).join('')}</div>
+        ${as === 'no' ? '<p class="hint">El organizador verá tu respuesta y podrá reacomodar el intercambio.</p>' : ''}
+      </div>
+      ${g.revelado && this.d.santa_nombre ? `<div class="banner center"><div style="font-size:40px">🎅</div><b>¡Tu Santa fue ${esc(this.d.santa_nombre)}!</b>${this.d.adivino === true ? '<div class="small">🎯 ¡Y le atinaste!</div>' : this.d.adivino === false ? '<div class="small">Tú creías que era otra persona 😅</div>' : ''}</div>` : ''}
       <div class="card ribbon">
         <h2>📅 El intercambio</h2>
         <div class="info">
@@ -1254,7 +1509,8 @@ const Part = {
           <li>Usa los mensajes anónimos si tienes dudas.</li>
           <li>Guarda tu link de WhatsApp para volver a entrar.</li>
         </ul>
-        <div class="row wrapr mt"><a class="btn ghost sm" href="?ayuda">📖 ¿Cómo funciona?</a><button class="btn ghost sm" id="salir">Cerrar sesión en este celular</button></div>
+        <div class="row wrapr mt"><a class="btn ghost sm" href="?ayuda">📖 ¿Cómo funciona?</a><button class="btn ghost sm" id="cambiarPin">🔐 Cambiar mi código</button>
+          ${esApp() ? '' : '<button class="btn ghost sm" id="instalarP">📲 Instalar app</button>'}<button class="btn ghost sm" id="salir">Cerrar sesión en este celular</button></div>
       </div>`;
   },
   enlazar(){
@@ -1266,7 +1522,7 @@ const Part = {
     on('#gift', e => {
       const gft = e.currentTarget; gft.classList.add('shake'); Musica.efecto('redoble');
       setTimeout(() => { gft.classList.remove('shake'); gft.classList.add('open'); }, 1000);
-      setTimeout(() => { store.set('ix_rev_' + this.token, true); this.render(); confeti(); Musica.efecto('campanas'); }, 1600);
+      setTimeout(() => { store.set('ix_rev_' + this.token, this.d.amigo.nombre); this.render(); confeti(); Musica.efecto('campanas'); }, 1600);
     });
     app.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => hacer(b, async () => {
       await rpc('ix_deseo_comprado', Object.assign(base(), {p_id: b.dataset.comprar, p_comprado: b.dataset.v === '1'}));
@@ -1290,6 +1546,8 @@ const Part = {
       ['d_txt','d_link','d_precio'].forEach(id => { const el = $('#' + id); el.value = ''; el.dataset.keep = 'no'; });
       toast('¡Agregado a tu lista! 🎁'); await this.refrescar(); const n = $('#d_txt'); if (n) n.focus();
     }));
+    const dp = $('#d_precio'), da = $('#d_alerta'), monto = +this.d.grupo.monto || 0;
+    if (dp && da){ const f = () => { da.textContent = monto && +dp.value > monto ? `⚠️ Cuesta más que el monto (${money(monto)}). Tu Santa podría buscar algo parecido.` : ''; }; dp.oninput = f; f(); }
     const dt = $('#d_txt'); if (dt) dt.onkeydown = e => { if (e.key === 'Enter') $('#d_add').click(); };
     app.querySelectorAll('[data-idea]').forEach(b => b.onclick = () => hacer(b, async () => {
       const [e, t, pr] = (this.ideasLista || [])[+b.dataset.idea] || [];
@@ -1297,11 +1555,18 @@ const Part = {
       await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2}));
       toast('¡Agregado! ' + e); await this.refrescar();
     }));
+    on('#sorprende', e => hacer(e.currentTarget, async () => {
+      const ya = this.d.mis_deseos.map(d => norm(d.texto));
+      const pick = ideasPara(this.d.yo.perfil, this.d.grupo.monto, 30).filter(i => !ya.includes(norm(i[1]))).slice(0, 3);
+      if (!pick.length) throw new Error('Ya no tengo más ideas para ti 😅');
+      for (const [e, t, pr] of pick) await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2}));
+      toast('🎲 Agregué: ' + pick.map(i => i[0]).join(' ')); confeti(60); await this.refrescar();
+    }));
     app.querySelectorAll('[data-borrard]').forEach(b => b.onclick = () => hacer(b, async () => {
       await rpc('ix_deseo_quitar', Object.assign(base(), {p_id: b.dataset.borrard})); await this.refrescar();
     }));
     on('#pf_save', e => hacer(e.currentTarget, async () => {
-      const pf = {}; ['talla','calzado','colores','gustos','evitar'].forEach(k => pf[k] = $('#pf_' + k).value.trim());
+      const pf = {}; ['talla','calzado','colores','gustos','evitar','yatengo'].forEach(k => pf[k] = $('#pf_' + k).value.trim());
       await rpc('ix_perfil', Object.assign(base(), {p_perfil: pf})); toast('Datos guardados ✅'); await this.refrescar();
     }));
     on('#pistasSave', e => hacer(e.currentTarget, async () => {
@@ -1318,6 +1583,10 @@ const Part = {
       await this.refrescar(); const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
     });
     on('#m_send', e => send(e.currentTarget));
+    const adv = $('#adivina'); if (adv) adv.onchange = () => hacer(null, async () => {
+      await rpc('ix_adivinar', Object.assign(base(), {p_id: adv.value || null}));
+      toast(adv.value ? '🕵️ Voto guardado' : 'Voto borrado'); await this.refrescar();
+    });
     const mt = $('#m_txt'); if (mt) mt.onkeydown = e => { if (e.key === 'Enter') send($('#m_send')); };
     const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
     app.querySelectorAll('[data-cena]').forEach(b => b.onclick = () => hacer(b, async () => {
@@ -1330,6 +1599,30 @@ const Part = {
       $('#cena_txt').value = ''; $('#cena_txt').dataset.keep = 'no'; toast('¡Anotado! 🍽️'); await this.refrescar();
     }));
     on('#salir', () => { store.del('ix_pin_' + this.token); location.reload(); });
+    on('#instalarP', () => instalar());
+    app.querySelectorAll('[data-dia]').forEach(b => b.onclick = () => this.abrirDia(+b.dataset.dia));
+    app.querySelectorAll('[data-asis]').forEach(b => b.onclick = () => hacer(b, async () => {
+      const v = b.dataset.asis === this.d.yo.asistencia ? null : b.dataset.asis;
+      await rpc('ix_asistencia', Object.assign(base(), {p_valor: v}));
+      toast(v === 'si' ? '¡Qué bien! Nos vemos ahí 🎉' : v === 'no' ? 'Le avisamos al organizador' : v ? 'Anotado 🤔' : 'Respuesta borrada');
+      await this.refrescar();
+    }));
+    on('#cambiarPin', () => {
+      const r = modal(`<h2>🔐 Cambiar mi código</h2><p class="muted mt0">Elige 4 números fáciles de recordar para ti${this.token !== this.raiz ? ' (es el código de ' + esc(this.d.yo.nombre) + ')' : ''}. El organizador ya no lo verá.</p>
+        <label>Código nuevo</label><input id="np1" inputmode="numeric" maxlength="4" placeholder="••••" style="letter-spacing:8px;font-size:22px;text-align:center">
+        <label>Repítelo</label><input id="np2" inputmode="numeric" maxlength="4" placeholder="••••" style="letter-spacing:8px;font-size:22px;text-align:center">
+        <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn rojo grow" data-x="si">Guardar</button></div>`);
+      r.querySelector('[data-x=no]').onclick = closeModal;
+      r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
+        const a = $('#np1').value.trim(), b2 = $('#np2').value.trim();
+        if (!/^\d{4}$/.test(a)) throw new Error('Deben ser 4 números');
+        if (a !== b2) throw new Error('Los códigos no coinciden');
+        await rpc('ix_cambiar_pin', Object.assign(base(), {p_nuevo: a}));
+        this.pin = a; store.set('ix_pin_' + this.token, a);
+        const f = this.familia.find(x => x.token === this.token); if (f) f.pin = a;
+        closeModal(); toast('Código cambiado 🔐 Guárdalo bien'); await this.refrescar();
+      });
+    });
   }
 };
 
