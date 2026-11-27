@@ -28,7 +28,9 @@
    ===================================================================== */
 const SUPABASE_URL = "https://wmazcnmvyuvhggbxcpgc.supabase.co";
 const SUPABASE_KEY = "sb_publishable_JuLGkmTtGgDCuyA-CGQDBA_vLaUEEIH";
-const APP_VERSION  = "2.4";
+const APP_VERSION  = "3.0";
+// Notificaciones: llave pública VAPID (la privada va SOLO en los secretos de Supabase)
+const PUSH_PUBLIC_KEY = "BEJrGnf6nC4njYXpASLZac2zn8TMbh0dYCKYbOXI0wEslUK7moFuOCePukpcCtlEKePMgJ8RTTLNy7RIa3CTDnw";
 </script>
 <style>
 :root{
@@ -44,6 +46,60 @@ body.trabajo{
   --linea:#dfe4ec; --glow:#22385c; --navtx:#9fb0c8; --sub:#b7c4d8;
 }
 body.trabajo #snow{display:none}
+/* ---------- Tema Posada mexicana ---------- */
+body.posada{
+  --noche:#3a0d3f; --pino:#5b1460; --pino2:#7b1fa2; --rojo:#e4007c; --rojo2:#b0005f; --rojoA:#ff2d95; --rojoS:#7a0042;
+  --oro:#ffb300; --oro2:#ffd54f; --crema:#fffaf3; --papel:#fff0f7; --tinta:#2b1030; --gris:#7a5b78;
+  --linea:#f3cfe4; --glow:#8e24aa; --navtx:#e0b3e6; --sub:#f3c6ef;
+}
+body.posada #snow{display:none}
+body.posada::before{content:'';position:fixed;top:0;left:0;right:0;height:46px;z-index:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='46'%3E%3Cpath d='M0 2 Q90 14 180 2' stroke='%23fff' stroke-width='1.5' fill='none' opacity='.6'/%3E%3Cpath d='M8 5 h28 v26 l-7 -5 l-7 5 l-7 -5 l-7 5z' fill='%23e4007c'/%3E%3Cpath d='M44 8 h28 v26 l-7 -5 l-7 5 l-7 -5 l-7 5z' fill='%23ffb300'/%3E%3Cpath d='M80 9 h28 v26 l-7 -5 l-7 5 l-7 -5 l-7 5z' fill='%2300a99d'/%3E%3Cpath d='M116 8 h28 v26 l-7 -5 l-7 5 l-7 -5 l-7 5z' fill='%23ff6d00'/%3E%3Cpath d='M152 5 h28 v26 l-7 -5 l-7 5 l-7 -5 l-7 5z' fill='%237b1fa2'/%3E%3Ccircle cx='22' cy='17' r='4' fill='%23fff' opacity='.55'/%3E%3Ccircle cx='58' cy='20' r='4' fill='%23fff' opacity='.55'/%3E%3Ccircle cx='94' cy='21' r='4' fill='%23fff' opacity='.55'/%3E%3Ccircle cx='130' cy='20' r='4' fill='%23fff' opacity='.55'/%3E%3Ccircle cx='166' cy='17' r='4' fill='%23fff' opacity='.55'/%3E%3C/svg%3E") repeat-x top left/180px 46px}
+body.posada .wrap{padding-top:calc(46px + env(safe-area-inset-top))}
+body.posada .foot{color:#d9a7df}
+/* ---------- Modo oscuro ---------- */
+body.oscuro{--crema:#17231c; --papel:#213128; --tinta:#efeae0; --gris:#a9b8ad; --linea:#2f4537; --sombra:0 10px 30px rgba(0,0,0,.45)}
+body.oscuro.trabajo{--crema:#141d2c; --papel:#1d2940; --linea:#2c3a55}
+body.oscuro.posada{--crema:#241028; --papel:#321838; --linea:#4a2650; --gris:#c9a6cd}
+body.oscuro input, body.oscuro textarea, body.oscuro select, body.oscuro .person, body.oscuro .list-link, body.oscuro .opt,
+body.oscuro .chk, body.oscuro .seg button.on, body.oscuro .btn.danger, body.oscuro .adv button:not(.hoy){background:#0f1813;color:var(--tinta)}
+body.oscuro .chip{background:#2a3a30;color:#cfd8d1}
+body.oscuro .chip.ok{background:#1d4d2f;color:#b6f0c8} body.oscuro .chip.oro{background:#4d3d12;color:#f6dc8f} body.oscuro .chip.rojo{background:#4d1c20;color:#f7b6ba}
+body.oscuro .btn.ghost{color:var(--tinta)}
+body.oscuro .efectos button, body.oscuro .opciones button{background:#0f1813;color:var(--tinta)}
+body.oscuro .msg.them{color:var(--tinta)}
+/* ---------- Modo claro ---------- */
+body.claro{background:radial-gradient(1200px 600px at 50% -200px, #fff 0%, transparent 70%), radial-gradient(circle at 20% 80%, rgba(0,0,0,.035) 0 2px, transparent 3px) 0 0/38px 38px, #f3ede2;
+  --sub:#6d6357; --navtx:#7a6e62}
+body.claro.trabajo{background:#eef1f6} body.claro.posada{background:#fdf0f7}
+body.claro .top, body.claro .hero, body.claro .hero p, body.claro.trabajo .hero{color:var(--tinta)}
+body.claro .top .sub{color:var(--gris)}
+body.claro .iconbtn{background:#fff;color:var(--tinta);border-color:var(--linea)}
+body.claro .nav{background:rgba(255,255,255,.96);border-top-color:var(--linea)}
+body.claro .nav button.on{color:var(--rojo);background:var(--papel)}
+body.claro .foot{color:var(--gris)}
+body.claro #snow span{color:#9db7c9}
+body.claro .hero a.btn.ghost, body.claro a.btn.ghost[href="?ayuda"]{color:var(--tinta)!important;border-color:var(--linea)!important}
+/* ---------- Extras v3 ---------- */
+.avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--oro2);flex:none}
+.avatar.lg{width:88px;height:88px;border-width:3px;display:block;margin:6px auto}
+.avatar.sm{width:26px;height:26px;border-width:1.5px}
+.barra{height:10px;background:var(--papel);border-radius:99px;overflow:hidden;margin:6px 0}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--oro),var(--ok));border-radius:99px}
+.chispa{position:fixed;pointer-events:none;z-index:45;font-size:16px;color:#fff;text-shadow:0 0 6px rgba(255,255,255,.8)}
+.grab{font-size:44px;text-align:center;animation:latido 1s infinite}
+.efectos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.efectos button{border:2px solid var(--linea);background:#fff;border-radius:14px;padding:10px 4px;font-weight:800;cursor:pointer;font-size:13px;color:var(--tinta)}
+.efectos button span{display:block;font-size:26px}
+.efectos button.on{border-color:var(--rojo);background:var(--papel)}
+.ajuste{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--linea)}
+.ajuste:last-child{border-bottom:0}
+.ajuste b{flex:1}
+.opciones{display:flex;gap:6px;flex-wrap:wrap}
+.opciones button{border:2px solid var(--linea);background:transparent;border-radius:10px;padding:6px 10px;font-weight:800;cursor:pointer;color:var(--tinta)}
+.opciones button.on{border-color:var(--rojo);background:var(--papel)}
+.tabla{width:100%;border-collapse:collapse;font-size:14px}
+.tabla td{padding:7px 4px;border-bottom:1px dashed var(--linea)}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
@@ -307,6 +363,140 @@ button.regalo:hover{border-color:var(--oro2)}
 <canvas id="confeti"></canvas>
 
 <script>
+/* ============================ IDIOMA (Español / English) ============================ */
+// Traduce automáticamente todo lo que aparece en pantalla cuando el idioma es inglés.
+const I18N = {
+  lang: 'es', faltan: new Set(), obs: null,
+  dict: /*DICT*/{"$ aprox":"$ approx.","$ c/u":"$ each","$ con cuánto coperas":"$ your contribution","$ con cuánto cooperas":"$ your contribution","(opcional)":"(optional)","(para que no te lo repitan)":"(so you don't get it twice)","+ Agregar":"+ Add","+ Agregar a mi lista":"+ Add to my list","+ Agregar exclusión":"+ Add exclusion","+ ¿Cuál es el platillo favorito de la abuela?":"+ What is grandma's favorite dish?","+ ¿En qué año se casaron los abuelos?":"+ What year did our grandparents get married?","+ ¿Quién cocina mejor?":"+ Who is the best cook?","+ ¿Quién es el más dormilón de la familia?":"+ Who is the sleepiest one in the family?","+ ¿Quién llega siempre tarde?":"+ Who is always late?",". A quien le roban le toca de inmediato (no puede recuperar el mismo).\nUn regalo robado":". Whoever gets robbed goes right away (they can't take the same one back). A gift stolen",". A quien le roban le toca de inmediato (no puede recuperar el mismo). Un regalo robado":". Whoever gets robbed goes right away (they can't take the same one back). A gift stolen",". ¿Quieres montos distintos (por ejemplo adultos y niños)?":". Want different amounts (for example adults and kids)?","A) A":"A) A","Abre el link que te llegó por WhatsApp y escribe tu código de 4 dígitos.":"Open the link you got on WhatsApp and type your 4-digit code.","Abre el link que te llegó por WhatsApp y escribe tus 4 dígitos. Tu celular lo recuerda.":"Open the link you got on WhatsApp and type your 4 digits. Your phone will remember it.","Abre la pantalla de TV: ruleta para el orden de abrir regalos, trivia familiar por equipos (escribe tus preguntas en el panel), modo robado y álbum. Al final activa «Revelar Santas» para ver quién le regaló a quién, con la foto del regalo.":"Open the TV screen: a wheel for the gift-opening order, family trivia in teams (write your questions in the panel), steal mode and album. At the end turn on “Reveal Santas” to see who gave to whom, with a photo of the gift.","Abre o roba un regalo":"Open or steal a gift","Abre una casilla cada día. Las trivias suman puntos: llevas":"Open one box each day. Trivia earns points: you have","Abrir imagen":"Open image","Abrir regalo":"Open gift","Abrió su link":"Opened their link","Accesorios para guitarra (púas, correa)":"Guitar accessories (picks, strap)","Activa las notificaciones en este celular.":"Turn on notifications on this phone.","Activar":"Turn on","Actualizar":"Refresh","Adultos":"Adults","Adviento":"Advent","Agrega a los participantes":"Add the participants","Agrega deseos con foto, link y precio. Marca con ⭐ lo que más quieres y llena tus tallas y gustos.":"Add wishes with a photo, link and price. Mark what you want most with ⭐ and fill in your sizes and likes.","Agrega mínimo 3 personas. Puedes mandar los links desde antes para que llenen su lista; cuando sortees, en el mismo link verán a quién les tocó.":"Add at least 3 people. You can send the links early so they fill in their list; after the draw, the same link shows who they got.","Agregar deseo":"Add a wish","Agregar persona":"Add person","Agregar y acomodar":"Add and rearrange","Ahora manda a cada quien su link por WhatsApp con el botón verde.":"Now send everyone their link on WhatsApp with the green button.","Ahora no":"Not now","Ajustes":"Settings","Al crear la primera categoría te sugiero «Adultos» con el monto general; luego asigna a cada quien con «Editar».":"For the first category I suggest “Adults” with the general amount; then assign each person with “Edit”.","Amazon":"Amazon","Anota lo que se necesita; cada quien aparta desde su link.":"Write down what is needed; everyone claims an item from their link.","Aparece en la app y en la pantalla de TV.":"It shows in the app and on the TV screen.","Aparta tu platillo":"Claim your dish","Aparten su platillo":"Pick your dish","Aquí te escribe quien te va a regalar. Tú no sabes quién es 🤫":"Whoever is giving you a gift writes to you here. You don't know who it is 🤫","Ardilla":"Chipmunk","Asegúrate de que nadie esté viendo tu pantalla 👀":"Make sure nobody is looking at your screen 👀","Audífonos deportivos inalámbricos":"Wireless sports earbuds","Avísale por WhatsApp a quien le falte algo.":"Remind on WhatsApp whoever is missing something.","Aún nadie suma puntos. ¡Sé el primero!":"No points yet. Be the first!","Aún no agrega deseos.":"No wishes added yet.","Aún no agregas nada":"You haven't added anything yet","Aún no hay fotos":"No photos yet","Aún no hay fotos. ¡Sube la primera!":"No photos yet. Upload the first one!","Aún no hay nadie. ¡Agrega a la familia!":"Nobody yet. Add the family!","Aún no hay platillos.":"No dishes yet.","Aún no llena sus datos. ¡Pregúntale de forma anónima en Mensajes!":"They haven't filled in their details yet. Ask them anonymously in Messages!","B) B":"B) B","Balón de futbol":"Soccer ball","Balón de voleibol":"Volleyball","Bandas de resistencia":"Resistance bands","Bocina bluetooth":"Bluetooth speaker","Bufanda y gorro tejidos":"Knitted scarf and beanie","Cada categoría se sortea por separado (por ejemplo, los niños se regalan entre niños).":"Each category is drawn separately (for example, kids give to kids).","Cada quien verá en su celular quién le regaló, y se activa la pantalla de TV.":"Everyone will see on their phone who gave them a gift, and the TV screen turns on.","Café de especialidad de Chiapas o Veracruz":"Specialty coffee from Chiapas or Veracruz","Cama para mascota":"Pet bed","Canasta de dulces mexicanos":"Basket of Mexican candy","Cancelar":"Cancel","Cargador portátil (power bank)":"Power bank","Cargando fotos…":"Loading photos…","Cartera o monedero":"Wallet or coin purse","Categoría agregada 💰":"Category added 💰","Cempasúchil":"Cempasúchil (marigold)","Cena":"Dinner","Cerrar":"Close","Cerrar sesión en este celular":"Log out on this phone","Clásico":"Classic","Cobija suave":"Soft blanket","Comparar precios":"Compare prices","Comparte el panel con otra persona (puede hacer todo menos borrar el intercambio).":"Share the panel with someone else (they can do everything except delete the exchange).","Con Recordatorios avisas a quien no ha llenado su lista. En Cena anotas qué se necesita y cada quien aparta lo que llevará.":"With Reminders you nudge whoever hasn't filled in their list. In Dinner you list what is needed and everyone claims what they will bring.","Con él vuelves a este panel desde cualquier celular. No lo compartas.":"Use it to come back to this panel from any phone. Don't share it.","Confirmen asistencia":"Confirm attendance","Confírmale al organizador para que pueda planear el intercambio.":"Let the organizer know so they can plan the exchange.","Copia a la misma gente y exclusiones con links nuevos. El sorteo evitará repetir parejas de este.":"Copies the same people and exclusions with new links. The draw will avoid repeating this year's pairs.","Copiar":"Copy","Copiar link":"Copy link","Copiar mensaje":"Copy message","Crea el intercambio":"Create the exchange","Crear intercambio":"Create exchange","Crear link de coorganizador":"Create co-organizer link","Cuando se haga el sorteo podrás preguntarle cosas a tu amigo secreto sin que sepa quién eres, contestarle a tu Santa y ver sus pistas.":"After the draw you can ask your secret friend questions without them knowing who you are, reply to your Santa and see their clues.","Cuetlaxóchitl":"Cuetlaxóchitl","Código incorrecto, revisa tu WhatsApp":"Wrong code, check your WhatsApp","Código nuevo":"New code","Descarga todo (participantes, links, códigos, listas, sorteo). Con él puedes restaurar el intercambio en otra base de datos sin perder los links.":"Download everything (participants, links, codes, lists, draw). With it you can restore the exchange in another database without losing the links.","Descargar respaldo":"Download backup","Descubre a quién le regalas":"Find out who you're giving to","Difusor de aromas":"Aroma diffuser","Dos personas que ya agregaste quedan como una sola: comparten link, dan un regalo y reciben uno.":"Two people you already added become one: they share a link, give one gift and receive one.","Duplicar":"Duplicate","Duplicar intercambio":"Duplicate exchange","Déjale hasta 3 pistas sobre quién eres. Se van desbloqueando conforme se acerca el intercambio.":"Leave up to 3 clues about who you are. They unlock as the exchange gets closer.","Déjale hasta 3 pistas sobre quién eres.":"Leave up to 3 clues about who you are.","Dígito 1":"Digit 1","Dígito 2":"Digit 2","Dígito 3":"Digit 3","Dígito 4":"Digit 4","Dígito":"Digit","Editar":"Edit","Ej. 26 MX":"E.g. 8 US","Ej. 500":"E.g. 500","Ej. Bufanda roja":"E.g. Red scarf","Ej. Cada quien lleva un platillo 🫔":"E.g. Everyone brings a dish 🫔","Ej. Café, futbol, cocinar, plantas":"E.g. Coffee, soccer, cooking, plants","Ej. Casa de la abuela":"E.g. Grandma's house","Ej. Cena, salón, pastel…":"E.g. Dinner, venue, cake…","Ej. Intercambio Familia Ramírez 2026":"E.g. Ramírez Family Exchange 2026","Ej. M / 32":"E.g. M / 32","Ej. Me gusta el café":"E.g. I like coffee","Ej. Niños":"E.g. Kids","Ej. Perfumes, chocolate":"E.g. Perfume, chocolate","Ej. Que el monto acepte dólares":"E.g. Let the amount accept dollars","Ej. Siempre llego tarde 😅":"E.g. I'm always late 😅","Ej. Tamales, ponche, refrescos…":"E.g. Tamales, punch, sodas…","Ej. Termo, audífonos, cafetera, bufanda roja":"E.g. Thermos, headphones, coffee maker, red scarf","Ej. Uso lentes":"E.g. I wear glasses","Ej. Verde, negro":"E.g. Green, black","Ej. “¿Prefieres algo para la casa o para ti?”":"E.g. “Would you rather have something for the house or for you?”","El Santa de":"The Santa for","El botón verde abre WhatsApp con el mensaje listo. Puedes mandarlos desde antes del sorteo para que llenen su lista.":"The green button opens WhatsApp with the message ready. You can send them before the draw so people fill in their list.","El organizador marca los pagos cuando le das el dinero.":"The organizer marks payments when you give them the money.","El sorteo aún no se hace":"The draw hasn't happened yet","El teléfono es opcional; sin él, WhatsApp te deja elegir el contacto.":"The phone number is optional; without it, WhatsApp lets you pick the contact.","Elige 4 números fáciles de recordar para ti. El organizador ya no lo verá.":"Choose 4 numbers that are easy for you to remember. The organizer won't see it anymore.","Elige 4 números fáciles de recordar para ti":"Choose 4 numbers that are easy for you to remember",". El organizador ya no lo verá.":". The organizer won't see it anymore.","Elige cómo sonará tu voz (para que no te reconozcan):":"Choose how your voice will sound (so nobody recognizes you):","Elige cómo sonará tu voz":"Choose how your voice will sound","En Evento ves la fecha, el lugar y la lista de la cena. Toca «Yo lo llevo» para apartar un platillo.":"In Event you see the date, place and dinner list. Tap “I'll bring it” to claim a dish.","En Mensajes le preguntas a tu amigo sin que sepa quién eres. Deja hasta 3 pistas que se desbloquean conforme se acerca la fecha.":"In Messages you can ask your friend questions without them knowing who you are. Leave up to 3 clues that unlock as the date gets closer.","English":"English","Entendido":"Got it","Entra con tu código":"Log in with your code","Entra con tu link de WhatsApp para ver a quién te tocó":"Open your WhatsApp link to see who you got","Entrar 🎁":"Enter 🎁","Enviar":"Send","Enviar prueba":"Send test","Es originaria de México y los mexicas la llamaban cuetlaxóchitl.":"It is native to Mexico and the Mexica called it cuetlaxóchitl.","Esa persona llenará su lista y verá a quién le regala, desde su propio link. El sorteo nunca los emparejará entre ellos.":"That person will fill in their list and see who they give to from their own link. The draw will never pair them with each other.","Escríbele a tu Santa…":"Write to your Santa…","Ese código es muy fácil de adivinar, elige otro":"That code is too easy to guess, choose another one","Español":"Español","Estilo":"Style","Estilo familia":"Family style","Estilo trabajo":"Work style","Estilo posada mexicana":"Mexican posada style","Evento":"Event","Evitar que dos personas se regalen entre sí":"Avoid two people giving to each other","Falta quién":"Nobody yet","Fecha y hora del intercambio":"Exchange date and time","Gira la ruleta…":"Spin the wheel…","Grave":"Deep","Guarda tu link de WhatsApp para volver a entrar.":"Keep your WhatsApp link to log in again.","Guardar":"Save","Guardar mis datos":"Save my details","Guardar pistas":"Save clues","Haz el sorteo":"Do the draw","Hora de comprar el regalo":"Time to buy the gift","Hoy, 6 de diciembre, es el día de San Nicolás: un obispo del siglo IV de Mira (en la actual Turquía), famoso por dar regalos en secreto. De él viene Santa Claus.":"Today, December 6, is Saint Nicholas Day: a 4th-century bishop of Myra (in today's Turkey), famous for giving gifts in secret. Santa Claus comes from him.","Instala la app":"Install the app","Instalar":"Install","Instalar en mi celular":"Install on my phone","Instálala desde":"Install it from","Intercambio":"Exchange","Juego de desarmadores de precisión":"Precision screwdriver set","Juguete para mascota":"Pet toy","Juntado:":"Collected:","Kit de cuidado de la piel":"Skin care kit","Kit de repostería (moldes y duyas)":"Baking kit (pans and piping tips)","La noche del intercambio en la TV":"Exchange night on the TV","La revelación se hace en la pantalla de TV (tarjeta «Noche del intercambio»).":"The reveal happens on the TV screen (“Exchange night” card).","Las pistas del Santa se desbloquean con base en esta fecha.":"Santa's clues unlock based on this date.","Libreta bonita y plumas":"Nice notebook and pens","Libro de recetas mexicanas":"Mexican cookbook","Link (opcional)":"Link (optional)","Lista en Excel (CSV)":"Excel list (CSV)","Listo":"Done","Llena tu lista":"Fill in your list","Llenen su lista de deseos":"Fill in your wish list","Lo quiero mucho":"I really want it","Lotería mexicana artesanal":"Handmade Mexican lotería game","Lugar":"Place","Lámpara para acampar":"Camping lantern","Manda los links por WhatsApp":"Send the links on WhatsApp","Mandil personalizado":"Personalized apron","Mandármelo por WhatsApp":"Send it to me on WhatsApp","Me apunto":"Count me in","Mensaje de voz":"Voice message","Mensajes":"Messages","Mensajes anónimos":"Anonymous messages","Mensajes listos según los días que faltan.":"Ready-made messages based on the days left.","Mensajes listos según los días que faltan. Si activaste las notificaciones automáticas en Supabase, se mandan solos ese día a las 10 am.":"Ready-made messages based on the days left. If you set up automatic notifications in Supabase, they go out on their own that day at 10 am.","Si activaste las notificaciones automáticas en Supabase, se mandan solos ese día a las 10 am.":"If you set up automatic notifications in Supabase, they go out on their own that day at 10 am.","Mercado Libre":"Mercado Libre","Mi amigo":"My friend","Mi foto":"My photo","Mi lista":"My list","Micrófono de karaoke bluetooth":"Bluetooth karaoke microphone","Mientras, llena tu lista":"Meanwhile, fill in your list","Modo robado":"Steal mode","Monto del regalo (MXN)":"Gift amount (MXN)","Mouse inalámbrico":"Wireless mouse","Multiherramienta":"Multi-tool","Música navideña":"Christmas music","Nadie aún":"Nobody yet","Nadie, ni tú, puede ver quién le tocó a quién en este panel. Manda a cada quien su link (abajo).":"Nobody, not even you, can see who got whom in this panel. Send everyone their link (below).","Navideño":"Christmas","Neceser de viaje":"Travel toiletry bag","Niños":"Kids","No":"No","No ha visto resultado":"Hasn't seen result","No le digas a nadie a quién te tocó.":"Don't tell anyone who you got.","No sabrá que eres tú.":"They won't know it's you.","Nombre":"Name","Nombre (1)":"Name (1)","Nombre (2)":"Name (2)","Nombre del intercambio":"Exchange name","Nombre del nuevo intercambio":"Name of the new exchange","Nombre y WhatsApp (opcional). Cada quien recibe un código de 4 dígitos. Si alguien no tiene celular (niños o abuelitos), márcalo y elige quién lo maneja desde su link. Marca exclusiones para que, por ejemplo, los esposos no se toquen.":"Name and WhatsApp (optional). Everyone gets a 4-digit code. If someone has no phone (kids or grandparents), mark it and choose who manages them from their link. Add exclusions so that, for example, spouses don't get each other.","Notas para todos":"Notes for everyone","Nuevo intercambio":"New exchange","Ocultar":"Hide","Opción A":"Option A","Opción B":"Option B","Opción C (opcional)":"Option C (optional)","Opción D (opcional)":"Option D (optional)","Opción":"Option","Orden":"Order","Organizador para el auto":"Car organizer","Otra categoría":"Another category","Panel del organizador":"Organizer panel","Para la cena, el salón o un regalo grupal: anota cuánto le toca a cada quien y marca quién ya pagó. Cada quien ve su estado en su app.":"For dinner, the venue or a group gift: set how much each person pays and mark who has paid. Everyone sees their status in their app.","Parejas que no se pueden tocar entre sí (ej. esposos).":"Pairs who can't get each other (e.g. spouses).","Peluche navideño":"Christmas plush toy","Pendiente":"Pending","Pie de foto (opcional)":"Caption (optional)","Pista":"Clue","Pista 1":"Clue 1","Pista 2":"Clue 2","Pista 3":"Clue 3","Pistas guardadas 🕵️":"Clues saved 🕵️","Pon el monto, agrega a los participantes, haz el sorteo y manda a cada quien su link con código por WhatsApp.":"Set the amount, add the participants, do the draw and send everyone their link with a code on WhatsApp.","Pon nombre, estilo (familia o trabajo), monto, fecha y lugar. Guarda tu link de organizador: con él vuelves a tu panel.":"Set the name, style (family or work), amount, date and place. Save your organizer link: it takes you back to your panel.","Portarretratos":"Picture frame","Pregunta":"Question","Pregunta agregada ❓":"Question added ❓","Pregunta anónima…":"Anonymous question…","Pregunta en secreto y deja pistas":"Ask in secret and leave clues","Pregúntale a":"Ask","Pídele a todos que suban fotos desde su app, en la pestaña Evento → Álbum.":"Ask everyone to upload photos from their app, in the Event → Album tab.","Quita o agrega a alguien sin rehacer el sorteo. La app reacomoda solo a quienes se afectan, sin que tú veas quién le regala a quién; ellos verán un aviso en su app.":"Remove or add someone without redoing the draw. The app only rearranges those affected, without you seeing who gives to whom; they'll see a notice in their app.","Quitar":"Remove","Quitar y reacomodar":"Remove and rearrange","Recibir avisos en este celular":"Get alerts on this phone","Recordar":"Remind","Recuerda y organiza la cena":"Remind people and organize dinner","Regalo para cooperar":"Group gift","Regalos que alguien quiere y que pueden comprar entre varios. La persona que lo pidió no ve quién coopera.":"Gifts someone wants that several people can chip in for. The person who asked doesn't see who chips in.","Reglas":"Rules","Reglas:":"Rules:","Repítelo":"Repeat it","Requiere configurar una vez la función «push» en Supabase (guía incluida).":"Requires setting up the “push” function in Supabase once (guide included).","Respeta el monto.":"Stick to the amount.","Reto del día: mándale una pregunta anónima a tu amigo secreto para atinarle al regalo.":"Today's challenge: send your secret friend an anonymous question to nail the gift.","Revelación de Santas":"Santa reveal","Revelar":"Reveal","Robot":"Robot","Rompecabezas de 1000 piezas":"1000-piece puzzle","Ruleta":"Wheel","Se borra su lista de deseos.":"Their wish list will be deleted.","Se borra su lista y sus mensajes. Quien le iba a regalar recibirá a otra persona, sin rehacer el sorteo.":"Their list and messages will be deleted. Whoever was giving to them will get someone else, without redoing the draw.","Se borran las asignaciones, los mensajes anónimos y las pistas. Las listas de deseos se conservan. Tendrás que volver a avisar a todos.":"Assignments, anonymous messages and clues will be deleted. Wish lists are kept. You'll have to notify everyone again.","Se hace en secreto: ni tú ves quién le tocó a quién. Si duplicaste el intercambio del año pasado, la app evita repetir parejas.":"It's done in secret: not even you see who got whom. If you duplicated last year's exchange, the app avoids repeating pairs.","Se mantendrá oculta":"It will stay hidden","Según lo más popular y el monto. Precios aproximados.":"Based on what's most popular and the amount. Approximate prices.","Set de acuarelas":"Watercolor set","Set de maquillaje":"Makeup set","Set de pinzas y especias para asador":"BBQ tongs and spice set","Set de utensilios de silicón":"Silicone utensil set","Set de velas aromáticas":"Scented candle set","Siguiente ›":"Next ›","Sin abrir":"Not opened","Sin celular · lo maneja":"No phone · managed by","Sin exclusiones.":"No exclusions.","Sin lista":"No list","Sin mejoras anotadas.":"No improvements noted.","Sin preguntas: en la TV se usarán preguntas navideñas de ejemplo. ¡Escribe unas sobre tu familia!":"No questions: the TV will use sample Christmas questions. Write some about your family!","Sin robos":"No steals","Sin teléfono · Código":"No phone · Code","Solo tú ves esto. Anota ideas y luego pásamelas como lista.":"Only you see this. Write down ideas and then send them to me as a list.","Son los 4 dígitos que te llegaron por WhatsApp":"It's the 4 digits you got on WhatsApp","Soporte de celular para auto":"Car phone mount","Soporte para celular de escritorio":"Desk phone stand","Sorteo secreto, lista de deseos y todo por WhatsApp":"Secret draw, wish list and everything over WhatsApp","Sube fotos del intercambio, la cena o tu regalo. Se verán aquí y en la pantalla de TV.":"Upload photos of the exchange, the dinner or your gift. They'll show here and on the TV screen.","Suculentas en maceta decorada":"Succulents in a decorated pot","Sí":"Yes","Sí, reiniciar":"Yes, restart","Tapete de yoga":"Yoga mat","Tarjeta de regalo de videojuegos":"Video game gift card","Taza personalizada con foto":"Personalized photo mug","Taza térmica de acero":"Steel travel mug","Te tocó regalarle a":"You're giving a gift to","Toca cada botón para mandarle el recordatorio por WhatsApp.":"Tap each button to send them the reminder on WhatsApp.","Toca el regalo para abrirlo. Verás su lista, sus datos e ideas de regalo según sus gustos y el monto.":"Tap the gift to open it. You'll see their list, their details and gift ideas based on their likes and the amount.","Toca el regalo para descubrir a quién le regalas":"Tap the gift to find out who you're giving to","Toca un regalo para robarlo, o abre uno nuevo":"Tap a gift to steal it, or open a new one","Toca una para agregarla a tu lista; llena tus gustos abajo para que te sugiera mejor.":"Tap one to add it to your list; fill in your likes below for better suggestions.","Todos regalan":"Everyone gives","Todos suben fotos desde su app (Evento → Álbum). Aquí puedes revisarlas y quitar alguna.":"Everyone uploads photos from their app (Event → Album). Here you can review them and remove any.","Trivia familiar":"Family trivia","Tu Santa aún no deja pistas. ¡Pídeselas! 👇":"Your Santa hasn't left clues yet. Ask for them! 👇","Tu Santa aún no te escribe.":"Your Santa hasn't written to you yet.","Tu Santa verá esta lista. Tú nunca sabrás si ya compró algo 😉 Toca ⭐ en lo que más quieres.":"Your Santa will see this list. You'll never know if they already bought something 😉 Tap ⭐ on what you want most.","Turno de":"Turn:","Unir en pareja":"Join as a couple","Uno por uno, con redoble y confeti":"One by one, with a drumroll and confetti","Usa las pistas y los mensajes. Puedes cambiar tu voto hasta la revelación; en la pantalla de TV se verá si le atinaste.":"Use the clues and messages. You can change your vote until the reveal; the TV screen will show if you got it right.","Usa los mensajes anónimos si tienes dudas.":"Use anonymous messages for questions.","Ver pagos":"View payments","Ver resultados 🏆":"See results 🏆","Ver y moderar fotos":"View and moderate photos","Vino o licor artesanal":"Craft wine or liquor","WhatsApp":"WhatsApp","WhatsApp (10 dígitos)":"WhatsApp (10 digits)","WhatsApp (2)":"WhatsApp (2)","WhatsApp (opcional)":"WhatsApp (optional)","WhatsApp al grupo":"WhatsApp the group","WhatsApp de la pareja":"Partner's WhatsApp","WhatsApp 1":"WhatsApp 1","WhatsApp 2":"WhatsApp 2","Xoconostle":"Xoconostle (sour prickly pear)","Ya lo guardé ✓":"I saved it ✓","Yo llevo… (ej. postre)":"I'll bring… (e.g. dessert)","Yo lo llevo":"I'll bring it","abre un regalo nuevo":"opens a new gift","activaron avisos en su celular (cada quien lo hace desde su app: ⚙️ → Notificaciones). Les llegan cuando su Santa les escribe, al sortear, al revelar y con los recordatorios.":"turned on alerts on their phone (each person does it from their app: ⚙️ → Notifications). They get them when their Santa writes, at the draw, at the reveal and with reminders.","con lista":"with a list","código":"code","desde su link":"from their link","días":"days","en su turno, cada quien":"on their turn, each person","fue":"was","horas":"hours","lo que quieras.":"anything you want.","min":"min","o":"or","para que se abra directo en tu intercambio.":"so it opens straight into your exchange.","para que tu Santa sepa qué regalarte.":"so your Santa knows what to give you.","participantes":"participants","por regalo":"per gift","queda congelado 🧊.":"is frozen 🧊.","roba uno ya abierto":"steals one already opened","tu propio link":"your own link","vieron resultado":"saw result","¡Agregado a tu lista! 🎁":"Added to your list! 🎁","¡Empate!":"It's a tie!","¡Empieza la cuenta regresiva! Durante 24 días aquí habrá trivias, datos curiosos, chistes y retos. Las trivias suman puntos al ranking de la familia.":"The countdown begins! For 24 days you'll find trivia, fun facts, jokes and challenges here. Trivia adds points to the family ranking.","¡Hola! Escribe tu":"Hi! Type your","¡Hoy es el día!":"Today is the day!","¡Mañana es el intercambio!":"The exchange is tomorrow!","¡Qué bien! Nos vemos ahí 🎉":"Great! See you there 🎉","¡Sorteo listo!":"Draw done!","¡Vamos!":"Let's go!","¡Ya se hizo el sorteo! 🎉":"The draw is done! 🎉","· se ve de inmediato":"· visible right away","se ve de inmediato":"visible right away","¿A quién le toca abrir su regalo?":"Whose turn is it to open their gift?","¿Cuántos equipos?":"How many teams?","¿Cómo funciona?":"How does it work?","¿Cómo llamaban los mexicas a la flor de Nochebuena?":"What did the Mexica call the poinsettia flower?","¿Hacer el sorteo?":"Do the draw?","¿Quién acertó? Toca los equipos":"Who got it right? Tap the teams","¿Quién le regaló a…":"Who gave a gift to…","¿Quién lleva qué?":"Who's bringing what?","¿Quién lo va a manejar desde su celular?":"Who will manage them from their phone?","¿Qué hacemos?":"What should we do?","¿Qué le salió? (opcional)":"What did they get? (optional)","¿Qué te gustaría? Ej. Termo para café":"What would you like? E.g. Coffee thermos","¿Reiniciar el sorteo?":"Restart the draw?","¿Te aviso cuando te escriban?":"Want an alert when someone writes to you?","¿Ya lo compraste? Súbele foto.":"Already bought it? Upload a photo.","Ábrela desde tu pantalla de inicio, sin buscar el link.":"Open it from your home screen, no need to look for the link.","Ábrela en el navegador de la TV o en una laptop conectada: revelación, ruleta, trivia familiar, modo robado y álbum.":"Open it in the TV's browser or on a connected laptop: reveal, wheel, family trivia, steal mode and album.","Ábrela, mantenla presionada y guárdala para mandarla al grupo por WhatsApp.":"Open it, press and hold, and save it to send to the group on WhatsApp.","Álbum":"Album","— Aún no sé —":"— Not sure yet —","— General —":"— General —","—¿Qué le dijo una esfera a otra?\n—¡Nos vemos colgadas en el árbol! 🎄":"—What did one ornament say to the other?\n—See you hanging on the tree! 🎄","—¿Qué le dijo una esfera a otra? —¡Nos vemos colgadas en el árbol! 🎄":"—What did one ornament say to the other? —See you hanging on the tree! 🎄","—¿Qué le dijo una esfera a otra?":"—What did one ornament say to the other?","—¡Nos vemos colgadas en el árbol! 🎄":"—See you hanging on the tree! 🎄","‹ Menú":"‹ Menu","↶ Deshacer":"↶ Undo","↺ Jugar otra vez":"↺ Play again","↺ Reiniciar":"↺ Restart","↺ Reiniciar sorteo":"↺ Restart draw","⏹️ Terminar":"⏹️ Stop","▶ Comenzar":"▶ Start","▶ Empezar":"▶ Start","▶️ Escuchar":"▶️ Listen","▶️ Mensaje de voz":"▶️ Voice message","☀️ Claro":"☀️ Light","♻️ Restaurar un respaldo":"♻️ Restore a backup","⚙️ Ajustes":"⚙️ Settings","⚙️ Más opciones":"⚙️ More options","✅ Sí voy":"✅ I'm going","✅ Va":"✅ Going","✋ Ya tengo esto":"✋ I already have this","✏️ Editar detalles":"✏️ Edit details","✏️ Editar participante":"✏️ Edit participant","✓ Sorteo hecho":"✓ Draw done","✓ Vio su resultado":"✓ Saw their result","❄️ Nieve al tocar el fondo":"❄️ Snow when tapping the background","❌ No voy":"❌ Not going","❓ Trivia":"❓ Trivia","❓ Trivia familiar":"❓ Family trivia","➕ Agregar a alguien":"➕ Add someone","➖ Quitar a alguien":"➖ Remove someone","⬇️ Descargar":"⬇️ Download","⭐ Guarda tu link de organizador":"⭐ Save your organizer link","⭐ Lo quiero mucho":"⭐ I really want it","⭐ Me gusta":"⭐ I like","⭐ Lo que más quiere":"⭐ What they want most","🇲🇽 Español":"🇲🇽 Español","🇺🇸 English":"🇺🇸 English","🌐 Idioma":"🌐 Language","🌐 Idioma de sus mensajes":"🌐 Language of their messages","🌙 Oscuro":"🌙 Dark","🍽️ Cena: ¿quién lleva qué?":"🍽️ Dinner: who's bringing what?","🍽️ ¿Quién lleva qué?":"🍽️ Who's bringing what?","🎁 Abrir regalo nuevo":"🎁 Open a new gift","🎁 Detalles":"🎁 Details","🎁 Listo":"🎁 Done","🎁 Mis deseos":"🎁 My wishes","🎁 Participante":"🎁 Participant","🎁 Su lista de deseos":"🎁 Their wish list","🎄 Calendario de adviento":"🎄 Advent calendar","🎄 Crear y agregar participantes":"🎄 Create and add participants","🎄 Familia · navideño clásico":"🎄 Family · classic Christmas","🎅 Mi Santa":"🎅 My Santa","🎅 Organiza un intercambio":"🎅 Organize an exchange","🎅 Organizador":"🎅 Organizer","🎅 Revelar Santas":"🎅 Reveal Santas","🎉 ¡Correcto! +1 punto":"🎉 Correct! +1 point","🎉 ¡Santas revelados!":"🎉 Santas revealed!","🎡 Girar":"🎡 Spin","🎡 ¿A quién le toca abrir su regalo?":"🎡 Whose turn is it to open their gift?","🎤 Grabando…":"🎤 Recording…","🎤 Los mensajes de voz se distorsionan en tu celular antes de enviarse: nadie reconocerá tu voz.":"🎤 Voice messages are distorted on your phone before sending: nobody will recognize your voice.","🎤 Mensaje de voz":"🎤 Voice message","🎤 ¡Audio enviado!":"🎤 Audio sent!","🎨 Apariencia":"🎨 Appearance","🎨 Colores favoritos":"🎨 Favorite colors","🎯 Reto del día":"🎯 Today's challenge","🎲 Hacer el sorteo":"🎲 Do the draw","🎲 Sorpréndeme: agrega 3 ideas a mi lista":"🎲 Surprise me: add 3 ideas to my list","🎲 Sortear":"🎲 Draw","🎲 Sorteo":"🎲 Draw","🎵 Música":"🎵 Music","🏆 Ranking de trivias":"🏆 Trivia ranking","👀 No han visto su resultado":"👀 Haven't seen their result","👕 Talla de ropa":"👕 Clothing size","👟 Calzado":"👟 Shoe size","👤 Yo":"👤 Me","👥 Coorganizador":"👥 Co-organizer","👨‍👩‍👧‍👦 Participantes":"👨‍👩‍👧‍👦 Participants","👶 No tiene celular":"👶 No phone","👶 No tiene celular (niño/a o abuelito/a)":"👶 No phone (kid or grandparent)","💑 Es pareja":"💑 Couple","💑 Es pareja (dan y reciben un solo regalo entre los dos)":"💑 Couple (they give and receive one gift together)","💑 Unir pareja":"💑 Join couple","💑 ¡Pareja unida!":"💑 Couple joined!","💡 Dato curioso":"💡 Fun fact","💡 ¿Sin ideas?":"💡 Out of ideas?","💬 Preguntarle en secreto":"💬 Ask them in secret","💰 Categoría":"💰 Category","💰 Montos":"💰 Amounts","💵 Cooperación":"💵 Chip-in","💵 ¿Cuánto pagó?":"💵 How much did they pay?","💼 Trabajo · elegante y sobrio":"💼 Work · elegant and sober","💾 Respaldo":"💾 Backup","📅 El intercambio":"📅 The exchange","📆 Recordatorios por fecha":"📆 Reminders by date","📋 Copiar lista para Claude":"📋 Copy list for Claude","📋 Duplicar intercambio":"📋 Duplicate exchange","📋 Duplicar para otro año":"📋 Duplicate for another year","📏 Mis datos para mi Santa":"📏 My details for my Santa","📏 Sus datos":"📏 Their details","📖 Manual de uso":"📖 User guide","📖 ¿Cómo funciona?":"📖 How does it work?","📝 Les falta su lista":"📝 Missing their list","📝 Llenar mi lista de deseos":"📝 Fill in my wish list","📣 Recordatorios":"📣 Reminders","📩 ¿Te invitaron?":"📩 Were you invited?","📲 Guía de instalación":"📲 Install guide","📲 Instalar":"📲 Install","📲 Instalar ahora":"📲 Install now","📲 Instalar app":"📲 Install app","📲 Instálala como app":"📲 Install it as an app","📷 Agregar foto":"📷 Add photo","📷 Subir":"📷 Upload","📷 Subir foto":"📷 Upload photo","📷 Subir foto del regalo":"📷 Upload gift photo","📸 Foto del regalo":"📸 Gift photo","📸 Álbum":"📸 Album","📸 Álbum del intercambio":"📸 Exchange album","📺 Abrir pantalla de TV":"📺 Open TV screen","📺 Noche del intercambio":"📺 Exchange night","🔄 Cambios de último momento":"🔄 Last-minute changes","🔊 Sonidos al tocar":"🔊 Tap sounds","🔍 Pistas de tu Santa":"🔍 Your Santa's clues","🔐 Cambiar mi código":"🔐 Change my code","🔔 Notificaciones":"🔔 Notifications","🔔 Notificar ahora":"🔔 Notify now","🔗 Link de este panel":"🔗 Link to this panel","🔴 Rojos":"🔴 Red team","🖼️ Resumen":"🖼️ Summary","🖼️ Resumen en imagen para el grupo":"🖼️ Image summary for the group","🖼️ Crear resumen en imagen":"🖼️ Create image summary","🖼️ Resumen para el grupo":"🖼️ Summary for the group","Pon la fecha del intercambio (Editar) para tener recordatorios por fecha.":"Set the exchange date (Edit) to get dated reminders.","🗑️ Borrar este intercambio":"🗑️ Delete this exchange","😄 Chiste del día":"😄 Joke of the day","🙋 ¿Vas a ir?":"🙋 Are you going?","🚫 Exclusiones":"🚫 Exclusions","🚫 Por favor no me regalen":"🚫 Please don't give me","🛠️ Mejoras para la app":"🛠️ App improvements","🟢 Verdes":"🟢 Green team","🤔 Tal vez":"🤔 Maybe","🤔 ¿Quién crees que es tu Santa?":"🤔 Who do you think your Santa is?","🤝 Los demás podrán cooperar para este regalo (tú no verás quién)":"🤝 Others can chip in for this gift (you won't see who)","🤝 Para cooperar":"🤝 Group gift","🤝 Regalos para cooperar":"🤝 Group gifts","🤝 ¡Para cooperar!":"🤝 Group gift!","🤝 ¡Gracias por cooperar!":"🤝 Thanks for chipping in!","🤫 Reglas":"🤫 Rules","🥁 Revelar":"🥁 Reveal","🪅 Posada mexicana · colorida":"🪅 Mexican posada · colorful","(según tus gustos)":"(based on your likes)","Abrir ›":"Open ›","Accesorio de bisutería":"Costume jewelry accessory","Activa «Revelar Santas» en el panel":"Turn on “Reveal Santas” in the panel","Activa «Revelar Santas» en el panel para usar la pantalla de TV":"Turn on “Reveal Santas” in the panel to use the TV screen","Actualizado":"Updated","Alemania":"Germany","Almohada de viaje":"Travel pillow","Alrededor del 21 de diciembre es el solsticio de invierno: la noche más larga del año en el hemisferio norte.":"Around December 21 is the winter solstice: the longest night of the year in the northern hemisphere.","Anotado 🤔":"Noted 🤔","Asistencia":"Attendance","Austria":"Austria","Avisar al grupo por WhatsApp":"Tell the group on WhatsApp","Ayúdale a llenarla para que su Santa le atine 😉":"Help them fill it in so their Santa gets it right 😉","Bacalao":"Bacalao (salt cod)","Borrar":"Delete","Borrar todo":"Delete everything","Botella deportiva térmica":"Insulated sports bottle","Caja de tés e infusiones":"Box of teas and infusions","Calcetines navideños divertidos":"Fun Christmas socks","Calzado":"Shoe size","Cantar un villancico":"Sing a carol","Categoría":"Category","Chocolates finos":"Fine chocolates","Colores favoritos":"Favorite colors","Copiado ✅":"Copied ✅","Código":"Code","Código cambiado 🔐 Guárdalo bien":"Code changed 🔐 Keep it safe","Código nuevo listo 🔑":"New code ready 🔑","Datos guardados ✅":"Details saved ✅","Deben ser 4 números":"It must be 4 numbers","Desde tu link puedes llenar su lista de deseos y, cuando se haga el sorteo, ver a quién le regala.":"From your link you can fill in their wish list and, after the draw, see who they are giving to.","Deseos":"Wishes","El 2 de febrero, día de la Candelaria, se pagan con tamales 🫔.":"On February 2, Candlemas Day, you pay with tamales 🫔.","El día de la Virgen de Guadalupe":"The day of the Virgin of Guadalupe","El día de los Santos Inocentes":"Holy Innocents' Day","El organizador aún no anota platillos. Puedes proponer uno.":"The organizer hasn't listed dishes yet. You can suggest one.","El tejocote, junto con guayaba, caña y canela, es el alma del ponche.":"Tejocote, along with guava, sugar cane and cinnamon, is the soul of the punch.","Elige a dos personas distintas":"Choose two different people","Elige dos personas distintas":"Choose two different people","Elige una imagen":"Choose an image","En iPhone primero instala la app (Compartir → Agregar a inicio) y ábrela desde su ícono":"On iPhone first install the app (Share → Add to Home Screen) and open it from its icon","En inglés la Nochebuena se llama «poinsettia» por Joel R. Poinsett, primer representante de Estados Unidos en México, que la llevó a su país en el siglo XIX.":"In English the Nochebuena is called “poinsettia” after Joel R. Poinsett, the first U.S. envoy to Mexico, who took it to his country in the 19th century.","Equipo":"Team","Escribe con cuánto cooperas":"Enter how much you're chipping in","Escribe el nombre":"Type the name","Escribe el nombre de la categoría":"Type the category name","Escribe el nombre de la pareja":"Type the partner's name","Escribe el platillo":"Type the dish","Escribe la mejora":"Type the improvement","Escribe la pregunta":"Type the question","Escribe los 4 dígitos":"Type the 4 digits","Escribe qué te gustaría":"Type what you'd like","Escribe qué vas a llevar":"Type what you'll bring","Escribe el concepto":"Type what it's for","Escribe un mensaje":"Type a message","Ese archivo no es un respaldo válido":"That file is not a valid backup","Ese archivo no es un respaldo de Intercambio Navideño":"That file is not a Christmas Gift Exchange backup","Esta vez no le atinaste 😅":"You didn't guess right this time 😅","Este navegador no permite notificaciones":"This browser doesn't support notifications","Falta":"Missing","Falta actualizar la base de datos: corre intercambio.sql en Supabase":"The database needs updating: run intercambio.sql in Supabase","Falta una semana. Confirma si vas.":"One week to go. Confirm if you are coming.","Faltan 10 días. Revisa la lista de tu amigo secreto.":"10 days left. Check your match's wish list.","Faltan 2 semanas. Tu Santa necesita ideas.":"2 weeks to go. Your Santa needs ideas.","Faltan 3 días. Revisa quién lleva qué.":"3 days left. Check who is bringing what.","Fecha por definir":"Date to be set","Foto quitada":"Photo removed","Gaspar, Miguel y Rafael":"Caspar, Michael and Raphael","Generar código":"Generate code","Girar":"Spin","Girar otra vez":"Spin again","Guardado ✅":"Saved ✅","Hazlo desde":"Do it from",", en Chrome (Android) o Safari (iPhone), no dentro de WhatsApp.":", in Chrome (Android) or Safari (iPhone), not inside WhatsApp.","Inglaterra":"England","Invitar los tamales el 2 de febrero":"Treat everyone to tamales on February 2","Ir al inicio":"Go home","Ir al panel":"Go to panel","Juego de mesa":"Board game","Kit de jardinería":"Gardening kit","Kit de spa (sales y mascarillas)":"Spa kit (bath salts and masks)","La Independencia":"Independence Day","La foto es muy pesada":"The photo is too large","La opción marcada como correcta está vacía":"The option marked as correct is empty","Le avisamos al organizador":"We'll let the organizer know","Le gusta":"Likes","Libro best seller":"Best-selling book","Link":"Link","Link de coorganizador creado":"Co-organizer link created","Link no válido":"Invalid link","Listo, lo soltaste":"Done, you released it","Lo llevas tú ✓":"You're bringing it ✓","Los 7 Reyes de Oriente":"The 7 Kings of the East","Los 7 días de la semana":"The 7 days of the week","Los 7 pecados capitales":"The 7 deadly sins","Los códigos no coinciden":"The codes don't match","Los romeritos son un clásico de la cena de Nochebuena en el centro de México.":"Romeritos are a Christmas Eve dinner classic in central Mexico.","Lámpara para leer":"Reading lamp","Mandar por WhatsApp":"Send on WhatsApp","Mango":"Mango","Marca ✓ lo que ya compraste. Solo tú lo ves.":"Mark ✓ what you already bought. Only you see it.","Melchor, Gabriel y Baltasar":"Melchior, Gabriel and Balthazar","Melchor, Gaspar y Baltasar":"Melchior, Caspar and Balthazar","Melchor, Gaspar y Baltasar llegan el 6 de enero.":"Melchior, Caspar and Balthazar arrive on January 6.","Mezclan humor, pastores, ángeles y diablos que intentan desviarlos del camino.":"They mix humor, shepherds, angels and devils who try to lead them astray.","Monto":"Amount","No diste permiso de notificaciones. Actívalo en los ajustes del navegador.":"You didn't allow notifications. Turn them on in the browser settings.","No encontramos el intercambio":"We couldn't find the exchange","No olvides tu regalo 🎁":"Don't forget your gift 🎁","No repetir a quien le tocó el año pasado":"Don't repeat last year's match","No se encontró el audio":"Audio not found","No se pudo copiar":"Couldn't copy","No se pudo evitar que dos personas se regalen entre sí con estas exclusiones.":"Couldn't avoid two people giving to each other with these exclusions.","No se pudo evitar repetir todas las parejas del año pasado.":"Couldn't avoid repeating all of last year's pairs.","No se pudo leer la imagen":"Couldn't read the image","No se pudo usar el micrófono. Revisa los permisos.":"Couldn't use the microphone. Check the permissions.","No votaste.":"You didn't vote.","Normal":"Normal","Pagar la rosca":"Pay for the rosca","Pantalla de TV":"TV screen","Pantuflas calientitas":"Cozy slippers","Para":"For","Para cooperar":"Group gift","Participantes":"Participants","Pitaya":"Pitaya (dragon fruit)","Plumones o lápices de colores profesionales":"Professional markers or colored pencils","Pon al menos 2 opciones":"Add at least 2 options","Ponle nombre al intercambio":"Give the exchange a name","Por favor no regalar":"Please don't give","Pozole":"Pozole","Preguntas navideñas de ejemplo":"Sample Christmas questions","Prensa francesa":"French press","Primero haz el sorteo":"Do the draw first","Quitar acceso":"Revoke access","Regalo":"Gift","Regalo para cooperar entre varios":"Gift to chip in for together","🤝 Regalo para cooperar entre varios":"🤝 Gift to chip in for together","Respuesta borrada":"Answer deleted","Restaurar":"Restore","Reto del día: deja (o mejora) tus 3 pistas para tu amigo secreto. ¡Que no sean tan obvias!":"Today's challenge: leave (or improve) your 3 clues for your secret friend. Don't make them too obvious!","Reto del día: revisa tu lista de deseos. ¿Ya llenaste «Ya tengo esto» para que no te regalen algo repetido?":"Today's challenge: check your wish list. Did you fill in “I already have this” so you don't get duplicates?","Reto del día: ¿ya votaste quién crees que es tu Santa? Ve a Mensajes → Mi Santa. ¡En la revelación se verá si le atinaste!":"Today's challenge: have you voted for who you think your Santa is? Go to Messages → My Santa. The reveal will show if you were right!","Romeritos":"Romeritos","Santas ocultos de nuevo":"Santas hidden again","Se borran también los pagos registrados.":"Recorded payments will also be deleted.","Se elimina todo: participantes, listas, mensajes y cena. No se puede deshacer.":"Everything is deleted: participants, lists, messages and dinner. This can't be undone.","Según la tradición, ¿qué representan los 7 picos de la piñata?":"According to tradition, what do the 7 points of the piñata represent?","Si se confirma, quítalo de la lista de participantes antes del sorteo.":"If confirmed, remove them from the participant list before the draw.","Si se confirma, quítalo en «Cambios de último momento» y la app reacomoda su regalo sin descubrir a nadie.":"If confirmed, remove them in “Last-minute changes” and the app rearranges their gift without revealing anyone.","Sin conexión. Revisa tu internet.":"No connection. Check your internet.","Sin intercambios anteriores.":"No previous exchanges.","Sin sorteo.":"No draw.","Sin teléfono":"No phone","Soltar":"Release","Sorteo reiniciado":"Draw restarted","Su link dejará de funcionar.":"Their link will stop working.","Sí, continuar":"Yes, continue","Sí, lo maneja":"Yes, they manage them","Talla de ropa":"Clothing size","Tarjeta de regalo de Amazon o Liverpool":"Amazon or Liverpool gift card","Tejocote":"Tejocote (Mexican hawthorn)","Tu Santa (anónimo)":"Your Santa (anonymous)","Tu Santa necesita ideas para atinarle 😉":"Your Santa needs ideas to get it right 😉","Tu celular no permite compartir imágenes desde aquí: descárgala":"Your phone can't share images from here: download it","Tu navegador no permite música":"Your browser doesn't support music","Tú creías que era otra persona 😅":"You thought it was someone else 😅","UNO o juego de cartas":"UNO or a card game","Un canto para pedir posada":"A song asking for lodging","Un postre de piloncillo":"A piloncillo dessert","Una obra de teatro sobre los pastores que van a Belén":"A play about the shepherds going to Bethlehem","Unir":"Join","Ver dónde comprar":"See where to buy","Voto borrado":"Vote deleted","Ya lo compré":"I bought it","Ya no tengo más ideas para ti 😅":"I'm out of ideas for you 😅","Ya tiene (no repetir)":"Already has (don't repeat)","día":"day","¡Agregado!":"Added!","¡Anotado! 🍽️":"Noted! 🍽️","¡Apartado! 🍽️":"Claimed! 🍽️","¡Feliz Navidad!":"Merry Christmas!","¡Feliz Nochebuena! Gracias por ser parte de este intercambio. Que esta noche esté llena de abrazos, risas y buena comida. 🎁🎄":"Happy Christmas Eve! Thanks for being part of this exchange. May tonight be full of hugs, laughter and good food. 🎁🎄","¡Hoy empiezan las posadas! Son nueve noches, del 16 al 24, que recuerdan a María y José pidiendo posada camino a Belén.":"The posadas start today! Nine nights, from the 16th to the 24th, remembering Mary and Joseph asking for lodging on the way to Bethlehem.","¡Instalada! 🎉":"Installed! 🎉","¡Listo!":"Done!","¡Todos tienen regalo!":"Everyone has a gift!","¿Borrar el intercambio?":"Delete the exchange?","¿Borrar esta cooperación?":"Delete this chip-in?","¿Cuál es el colmo de Santa Claus?\n¡Tenerle miedo a las alturas y trabajar en los techos! 🏠":"What's the irony of Santa Claus?\nBeing afraid of heights and working on rooftops! 🏠","¿Cuál es el colmo de Santa Claus? ¡Tenerle miedo a las alturas y trabajar en los techos! 🏠":"What's the irony of Santa Claus? Being afraid of heights and working on rooftops! 🏠","¿Cómo se llaman los Reyes Magos?":"What are the names of the Three Wise Men?","¿En qué país se cantó por primera vez «Noche de paz» (1818)?":"In which country was “Silent Night” first sung (1818)?","¿Por qué el muñeco de nieve no usa celular?\n¡Porque se le congela la pantalla! 📱":"Why doesn't the snowman use a phone?\nBecause his screen keeps freezing! 📱","¿Por qué el muñeco de nieve no usa celular? ¡Porque se le congela la pantalla! 📱":"Why doesn't the snowman use a phone? Because his screen keeps freezing! 📱","¿Por qué el árbol de Navidad no sabe tejer?\n¡Porque siempre se le caen las agujas! 🧶":"Why can't the Christmas tree knit?\nBecause it always drops its needles! 🧶","¿Por qué el árbol de Navidad no sabe tejer? ¡Porque siempre se le caen las agujas! 🧶":"Why can't the Christmas tree knit? Because it always drops its needles! 🧶","¿Quitar acceso al coorganizador?":"Revoke the co-organizer's access?","¿Qué es una pastorela?":"What is a pastorela?","¿Qué fruta le da su sabor característico al ponche navideño mexicano?":"Which fruit gives Mexican Christmas punch its signature flavor?","¿Qué le dijo el reno a Santa en diciembre?\n—¡Ya llegó mi temporada alta! ✈️":"What did the reindeer tell Santa in December?\n—My peak season is here! ✈️","¿Qué le dijo el reno a Santa en diciembre? —¡Ya llegó mi temporada alta! ✈️":"What did the reindeer tell Santa in December? —My peak season is here! ✈️","¿Qué le toca hacer a quien encuentra el muñequito en la Rosca de Reyes?":"What does whoever finds the baby figurine in the Rosca de Reyes have to do?","¿Qué platillo navideño lleva unas hierbas parecidas al romero, mole y tortitas de camarón?":"Which Christmas dish has rosemary-like greens, mole and shrimp patties?","¿Qué se celebra en México el 12 de diciembre?":"What is celebrated in Mexico on December 12?","¿Restaurar este respaldo?":"Restore this backup?","Úsalo si olvidó el código que eligió. Después mándale de nuevo su link por WhatsApp.":"Use it if they forgot the code they chose. Then send them their link on WhatsApp again.","♻️ ¡Restaurado!":"♻️ Restored!","⚠️ Falta crear la función «push» en Supabase":"⚠️ The “push” function still needs to be created in Supabase","✓ Pagó":"✓ Paid","❌ Esta no la atinaste":"❌ You missed this one","🎉 ¡Hoy es el intercambio (o ya pasó)!":"🎉 The exchange is today (or already happened)!","🎯 ¡Le atinaste!":"🎯 You got it right!","🎯 ¡Y le atinaste!":"🎯 And you got it right!","👉 Agrégala aquí (tarda 2 minutos):":"👉 Add it here (takes 2 minutes):","📸 ¡Foto en el álbum!":"📸 Photo in the album!","📸 ¡Foto lista!":"📸 Photo ready!","🔐 Tu código: el que tú elegiste 🔒":"🔐 Your code: the one you chose 🔒","🔑 Nuevo código":"🔑 New code","🔒 Ese intercambio no se reveló, así que sigue en secreto.":"🔒 That exchange wasn't revealed, so it stays secret.","🔔 Este celular recibirá avisos":"🔔 This phone will get alerts","🔔 Notificación enviada":"🔔 Notification sent","🔔 ¡Listo! Te avisaré aquí":"🔔 Done! I'll alert you here","🤫 ¡Es secreto!":"🤫 It's a secret!","🤫 ¡Es secreto, no se lo enseñes a nadie!":"🤫 It's a secret, don't show it to anyone!","Romper la piñata simboliza vencer al mal; los dulces son la recompensa.":"Breaking the piñata symbolizes defeating evil; the candy is the reward.","Se estrenó en Oberndorf, Austria; música de Franz Xaver Gruber y letra de Joseph Mohr.":"It premiered in Oberndorf, Austria; music by Franz Xaver Gruber and lyrics by Joseph Mohr.","Es una de las fiestas más grandes del país; millones visitan la Basílica de Guadalupe.":"It's one of the country's biggest celebrations; millions visit the Basilica of Guadalupe.","Tú":"You","Jugadores:":"Players:","en el orden de la ruleta":"in wheel order","orden al azar (o gira primero la ruleta)":"random order (or spin the wheel first)","Se mandan solos":"Sent automatically","ya pasó":"already passed","¡hoy!":"today!","✓ notificación enviada":"✓ notification sent","✓ Activadas":"✓ On","sin monto":"no amount","Sorteo":"Draw","TV":"TV","Alguien más ya lo va a llevar":"Someone else is already bringing it","Alguno de los dos ya es pareja":"One of them is already part of a couple","Algunos participantes ya existen en esta base de datos":"Some participants already exist in this database","Aún no hay sorteo":"There's no draw yet","Aún no hay sorteo: usa «Agregar» normal":"No draw yet: use the regular “Add”","Aún no hay sorteo: usa «Quitar» normal":"No draw yet: use the regular “Remove”","Cada categoría necesita nombre":"Each category needs a name","Categoría inválida":"Invalid category","Código de organizador inválido":"Invalid organizer code","Código incorrecto":"Wrong code","Datos inválidos":"Invalid data","Deben quedar al menos 3 personas":"At least 3 people must remain","Destino inválido":"Invalid recipient","Día inválido":"Invalid day","El audio no es válido o es muy largo":"The audio is invalid or too long","El código debe ser de 4 números":"The code must be 4 numbers","El responsable debe ser alguien del intercambio que use su propio celular":"The manager must be someone in the exchange who uses their own phone","El sorteo ya se hizo":"The draw is already done","El sorteo ya se hizo. Reinícialo para cambiar exclusiones.":"The draw is already done. Restart it to change exclusions.","El sorteo ya se hizo. Reinícialo para quitar personas.":"The draw is already done. Restart it to remove people.","El sorteo ya se hizo. Usa «Cambios de último momento».":"The draw is already done. Use “Last-minute changes”.","El sorteo ya se hizo: reinícialo para cambiar de categoría":"The draw is already done: restart it to change category","El sorteo ya se hizo: reinícialo para cambiar las categorías":"The draw is already done: restart it to change the categories","El sorteo ya se hizo: reinícialo para unir parejas":"The draw is already done: restart it to join couples","El álbum está lleno (300 fotos)":"The album is full (300 photos)","Elige a otra persona del intercambio":"Choose another person in the exchange","En el sorteo ya les tocó regalarse entre ellos. Reinicia el sorteo para asignar ese responsable.":"They already got each other in the draw. Restart the draw to assign that manager.","Ese platillo ya no existe":"That dish no longer exists","Ese regalo ya no está disponible para cooperar":"That gift is no longer open for chipping in","Esta persona ya administra a alguien más; no puede estar a cargo de otro":"This person already manages someone else; they can't be in charge of another","Este intercambio ya existe en esta base de datos":"This exchange already exists in this database","La foto de perfil es muy pesada":"The profile photo is too large","La foto no es válida o es muy pesada":"The photo is invalid or too large","Link inválido. Pide al organizador que te lo reenvíe.":"Invalid link. Ask the organizer to send it again.","Los Santas ya se revelaron":"The Santas have already been revealed","Marca la respuesta correcta":"Mark the correct answer","Máximo 10 cooperaciones":"Maximum 10 chip-ins","Máximo 15 deseos":"Maximum 15 wishes","Máximo 15 fotos por persona":"Maximum 15 photos per person","Máximo 50 preguntas":"Maximum 50 questions","Máximo 6 categorías":"Maximum 6 categories","Máximo 60 participantes":"Maximum 60 participants","Máximo 60 platillos":"Maximum 60 dishes","No se pudo reacomodar con las exclusiones actuales. Quita alguna o reinicia el sorteo.":"Couldn't rearrange with the current exclusions. Remove one or restart the draw.","Opciones inválidas":"Invalid options","Participante no encontrado":"Participant not found","Participantes inválidos":"Invalid participants","Pista inválida":"Invalid clue","Pon cuánto le toca a cada quien":"Set how much each person pays","Pon de 2 a 4 opciones":"Add 2 to 4 options","Primero revela los Santas":"Reveal the Santas first","Respuesta inválida":"Invalid answer","Se necesitan al menos 3 participantes":"At least 3 participants are needed","Solo el organizador principal puede hacer esto":"Only the main organizer can do this","Suscripción inválida":"Invalid subscription","Tipo inválido":"Invalid type","Una persona no puede ser su propio responsable":"A person can't be their own manager","Una persona sin celular no puede unirse en pareja":"A person without a phone can't be joined as a couple"}/*FIN*/,
+  pats: /*PATS*/[
+  [/^(\d+) de (\d+)$/, '$1 of $2'],
+  [/^(\d+) personas?$/, (m, n) => n + (n === '1' ? ' person' : ' people')],
+  [/^(\d+) de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)$/, (m, d, mes) => I18N.mes(mes) + ' ' + d],
+  [/^(\d+) preguntas? escritas? por el organizador$/, (m, n) => n + (n === '1' ? ' question' : ' questions') + ' written by the organizer'],
+  [/^(\d+) preguntas? · por equipos$/, (m, n) => n + (n === '1' ? ' question' : ' questions') + ' · in teams'],
+  [/^(\d+) equipos$/, '$1 teams'],
+  [/^(\d+) veces$/, '$1 times'],
+  [/^Tu Santa \(anónimo\) · (.+)$/, 'Your Santa (anonymous) · $1'],
+  [/^Tú · (.+)$/, 'You · $1'],
+  [/^Adultos · (.+)$/, 'Adults · $1'],
+  [/^Niños · (.+)$/, 'Kids · $1'],
+  [/^Correcta: (.+)$/, 'Correct: $1'],
+  [/^El Santa de (.+) es…$/, '$1\'s Santa is…'],
+  [/^Hola, (.+) 👋$/, 'Hi, $1 👋'],
+  [/^Jugadores: (\d+) · primero el orden de la ruleta \((\d+)\), luego los demás al azar$/, 'Players: $1 · wheel order first ($2), then the rest at random'],
+  [/^Jugadores: (\d+) · en el orden de la ruleta$/, 'Players: $1 · in wheel order'],
+  [/^Jugadores: (\d+) · orden al azar \(o gira primero la ruleta\)$/, 'Players: $1 · random order (or spin the wheel first)'],
+  [/^Máx\. (\d+) robos?$/, (m, n) => 'Max. ' + n + (n === '1' ? ' steal' : ' steals')],
+  [/^Para (.+) · ≈ (.+)$/, 'For $1 · ≈ $2'],
+  [/^Para (.+): (.+)$/, 'For $1: $2'],
+  [/^Pregunta (\d+) de (\d+)$/, 'Question $1 of $2'],
+  [/^Recuerda: el monto es de (.+)\.$/, 'Remember: the amount is $1.'],
+  [/^Respeta el monto de (.+)\.$/, 'Stick to the amount of $1.'],
+  [/^Se copian (\d+) personas, sus tallas y gustos, y las exclusiones\. Cada quien tendrá link y código nuevos\. Las listas de deseos empiezan vacías\.$/, '$1 people are copied, with their sizes, likes and exclusions. Everyone gets a new link and code. Wish lists start empty.'],
+  [/^Se lleva (.+) de (.+)$/, '$1 of $2 collected'],
+  [/^Se sortea entre (\d+) personas\. Después ya no podrás agregar ni quitar gente \(a menos que reinicies\)\.$/, 'The draw is among $1 people. After that you can\'t add or remove people (unless you restart).'],
+  [/^Somos (\d+) en el intercambio\. Cuando el organizador sortee, aquí verás a quién le regalas\.$/, 'There are $1 of us in the exchange. When the organizer does the draw, you\'ll see here who you\'re giving to.'],
+  [/^Te toca (.+)$/, 'Your share: $1'],
+  [/^(.+) c\/u$/, '$1 each'],
+  [/^Avisar a (.+)$/, 'Notify $1'],
+  [/^(.+) maneja a otra persona, así que usa su propio celular\.$/, '$1 manages someone else, so they use their own phone.'],
+  [/^de (.+) · (\d+)\/(\d+) pagaron$/, 'of $1 · $2/$3 paid'],
+  [/^de (.+)$/, 'of $1'],
+  [/^(.+) · faltan (\d+) días?$/, (m, f, n) => f + ' · ' + n + (n === '1' ? ' day left' : ' days left')],
+  [/^(.+) · ya pasó$/, '$1 · already passed'],
+  [/^vía (.+)$/, 'via $1'],
+  [/^y aparecerá en la TV y en el celular de (.+) hasta la revelación\.$/, 'and will show on the TV and on $1\'s phone until the reveal.'],
+  [/^· se ve el (.+)$/, '· visible on $1'],
+  [/^¿Quitar a (.+)\?$/, 'Remove $1?'],
+  [/^⏳ (\d+) sin responder$/, '⏳ $1 unanswered'],
+  [/^⚠️ Cuesta más que el monto \((.+)\)\. Tu Santa podría buscar algo parecido\.$/, '⚠️ It costs more than the amount ($1). Your Santa might look for something similar.'],
+  [/^✅ (\d+) van?$/, '✅ $1 going'],
+  [/^❌ (\d+) no van?$/, '❌ $1 not going'],
+  [/^🤔 (\d+) tal vez$/, '🤔 $1 maybe'],
+  [/^🎁 (\d+) deseos?$/, (m, n) => '🎁 ' + n + (n === '1' ? ' wish' : ' wishes')],
+  [/^🎁 (\d+) por abrir$/, '🎁 $1 to open'],
+  [/^(🎁 )?Regalo #(\d+)$/, '$1Gift #$2'],
+  [/^🎲 Agregué: (.+)$/, '🎲 Added: $1'],
+  [/^👀 Mostrar respuesta \((\d+)\)$/, '👀 Show answer ($1)'],
+  [/^👀 Sin ver resultado \((\d+)\)$/, '👀 Haven\'t seen result ($1)'],
+  [/^💡 Ideas para (.+)$/, '💡 Ideas for $1'],
+  [/^💰 Monto: (.+)$/, '💰 Amount: $1'],
+  [/^📅 Sin confirmar \((\d+)\)$/, '📅 Not confirmed ($1)'],
+  [/^📝 Sin lista \((\d+)\)$/, '📝 No list ($1)'],
+  [/^🕵️ (\d+) de (\d+) votaron por su Santa$/, '🕵️ $1 of $2 voted for their Santa'],
+  [/^🕵️ Tus pistas para (.+)$/, '🕵️ Your clues for $1'],
+  [/^Intercambio Navideño · v(.+)$/, 'Christmas Gift Exchange · v$1'],
+  [/^¡Tu Santa fue (.+)!$/, 'Your Santa was $1!'],
+  [/^(.+) le robó «(.+)» a (.+?)( 🧊 ¡y quedó congelado!)?$/, (m, a, r, b, c) => a + ' stole “' + r + '” from ' + b + (c ? ' 🧊 and it\'s frozen!' : '')],
+  [/^🎯 ¡(.+) le atinó!$/, '🎯 $1 got it right!'],
+  [/^😅 (.+) creía que era (.+)$/, '😅 $1 thought it was $2'],
+  [/^Gracias por participar en (.+)$/, 'Thanks for taking part in $1'],
+  [/^(\d+) fotos? en presentación$/, (m, n) => n + (n === '1' ? ' photo' : ' photos') + ' in the slideshow'],
+  [/^(.+) entró al intercambio$/, '$1 joined the exchange'],
+  [/^(.+) salió del intercambio$/, '$1 left the exchange'],
+  [/^¿Darle un código nuevo a (.+)\?$/, 'Give $1 a new code?'],
+  [/^¿Unir a (.+) y (.+)\?$/, 'Join $1 and $2?'],
+  [/^Quedarán como «(.+)» con el link y código de (.+)\. Las listas de deseos se juntan\.$/, 'They\'ll become “$1” with $2\'s link and code. Wish lists are merged.'],
+  [/^Se creará el intercambio «(.*)» con los mismos links y códigos de todos\.$/, 'The exchange “$1” will be created with everyone\'s same links and codes.'],
+  [/^La pista (\d+) se desbloquea el$/, 'Clue $1 unlocks on'],
+  [/^Según sus gustos y el monto\. Precios aproximados\.$/, 'Based on their likes and the amount. Approximate prices.'],
+  [/^Según sus gustos\. Precios aproximados\.$/, 'Based on their likes. Approximate prices.'],
+  [/^Según lo más popular\. Precios aproximados\.$/, 'Based on what\'s most popular. Approximate prices.'],
+  [/^⚠️ (\d+) persona\(s\) sin categoría: se sortean juntas con el monto general \((.+)\)\. Asígnales una con «Editar»\.$/, '⚠️ $1 person(s) without a category: they are drawn together with the general amount ($2). Assign one with “Edit”.'],
+  [/^Empieza el$/, 'It starts on'],
+  [/^· faltan (\d+) días?\. Cada día se abre una casilla con trivia, dato curioso, chiste o reto\.$/, (m, n) => '· ' + n + (n === '1' ? ' day' : ' days') + ' left. A new box opens every day with trivia, a fun fact, a joke or a challenge.'],
+  [/^\. Cada día se abre una casilla con trivia, dato curioso, chiste o reto\.$/, '. A new box opens every day with trivia, a fun fact, a joke or a challenge.'],
+  [/^No se pudo acomodar a (.+) con las exclusiones o categorías actuales$/, 'Couldn\'t place $1 with the current exclusions or categories'],
+  [/^No se pudo hacer el sorteo con esas exclusiones(.*)\. Quita alguna e intenta de nuevo\.$/, (m, x) => 'Couldn\'t do the draw with those exclusions' + (x ? ' and categories' : '') + '. Remove one and try again.'],
+  [/^La categoría «(.+)» necesita al menos 2 personas$/, 'The category “$1” needs at least 2 people'],
+  [/^(.+) maneja la cuenta de otra persona\. Primero asígnale otro responsable \(botón Editar\)\.$/, '$1 manages another person\'s account. First assign them another manager (Edit button).'],
+  [/^Elige 4 números fáciles de recordar para ti \(es el código de (.+)\)$/, 'Choose 4 numbers that are easy for you to remember (it\'s $1\'s code)'],
+  [/^(\d+) participantes$/, '$1 participants'],
+  [/^Error del servidor \((\d+)\)$/, 'Server error ($1)'],
+  [/^(\d+) días?$/, (m, n) => n + (n === '1' ? ' day' : ' days')],
+  [/^Día (\d+)$/, 'Day $1'],
+  [/^(\d+) pagaron$/, '$1 paid']
+]/*FIN*/,
+  mes(m){ return {enero:'January',febrero:'February',marzo:'March',abril:'April',mayo:'May',junio:'June',julio:'July',agosto:'August',septiembre:'September',octubre:'October',noviembre:'November',diciembre:'December'}[m] || m; },
+  t(s){ return this.lang === 'en' ? this.tr(String(s)) : s; },
+  tr(s){
+    const k = s.trim().replace(/[ \t]*\n[ \t]*/g, '\n').replace(/[ \t]{2,}/g, ' '); if (!k) return s;
+    let en = this.dict[k];
+    if (en === undefined && k.includes('\n')) en = this.dict[k.replace(/\s+/g, ' ')];
+    if (en === undefined){
+      for (const [re, f] of this.pats){ const m = k.match(re); if (m){ en = typeof f === 'function' ? f(...m) : k.replace(re, f); break; } }
+    }
+    if (en === undefined){ if (/[a-záéíóúñ¿¡]/i.test(k) && !/^[\w.+-]+@/.test(k)) this.faltan.add(k); return s; }
+    const ini = s.match(/^\s*/)[0], fin = s.match(/\s*$/)[0];
+    return ini + en + fin;
+  },
+  texto(n){ if (n.nodeValue && n.nodeValue.trim()){ const v = this.tr(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; } },
+  nodo(root){
+    if (!root) return;
+    if (root.nodeType === 3){ if (!this.salta(root.parentNode)) this.texto(root); return; }
+    if (root.nodeType !== 1 || this.salta(root)) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => this.salta(n.parentNode) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT});
+    let n; while ((n = w.nextNode())) this.texto(n);
+    const attrs = el => ['placeholder','title','aria-label'].forEach(a => { const v = el.getAttribute && el.getAttribute(a); if (v){ const t = this.tr(v); if (t !== v) el.setAttribute(a, t); } });
+    attrs(root); root.querySelectorAll('[placeholder],[title],[aria-label]').forEach(attrs);
+  },
+  salta(el){ return !el || (el.nodeType === 1 && (/^(SCRIPT|STYLE|TEXTAREA)$/.test(el.tagName) || (el.closest && el.closest('[data-notr]')))); },
+  cambiar(l){
+    this.lang = l === 'en' ? 'en' : 'es';
+    document.documentElement.lang = this.lang === 'en' ? 'en' : 'es-MX';
+    if (this.lang === 'en'){
+      document.title = 'Christmas Gift Exchange';
+      if (!this.obs) this.obs = new MutationObserver(ms => {
+        this.obs.disconnect();
+        for (const m of ms){ if (m.type === 'characterData') this.texto(m.target); else m.addedNodes.forEach(x => this.nodo(x)); }
+        this.obs.observe(document.body, {childList: true, subtree: true, characterData: true});
+      });
+      this.nodo(document.body);
+      this.obs.observe(document.body, {childList: true, subtree: true, characterData: true});
+    } else if (this.obs) this.obs.disconnect();
+  }
+};
+
 /* ============================ UTILIDADES ============================ */
 const $ = s => document.querySelector(s);
 const app = $('#app');
@@ -322,19 +512,34 @@ function toast(msg, err){
   const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : '');
   clearTimeout(toast._t); toast._t = setTimeout(() => t.className = 'toast', 2800);
 }
+const LOC = l => (l || I18N.lang) === 'en' ? 'en-US' : 'es-MX';
 function money(n, cur){
   if (n === null || n === undefined || n === '') return '';
-  return new Intl.NumberFormat('es-MX', {style:'currency', currency: cur || 'MXN', maximumFractionDigits: Number(n) % 1 ? 2 : 0}).format(n);
+  return new Intl.NumberFormat(LOC(), {style:'currency', currency: cur || 'MXN', currencyDisplay:'narrowSymbol', maximumFractionDigits: Number(n) % 1 ? 2 : 0}).format(n);
 }
-function fechaLarga(iso){
+function fechaLarga(iso, l){
   if (!iso) return '';
   const d = new Date(iso);
-  const s = d.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  const h = d.toLocaleTimeString('es-MX', {hour:'numeric', minute:'2-digit'});
+  const s = d.toLocaleDateString(LOC(l), {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const h = d.toLocaleTimeString(LOC(l), {hour:'numeric', minute:'2-digit'});
   return s.charAt(0).toUpperCase() + s.slice(1) + ' · ' + h;
 }
-function fechaCorta(iso){ return new Date(iso).toLocaleDateString('es-MX', {weekday:'short', day:'numeric', month:'short'}); }
-function hora(iso){ const d = new Date(iso); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit'}); }
+function fechaCorta(iso){ return new Date(iso).toLocaleDateString(LOC(), {weekday:'short', day:'numeric', month:'short'}); }
+function hora(iso){ const d = new Date(iso); return d.toLocaleDateString(LOC(),{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString(LOC(),{hour:'numeric',minute:'2-digit'}); }
+function descargar(texto, nombre, tipo){
+  const url = URL.createObjectURL(new Blob([texto], {type: tipo})); const a = document.createElement('a');
+  a.href = url; a.download = nombre; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function reducirAvatar(file){
+  return new Promise((ok, mal) => {
+    if (!file || !/^image\//.test(file.type)) return mal(new Error('Elige una imagen'));
+    const fr = new FileReader(); fr.onload = () => { const img = new Image(); img.onload = () => {
+      const lado = Math.min(img.width, img.height), c = document.createElement('canvas'); c.width = c.height = 220;
+      c.getContext('2d').drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, 220, 220);
+      ok(c.toDataURL('image/jpeg', .8)); }; img.onerror = () => mal(new Error('No se pudo leer la imagen')); img.src = fr.result; };
+    fr.readAsDataURL(file);
+  });
+}
 function toLocalInput(iso){
   if (!iso) return '';
   const d = new Date(iso); const p = n => String(n).padStart(2,'0');
@@ -391,11 +596,11 @@ function snow(){
   }
 }
 function aplicarTema(t){
-  const trabajo = t === 'trabajo';
-  document.body.classList.toggle('trabajo', trabajo);
-  document.querySelector('meta[name=theme-color]').setAttribute('content', trabajo ? '#0e1726' : '#0d2418');
+  document.body.classList.toggle('trabajo', t === 'trabajo');
+  document.body.classList.toggle('posada', t === 'posada');
+  document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'trabajo' ? '#0e1726' : t === 'posada' ? '#3a0d3f' : '#0d2418');
 }
-const palabra = t => t === 'trabajo' ? {gente:'tus compañeros', grupo:'el equipo', ico:'🎁'} : {gente:'la familia', grupo:'la familia', ico:'🎄'};
+const palabra = t => t === 'trabajo' ? {gente:'tus compañeros', grupo:'el equipo', ico:'🎁'} : t === 'posada' ? {gente:'la familia', grupo:'la familia', ico:'🪅'} : {gente:'la familia', grupo:'la familia', ico:'🎄'};
 
 /* Conserva lo que el usuario está escribiendo cuando la pantalla se actualiza sola */
 function conservar(fn){
@@ -460,6 +665,98 @@ function enlazarInstalar(){
   if (no) no.onclick = () => { store.set('ix_inst_no', true); const b = si.closest('.banner'); if (b) b.remove(); };
 }
 
+/* ============================ AJUSTES DEL DISPOSITIVO ============================ */
+const Ajustes = {
+  get(){ return Object.assign({lang: (navigator.language || 'es').toLowerCase().startsWith('es') ? 'es' : 'en', modo: 'clasico', sonidos: false, nieve: true}, store.get('ix_ajustes', {})); },
+  set(c){ store.set('ix_ajustes', Object.assign(this.get(), c)); this.aplicar(); },
+  aplicar(){
+    const a = this.get();
+    document.body.classList.toggle('oscuro', a.modo === 'oscuro');
+    document.body.classList.toggle('claro', a.modo === 'claro');
+    I18N.cambiar(a.lang);
+  }
+};
+const L = () => I18N.lang === 'en' ? 'en-US' : 'es-MX';
+
+/* Nieve (o confeti en Posada) al tocar el fondo, y sonido suave en los botones */
+document.addEventListener('pointerdown', e => {
+  const a = Ajustes.get();
+  if (a.sonidos && e.target.closest && e.target.closest('.btn, .iconbtn, .nav button, .chk, .star')) Musica.efecto('clic');
+  if (!a.nieve || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (e.target.closest && e.target.closest('button, a, input, textarea, select, label, .card, .modal, .nav, .tv, canvas, img')) return;
+  const posada = document.body.classList.contains('posada');
+  const cols = ['#e4007c','#ffb300','#00a99d','#ff6d00','#7b1fa2'];
+  for (let i = 0; i < 12; i++){
+    const f = document.createElement('span'); f.className = 'chispa';
+    f.textContent = posada ? '✦' : ['❄','❅','✦'][i % 3];
+    if (posada) f.style.color = cols[i % cols.length];
+    f.style.left = e.clientX + 'px'; f.style.top = e.clientY + 'px';
+    document.body.appendChild(f);
+    const ang = Math.random() * Math.PI * 2, d = 40 + Math.random() * 70;
+    f.animate([{transform: 'translate(-50%,-50%) scale(1)', opacity: 1},
+               {transform: `translate(calc(-50% + ${Math.cos(ang) * d}px), calc(-50% + ${Math.sin(ang) * d + 40}px)) scale(.4) rotate(${Math.random() * 360}deg)`, opacity: 0}],
+              {duration: 900 + Math.random() * 500, easing: 'cubic-bezier(.2,.7,.4,1)'}).onfinish = () => f.remove();
+  }
+});
+
+/* ============================ NOTIFICACIONES (Web Push) ============================ */
+const Push = {
+  soportado(){ return !!PUSH_PUBLIC_KEY && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; },
+  esIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); },
+  necesitaInstalar(){ return this.esIOS() && !esApp(); },
+  async registro(){ return navigator.serviceWorker.register('sw.js'); },
+  clave(){ const b = PUSH_PUBLIC_KEY.replace(/-/g, '+').replace(/_/g, '/'); const r = atob(b + '==='.slice((b.length + 3) % 4)); return Uint8Array.from(r, c => c.charCodeAt(0)); },
+  async activo(){
+    if (!this.soportado() || Notification.permission !== 'granted') return false;
+    try{ const reg = await navigator.serviceWorker.getRegistration(); return !!(reg && await reg.pushManager.getSubscription()); }catch(e){ return false; }
+  },
+  async suscribir(){
+    if (!this.soportado()) throw new Error('Este navegador no permite notificaciones');
+    if (this.necesitaInstalar()) throw new Error('En iPhone primero instala la app (Compartir → Agregar a inicio) y ábrela desde su ícono');
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') throw new Error('No diste permiso de notificaciones. Actívalo en los ajustes del navegador.');
+    const reg = await this.registro(); await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: this.clave()});
+    return sub.toJSON();
+  },
+  avisar(datos){
+    if (!PUSH_PUBLIC_KEY) return;
+    fetch(SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/push', {method: 'POST', headers: {'Content-Type': 'application/json', apikey: SUPABASE_KEY}, body: JSON.stringify(datos)})
+      .then(r => r.json()).then(r => { if (datos.tipo === 'prueba') toast(r.error ? '⚠️ ' + r.error : (r.enviados ? '🔔 Prueba enviada' : '⚠️ No hay celulares registrados'), !!r.error); })
+      .catch(() => { if (datos.tipo === 'prueba') toast('⚠️ Falta crear la función «push» en Supabase', true); });
+  }
+};
+if ('serviceWorker' in navigator && PUSH_PUBLIC_KEY) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+/* ============================ AUDIOS ANÓNIMOS (voz distorsionada en el celular) ============================ */
+const Audio8 = {
+  efectos: [['ardilla','🐿️','Ardilla'],['robot','🤖','Robot'],['grave','🐻','Grave'],['normal','🙂','Normal']],
+  async procesar(blob, efecto){
+    const AC = window.AudioContext || window.webkitAudioContext; const ctx = new AC();
+    const ab = await blob.arrayBuffer();
+    const buf = await new Promise((ok, mal) => ctx.decodeAudioData(ab, ok, mal));
+    ctx.close && ctx.close();
+    const tasa = {ardilla: 1.5, grave: .72, robot: 1.05, normal: 1}[efecto] || 1, sr = 11025;
+    const off = new OfflineAudioContext(1, Math.ceil(buf.duration / tasa * sr) + sr / 10, sr);
+    const src = off.createBufferSource(); src.buffer = buf; src.playbackRate.value = tasa;
+    if (efecto === 'robot'){
+      const g = off.createGain(); g.gain.value = 0; const o = off.createOscillator(); o.frequency.value = 55; o.connect(g.gain); o.start();
+      src.connect(g); g.connect(off.destination);
+    } else src.connect(off.destination);
+    src.start();
+    const out = (await off.startRendering()).getChannelData(0);
+    let max = 0; for (let i = 0; i < out.length; i++) max = Math.max(max, Math.abs(out[i]));
+    const k = max > 0 ? .95 / max : 1;
+    const n = out.length, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = (o, t) => { for (let i = 0; i < t.length; i++) b[o + i] = t.charCodeAt(i); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, n, true);
+    for (let i = 0; i < n; i++) b[44 + i] = Math.max(0, Math.min(255, Math.round(out[i] * k * 127 + 128)));
+    let s = ''; for (let i = 0; i < b.length; i += 8192) s += String.fromCharCode.apply(null, b.subarray(i, i + 8192));
+    return 'data:audio/wav;base64,' + btoa(s);
+  }
+};
+
 /* ============================ CONFETI ============================ */
 function confeti(n = 160){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -522,6 +819,10 @@ const Musica = {
   pintar(){ const f = $('#fab'); f.classList.toggle('on', this.on); f.textContent = this.on ? '🔊' : '🎵'; },
   efecto(tipo){
     if (!this.iniciar()) return; const c = this.ctx; c.resume(); const t = c.currentTime;
+    if (tipo === 'clic'){
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = 880;
+      g.gain.setValueAtTime(.25, t); g.gain.exponentialRampToValueAtTime(.001, t + .08); o.connect(g); g.connect(this.master); o.start(t); o.stop(t + .09); return;
+    }
     if (tipo === 'redoble'){
       const len = 2.2, buf = c.createBuffer(1, c.sampleRate*len, c.sampleRate), d = buf.getChannelData(0);
       for (let i = 0; i < d.length; i++){ const s = i / c.sampleRate; d[i] = (Math.random()*2-1) * (.35 + .65*Math.abs(Math.sin(s*Math.PI*22))) * (s/len*.8 + .2); }
@@ -637,8 +938,33 @@ async function hacer(btn, fn){
   finally{ if (btn) btn.disabled = false; }
 }
 
+/* ============================ VENTANA DE AJUSTES ============================ */
+function abrirAjustes(ctx = {}){
+  const a = Ajustes.get();
+  const grupo = (clave, ops) => `<div class="opciones">${ops.map(([v, t]) => `<button data-aj="${clave}" data-v="${v}" class="${String(a[clave]) === String(v) ? 'on' : ''}">${t}</button>`).join('')}</div>`;
+  const r = modal(`<h2>⚙️ Ajustes</h2>
+    <div class="ajuste"><b>🌐 Idioma</b>${grupo('lang', [['es','🇲🇽 Español'],['en','🇺🇸 English']])}</div>
+    <div class="ajuste"><b>🎨 Apariencia</b>${grupo('modo', [['clasico','Clásico'],['oscuro','🌙 Oscuro'],['claro','☀️ Claro']])}</div>
+    <div class="ajuste"><b>🔊 Sonidos al tocar</b>${grupo('sonidos', [[true,'Sí'],[false,'No']])}</div>
+    <div class="ajuste"><b>❄️ Nieve al tocar el fondo</b>${grupo('nieve', [[true,'Sí'],[false,'No']])}</div>
+    ${ctx.push ? `<div class="ajuste"><b>🔔 Notificaciones</b><span id="ajPush"><button class="btn xs oro" id="ajPushBtn">Activar</button></span></div>` : ''}
+    <button class="btn ghost full mt" data-x="ok">Listo</button>`);
+  r.querySelectorAll('[data-aj]').forEach(b => b.onclick = () => {
+    const k = b.dataset.aj; let v = b.dataset.v; if (v === 'true') v = true; if (v === 'false') v = false;
+    Ajustes.set({[k]: v});
+    if (k === 'lang'){ closeModal(); Promise.resolve(ctx.onLang ? ctx.onLang(v) : null).finally(() => location.reload()); return; }
+    closeModal(); abrirAjustes(ctx); if (ctx.onCambio) ctx.onCambio();
+  });
+  r.querySelector('[data-x=ok]').onclick = () => { closeModal(); if (ctx.onCambio) ctx.onCambio(); };
+  if (ctx.push){
+    Push.activo().then(on => { const s = document.getElementById('ajPush'); if (s && on) s.innerHTML = '<span class="chip ok">✓ Activadas</span>'; });
+    const pb = document.getElementById('ajPushBtn'); if (pb) pb.onclick = () => hacer(pb, async () => { await ctx.push(); closeModal(); abrirAjustes(ctx); });
+  }
+}
+
 /* ============================ RUTEO ============================ */
 function arrancar(){
+  Ajustes.aplicar();
   snow();
   if (!configurado) return vistaConfig();
   if (params.get('tv')) return TV.iniciar(params.get('tv'));
@@ -665,7 +991,7 @@ function vistaInicio(){
   app.innerHTML = `
   <div class="hero">
     <img class="logo" src="icon-512.png" alt="">
-    <h1>Intercambio <em>Navideño</em></h1>
+    <h1 data-notr>${I18N.lang === 'en' ? 'Christmas <em>Gift Exchange</em>' : 'Intercambio <em>Navideño</em>'}</h1>
     <p>Sorteo secreto, lista de deseos y todo por WhatsApp</p>
   </div>
   <div class="card ribbon">
@@ -680,8 +1006,17 @@ function vistaInicio(){
     <h2>📩 ¿Te invitaron?</h2>
     <p class="muted mt0">Abre el link que te llegó por WhatsApp y escribe tu código de 4 dígitos.</p>
   </div>
-  <a class="btn ghost full" style="color:#fff;border-color:rgba(255,255,255,.25)" href="?ayuda">📖 ¿Cómo funciona?</a>
+  <div class="row wrapr"><a class="btn ghost grow" style="color:#fff;border-color:rgba(255,255,255,.25)" href="?ayuda">📖 ¿Cómo funciona?</a>
+  <button class="btn ghost grow" style="color:#fff;border-color:rgba(255,255,255,.25)" id="hAjustes">⚙️ Ajustes</button></div>
+  <div class="center mt"><span class="btn xs ghost filebtn" style="color:#fff;border-color:rgba(255,255,255,.2)">♻️ Restaurar un respaldo<input type="file" accept=".json,application/json" id="hRestaurar"></span></div>
   ${pie()}`;
+  $('#hAjustes').onclick = () => abrirAjustes({onCambio: () => vistaInicio()});
+  const hr = $('#hRestaurar'); hr.onchange = () => hacer(null, async () => {
+    const txt = await hr.files[0].text(); let datos; try{ datos = JSON.parse(txt); }catch(e){ throw new Error('Ese archivo no es un respaldo válido'); }
+    if (!await confirmar('¿Restaurar este respaldo?', 'Se creará el intercambio «' + esc((datos.grupo || {}).nombre || '') + '» con los mismos links y códigos de todos.', 'Restaurar', 'verde')) return;
+    const r = await rpc('ix_restaurar', {p_datos: datos}); guardarMio(r.admin_code, r.nombre, (datos.grupo || {}).tema); toast('♻️ ¡Restaurado!');
+    location.href = '?admin=' + r.admin_code;
+  });
 }
 
 function formGrupo(g = {}){
@@ -693,6 +1028,7 @@ function formGrupo(g = {}){
     <select id="f_tema">
       <option value="familia" ${tema === 'familia' ? 'selected' : ''}>🎄 Familia · navideño clásico</option>
       <option value="trabajo" ${tema === 'trabajo' ? 'selected' : ''}>💼 Trabajo · elegante y sobrio</option>
+      <option value="posada" ${tema === 'posada' ? 'selected' : ''}>🪅 Posada mexicana · colorida</option>
     </select>
     <label>Monto del regalo (MXN)</label>
     <input id="f_monto" type="number" inputmode="decimal" min="0" step="50" placeholder="Ej. 500" value="${esc(g.monto ?? '')}">
@@ -795,8 +1131,9 @@ const Admin = {
   linkPart(p){ return BASE + '?p=' + p.token; },
   encabezado(){
     const g = this.d.grupo, w = palabra(g.tema), l = [];
-    if (g.monto) l.push(`💰 Monto: ${money(g.monto, g.moneda)}`);
-    if (g.fecha) l.push(`📅 ${fechaLarga(g.fecha)}`);
+    const m = this._p ? this.montoDe(this._p) : g.monto;
+    if (m) l.push(`💰 Monto: ${money(m, g.moneda)}`);
+    if (g.fecha) l.push(`📅 ${fechaLarga(g.fecha, 'es')}`);
     if (g.lugar) l.push(`📍 ${g.lugar}`);
     return {w, l};
   },
@@ -804,8 +1141,9 @@ const Admin = {
   resp(p){ return p && p.responsable_id ? this.d.participantes.find(x => x.id === p.responsable_id) : null; },
   telDe(p){ const r = this.resp(p); return r ? r.telefono : p.telefono; },
   mensaje(p, tipo = 'invitar'){
-    const g = this.d.grupo, {w, l} = this.encabezado();
     const r = this.resp(p);
+    if (((r || p).idioma) === 'en') return this.mensajeEN(p, tipo);
+    this._p = p; const g = this.d.grupo, {w, l} = this.encabezado(); this._p = null;
     if (r){
       const cierreR = ['', '👉 Entra con *tu* link de siempre y toca el nombre de ' + p.nombre + ' arriba para cambiar a su cuenta:', this.linkPart(r), '', this.lineaPin(r)];
       if (tipo === 'lista') return [`🎁 ¡Hola ${r.nombre}! A *${p.nombre}* le falta su lista de deseos para *${g.nombre}*.`, 'Ayúdale a llenarla para que su Santa le atine 😉', ...cierreR].join('\n');
@@ -823,6 +1161,34 @@ const Admin = {
                  : '👉 Entra aquí para llenar tu lista de deseos. Cuando se haga el sorteo, en este mismo link verás a quién te tocó:',
       ...cierre].join('\n');
   },
+  mensajeEN(p, tipo){
+    const g = this.d.grupo, r = this.resp(p), l = [];
+    const monto = this.montoDe(p);
+    if (monto) l.push(`💰 Budget: ${new Intl.NumberFormat('en-US', {style:'currency', currency: g.moneda || 'MXN', currencyDisplay:'narrowSymbol'}).format(monto)}`);
+    if (g.fecha){ const d = new Date(g.fecha); l.push(`📅 ${d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'})} · ${d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`); }
+    if (g.lugar) l.push(`📍 ${g.lugar}`);
+    const pin = x => x.pin_propio ? '🔐 Your code: the one you chose 🔒' : `🔐 Your code: *${x.pin}*`;
+    if (r){
+      const c = ['', '👉 Open *your* usual link and tap ' + p.nombre + '\'s name at the top to switch to their account:', this.linkPart(r), '', pin(r)];
+      if (tipo === 'lista') return [`🎁 Hi ${r.nombre}! *${p.nombre}* still needs a wish list for *${g.nombre}*.`, 'Help them fill it in so their Santa gets it right 😉', ...c].join('\n');
+      if (tipo === 'ver') return [`🎅 Hi ${r.nombre}! The draw for *${g.nombre}* is done and you haven't seen who *${p.nombre}* got yet.`, ...c].join('\n');
+      if (tipo === 'asis') return [`📅 Hi ${r.nombre}! Is *${p.nombre}* coming to *${g.nombre}*? Confirm from their account (Event tab).`, ...c].join('\n');
+      return [`🎄 Hi ${r.nombre}!`, `You'll manage *${p.nombre}*'s account in the gift exchange *${g.nombre}* 🎁`, '', ...l, '',
+        'From your link you can fill in their wish list and, after the draw, see who they are giving to.', ...c, '🤫 It\'s a secret!'].join('\n');
+    }
+    const c = [this.linkPart(p), '', pin(p), '🤫 It\'s a secret, don\'t show it to anyone!'];
+    if (tipo === 'asis') return [`📅 Hi ${p.nombre}! Are you coming to *${g.nombre}*?`, ...l, '', '👉 Confirm here in one tap (Event tab):', ...c].join('\n');
+    if (tipo === 'lista') return [`🎁 Hi ${p.nombre}! You haven't filled in your wish list for *${g.nombre}* yet.`, 'Your Santa needs ideas 😉', '', '👉 Add it here (takes 2 minutes):', ...c].join('\n');
+    if (tipo === 'ver') return [`🎅 Hi ${p.nombre}! The draw for *${g.nombre}* is done and you haven't seen who you got.`, '', '👉 Open it here and tap the gift:', ...c].join('\n');
+    return [`🎄 Hi ${p.nombre}!`, `You're in the Christmas gift exchange *${g.nombre}* 🎁`, '', ...l, '',
+      g.sorteado ? '👉 The draw is done! Open this link to see who you got and what they would like:'
+                 : '👉 Open this link to fill in your wish list. After the draw, this same link will show who you got:', ...c].join('\n');
+  },
+  montoDe(p){
+    const cat = (this.d.grupo.categorias || []).find(c => c.id === p.categoria);
+    return cat && cat.monto ? cat.monto : this.d.grupo.monto;
+  },
+  catNombre(id){ const c = (this.d.grupo.categorias || []).find(x => x.id === id); return c ? c.nombre : ''; },
   render(){
     const {grupo: g, participantes: ps, exclusiones: ex, cena, mejoras} = this.d;
     const principal = this.d.es_principal;
@@ -836,6 +1202,7 @@ const Admin = {
     app.innerHTML = `
     <div class="top"><a class="iconbtn" href="./">‹</a>
       <div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">${principal ? 'Panel del organizador' : '👥 Eres coorganizador'}</div></div>
+      <button class="iconbtn" id="ajustes" title="Ajustes">⚙️</button>
       <a class="iconbtn" href="?ayuda" title="¿Cómo funciona?">?</a>
       <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
 
@@ -849,7 +1216,7 @@ const Admin = {
     <div class="card ribbon">
       <div class="row"><h2 class="grow" style="margin:0">🎁 Detalles</h2><button class="btn xs ghost" id="editar">Editar</button></div>
       <div class="info mt">
-        <span class="k">${g.tema === 'trabajo' ? '💼' : '🎄'}</span><span>Estilo ${g.tema === 'trabajo' ? 'trabajo' : 'familia'}</span>
+        <span class="k">${g.tema === 'trabajo' ? '💼' : g.tema === 'posada' ? '🪅' : '🎄'}</span><span>${g.tema === 'trabajo' ? 'Estilo trabajo' : g.tema === 'posada' ? 'Estilo posada mexicana' : 'Estilo familia'}</span>
         ${g.monto ? `<span class="k">💰</span><span><b>${money(g.monto, g.moneda)}</b> por regalo</span>` : ''}
         ${g.fecha ? `<span class="k">📅</span><span>${esc(fechaLarga(g.fecha))}</span>` : ''}
         ${g.lugar ? `<span class="k">📍</span><span>${esc(g.lugar)}</span>` : ''}
@@ -862,6 +1229,19 @@ const Admin = {
         <span class="chip rojo">❌ ${ps.filter(p => p.asistencia === 'no').length} no van</span>
         <span class="chip">⏳ ${ps.filter(p => !p.asistencia).length} sin responder</span></div>` : ''}
       <div class="stat"><div><b>${ps.length}</b><span>participantes</span></div><div><b>${ps.length - sinLista.length}</b><span>con lista</span></div><div><b>${g.sorteado ? vieron : '—'}</b><span>vieron resultado</span></div></div>
+    </div>
+
+    <div class="card">
+      <h2>💰 Montos</h2>
+      ${(g.categorias || []).length ? `
+        <p class="muted mt0 small">Cada categoría se sortea por separado (por ejemplo, los niños se regalan entre niños).</p>
+        ${g.categorias.map(c => `<div class="row" style="padding:8px 0;border-bottom:1px dashed var(--linea)">
+          <span class="grow"><b>${esc(c.nombre)}</b> · ${c.monto ? money(c.monto, g.moneda) : 'sin monto'} <span class="chip">${ps.filter(p => p.categoria === c.id).length} personas</span></span>
+          ${g.sorteado ? '' : `<button class="btn xs danger" data-catq="${esc(c.id)}">Quitar</button>`}</div>`).join('')}
+        ${ps.some(p => !p.categoria) ? `<p class="hint" style="color:#b3202a">⚠️ ${ps.filter(p => !p.categoria).length} persona(s) sin categoría: se sortean juntas con el monto general (${money(g.monto, g.moneda) || 'sin monto'}). Asígnales una con «Editar».</p>` : ''}`
+      : `<p class="muted mt0">Todos regalan ${g.monto ? '<b>' + money(g.monto, g.moneda) + '</b>' : 'sin monto definido'}. ¿Quieres montos distintos (por ejemplo adultos y niños)?</p>`}
+      ${g.sorteado ? '' : `<div class="row mt"><input id="cat_n" class="grow" maxlength="30" placeholder="${(g.categorias || []).length ? 'Otra categoría' : 'Ej. Niños'}"><input id="cat_m" type="number" inputmode="decimal" placeholder="$" style="width:90px"><button class="btn verde" id="catAdd">+</button></div>
+        ${(g.categorias || []).length ? '' : '<div class="hint">Al crear la primera categoría te sugiero «Adultos» con el monto general; luego asigna a cada quien con «Editar».</div>'}`}
     </div>
 
     <div class="card">
@@ -899,7 +1279,8 @@ const Admin = {
       <h2>${g.tema === 'trabajo' ? '👥' : '👨‍👩‍👧‍👦'} Participantes <span class="chip">${ps.length}</span></h2>
       ${ps.length ? ps.map(p => `
         <div class="person">
-          <div class="name">${p.responsable_id ? '👶 ' : ''}${esc(p.nombre)}</div>
+          <div class="row" style="gap:8px">${p.avatar ? `<img class="avatar" src="${esc(p.avatar)}" alt="">` : ''}<div class="name grow">${p.responsable_id ? '👶 ' : p.es_pareja ? '💑 ' : ''}${esc(p.nombre)}</div>
+            ${p.categoria ? `<span class="chip">${esc(this.catNombre(p.categoria))}</span>` : ''}${p.idioma === 'en' ? '<span class="chip">🇺🇸</span>' : ''}${p.push ? '<span class="chip ok" title="Notificaciones activas">🔔</span>' : ''}</div>
           <div class="muted small">${p.responsable_id ? `Sin celular · lo maneja <b>${esc((this.resp(p) || {}).nombre)}</b> desde su link` : (p.telefono ? '📱 ' + esc(p.telefono) : 'Sin teléfono') + ` · Código ${p.pin_propio ? '<span class="pin">🔒 propio</span>' : `<span class="pin">${esc(p.pin)}</span>`}`}</div>
           <div class="chips">
             ${p.asistencia === 'si' ? '<span class="chip ok">✅ Va</span>' : p.asistencia === 'no' ? '<span class="chip rojo">❌ No va</span>' : p.asistencia === 'talvez' ? '<span class="chip oro">🤔 Tal vez</span>' : ''}
@@ -908,7 +1289,8 @@ const Admin = {
             ${g.sorteado ? (p.vio ? '<span class="chip ok">✓ Vio su resultado</span>' : '<span class="chip rojo">No ha visto resultado</span>') : ''}
           </div>
           <div class="actions">
-            <a class="btn sm wa" target="_blank" href="${esc(waLink(this.telDe(p), this.mensaje(p)))}">${p.responsable_id ? 'Avisar a ' + esc((this.resp(p) || {}).nombre) : 'WhatsApp'}</a>
+            <a class="btn sm wa" target="_blank" href="${esc(waLink(this.telDe(p), this.mensaje(p)))}">${p.responsable_id ? 'Avisar a ' + esc((this.resp(p) || {}).nombre) : p.telefono2 ? 'WhatsApp 1' : 'WhatsApp'}</a>
+            ${p.telefono2 && !p.responsable_id ? `<a class="btn sm wa" target="_blank" href="${esc(waLink(p.telefono2, this.mensaje(p)))}">WhatsApp 2</a>` : ''}
             <button class="btn sm ghost" data-copiar="${esc(p.id)}">Copiar mensaje</button>
             <button class="btn sm ghost" data-editp="${esc(p.id)}">Editar</button>
             ${p.pin_propio && !p.responsable_id ? `<button class="btn sm ghost" data-resetpin="${esc(p.id)}">🔑 Nuevo código</button>` : ''}
@@ -926,11 +1308,15 @@ const Admin = {
           <input id="alta_t" type="tel" inputmode="tel" placeholder="WhatsApp (opcional)" style="flex:1 1 130px" ${this.altaSinCel ? 'hidden' : ''}></div>
           <label class="check"><input type="checkbox" id="alta_sc" ${this.altaSinCel ? 'checked' : ''}> 👶 No tiene celular</label>
           ${this.altaSinCel ? `<select id="alta_r">${ps.filter(p => !p.responsable_id).map(p => `<option value="${esc(p.id)}">Lo maneja ${esc(p.nombre)}</option>`).join('')}</select>` : ''}
+          ${(g.categorias || []).length ? `<select id="alta_c" class="mt">${g.categorias.map(c => `<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join('')}</select>` : ''}
           <button class="btn sm verde full mt" id="alta">Agregar y acomodar</button></div>` : `
         <h3>Agregar persona</h3>
-        <div class="row wrapr"><input id="np_nombre" maxlength="40" placeholder="Nombre" style="flex:1 1 140px">
+        <div class="row wrapr"><input id="np_nombre" maxlength="40" placeholder="${this.esPareja ? 'Nombre (1)' : 'Nombre'}" style="flex:1 1 140px">
         <input id="np_tel" type="tel" inputmode="tel" placeholder="WhatsApp (10 dígitos)" style="flex:1 1 140px" ${this.sinCel ? 'hidden' : ''}></div>
-        ${ps.some(p => !p.responsable_id) ? `<label class="check"><input type="checkbox" id="np_sincel" ${this.sinCel ? 'checked' : ''}> 👶 No tiene celular (niño/a o abuelito/a)</label>
+        ${this.esPareja ? `<div class="row wrapr mt"><input id="np_nombre2" maxlength="30" placeholder="Nombre (2)" style="flex:1 1 140px"><input id="np_tel2" type="tel" inputmode="tel" placeholder="WhatsApp (2)" style="flex:1 1 140px"></div>` : ''}
+        ${(g.categorias || []).length ? `<select id="np_cat" class="mt">${g.categorias.map(c => `<option value="${esc(c.id)}">${esc(c.nombre)}${c.monto ? ' · ' + money(c.monto, g.moneda) : ''}</option>`).join('')}</select>` : ''}
+        ${this.sinCel ? '' : `<label class="check"><input type="checkbox" id="np_pareja" ${this.esPareja ? 'checked' : ''}> 💑 Es pareja (dan y reciben un solo regalo entre los dos)</label>`}
+        ${ps.some(p => !p.responsable_id) && !this.esPareja ? `<label class="check"><input type="checkbox" id="np_sincel" ${this.sinCel ? 'checked' : ''}> 👶 No tiene celular (niño/a o abuelito/a)</label>
         ${this.sinCel ? `<label class="mt0">¿Quién lo va a manejar desde su celular?</label>
         <select id="np_resp">${ps.filter(p => !p.responsable_id).map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select>
         <div class="hint">Esa persona llenará su lista y verá a quién le regala, desde su propio link. El sorteo nunca los emparejará entre ellos.</div>` : ''}` : ''}
@@ -949,6 +1335,39 @@ const Admin = {
         <span>✕</span><select id="ex_b" class="grow">${ps.map((p, i) => `<option value="${esc(p.id)}" ${i === 1 ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('')}</select></div>
         <button class="btn ghost full mt" id="exAdd">+ Agregar exclusión</button>` : ''}
     </div>
+
+    <div class="card">
+      <h2>💵 Cooperación</h2>
+      <p class="muted mt0 small">Para la cena, el salón o un regalo grupal: anota cuánto le toca a cada quien y marca quién ya pagó. Cada quien ve su estado en su app.</p>
+      ${(this.d.coop || []).map(c => { const tot = Object.values(c.pagos || {}).reduce((a, b) => a + Number(b), 0), meta = c.monto * ps.length, abierto = this.coopAbierto === c.id;
+        return `<div class="opt"><div class="row"><b class="grow">${esc(c.concepto)}</b><span class="muted small">${money(c.monto, g.moneda)} c/u</span></div>
+          <div class="barra"><i style="width:${Math.min(100, meta ? tot / meta * 100 : 0)}%"></i></div>
+          <div class="row"><span class="grow small">Juntado: <b>${money(tot, g.moneda) || '$0'}</b> de ${money(meta, g.moneda)} · ${Object.keys(c.pagos || {}).length}/${ps.length} pagaron</span>
+          <button class="btn xs ghost" data-coopv="${esc(c.id)}">${abierto ? 'Ocultar' : 'Ver pagos'}</button><button class="btn xs danger" data-coopq="${esc(c.id)}">✕</button></div>
+          ${abierto ? `<table class="tabla mt">${ps.map(p => { const pg = Number((c.pagos || {})[p.id] || 0);
+            return `<tr><td>${esc(p.nombre)}</td><td>${pg >= c.monto ? '<span class="chip ok">✓ Pagó</span>' : pg > 0 ? `<span class="chip oro">${money(pg, g.moneda)}</span>` : '<span class="chip">Pendiente</span>'}</td>
+              <td style="text-align:right;white-space:nowrap"><button class="btn xs verde" data-pago="${esc(c.id)}|${esc(p.id)}|${c.monto}">✓</button>
+              <button class="btn xs ghost" data-pagox="${esc(c.id)}|${esc(p.id)}">$</button>${pg ? `<button class="btn xs danger" data-pago="${esc(c.id)}|${esc(p.id)}|0">✕</button>` : ''}</td></tr>`; }).join('')}</table>` : ''}
+        </div>`; }).join('')}
+      <div class="row mt"><input id="coop_c" class="grow" maxlength="60" placeholder="Ej. Cena, salón, pastel…"><input id="coop_m" type="number" inputmode="decimal" placeholder="$ c/u" style="width:90px"><button class="btn verde" id="coopAdd">+</button></div>
+    </div>
+
+    ${g.fecha ? `<div class="card">
+      <h2>📆 Recordatorios por fecha</h2>
+      <p class="muted mt0 small">Mensajes listos según los días que faltan. ${PUSH_PUBLIC_KEY ? 'Si activaste las notificaciones automáticas en Supabase, se mandan solos ese día a las 10 am.' : ''}</p>
+      ${this.calendario().map(r => `<div class="wish"><span style="font-size:22px">${r.ico}</span><div class="grow"><b>${esc(r.titulo)}</b>
+          <div class="muted small">${esc(fechaCorta(r.fecha))} · ${r.estado === 'pasado' ? 'ya pasó' : r.estado === 'hoy' ? '<b style="color:#b3202a">¡hoy!</b>' : 'faltan ' + r.dias + ' días'}${(this.d.avisos || []).includes(r.auto) ? ' · <span class="chip ok">✓ notificación enviada</span>' : ''}</div>
+          <div class="row wrapr mt"><a class="btn xs wa" target="_blank" href="${esc(waLink('', r.wa))}">WhatsApp al grupo</a>${PUSH_PUBLIC_KEY ? `<button class="btn xs ghost" data-aviso="${esc(r.id)}">🔔 Notificar ahora</button>` : ''}</div></div></div>`).join('')}
+      <button class="btn oro full mt" id="resumen">🖼️ Resumen en imagen para el grupo</button>
+    </div>` : `<div class="card"><h2>🖼️ Resumen para el grupo</h2><p class="muted mt0 small">Pon la fecha del intercambio (Editar) para tener recordatorios por fecha.</p><button class="btn oro full" id="resumen">🖼️ Crear resumen en imagen</button></div>`}
+
+    ${PUSH_PUBLIC_KEY ? `<div class="card">
+      <h2>🔔 Notificaciones</h2>
+      <p class="muted mt0 small"><b>${ps.filter(p => p.push).length} de ${ps.length}</b> activaron avisos en su celular (cada quien lo hace desde su app: ⚙️ → Notificaciones). Les llegan cuando su Santa les escribe, al sortear, al revelar y con los recordatorios.</p>
+      <div class="row wrapr"><button class="btn sm ${this.d.push_admin ? 'ghost' : 'oro'}" id="pushYo">${this.d.push_admin ? '✓ Este celular recibe avisos' : 'Recibir avisos en este celular'}</button>
+      <button class="btn sm ghost" id="pushPrueba" ${this.d.push_admin ? '' : 'disabled'}>Enviar prueba</button></div>
+      <div class="hint">Requiere configurar una vez la función «push» en Supabase (guía incluida).</div>
+    </div>` : ''}
 
     <div class="card">
       <h2>📺 Noche del intercambio</h2>
@@ -1004,6 +1423,15 @@ const Admin = {
           <div class="muted small">Copia a la misma gente y exclusiones con links nuevos. El sorteo evitará repetir parejas de este.</div>
           <button class="btn sm verde mt" id="duplicar">Duplicar intercambio</button>
         </div>` : ''}
+        ${!this.d.grupo.sorteado && ps.filter(p => !p.es_pareja && !p.responsable_id).length >= 2 ? `<div class="opt"><b>💑 Unir pareja</b>
+          <div class="muted small">Dos personas que ya agregaste quedan como una sola: comparten link, dan un regalo y reciben uno.</div>
+          <div class="row mt"><select id="up_a" class="grow">${ps.filter(p => !p.es_pareja && !p.responsable_id).map(p => `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select><span>+</span>
+          <select id="up_b" class="grow">${ps.filter(p => !p.es_pareja && !p.responsable_id).map((p, i) => `<option value="${esc(p.id)}" ${i === 1 ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('')}</select></div>
+          <button class="btn sm verde mt" id="unirPareja">Unir en pareja</button></div>` : ''}
+        ${this.d.historial ? `<div class="opt"><b>📜 Historial de años anteriores</b><div class="muted small">Quién le regaló a quién en los intercambios de los que duplicaste este.</div>
+          <button class="btn sm ghost mt" id="historial">Ver historial</button></div>` : ''}
+        ${principal ? `<div class="opt"><b>💾 Respaldo</b><div class="muted small">Descarga todo (participantes, links, códigos, listas, sorteo). Con él puedes restaurar el intercambio en otra base de datos sin perder los links.</div>
+          <div class="row wrapr mt"><button class="btn sm verde" id="respaldo">Descargar respaldo</button><button class="btn sm ghost" id="csv">Lista en Excel (CSV)</button></div></div>` : ''}
         <div class="opt"><b>🔗 Link de este panel</b>
           <div class="code" style="background:var(--papel)">${esc(this.linkAdmin())}</div>
           <button class="btn sm ghost" id="copAdmin2">Copiar link</button>
@@ -1031,6 +1459,19 @@ const Admin = {
     on('#agregar', e => this.agregar(e.currentTarget));
     const tel = $('#np_tel'); if (tel) tel.onkeydown = e => { if (e.key === 'Enter') this.agregar($('#agregar')); };
     const sc = $('#np_sincel'); if (sc) sc.onchange = () => { this.sinCel = sc.checked; conservar(() => this.render()); };
+    const pj = $('#np_pareja'); if (pj) pj.onchange = () => { this.esPareja = pj.checked; conservar(() => this.render()); };
+    on('#ajustes', () => abrirAjustes({onCambio: () => this.render(), push: () => this.activarPush()}));
+    on('#catAdd', e => hacer(e.currentTarget, async () => {
+      const n = $('#cat_n').value.trim(), m = $('#cat_m').value; if (!n) throw new Error('Escribe el nombre de la categoría');
+      const cats = (g.categorias || []).slice();
+      if (!cats.length && !/adult/i.test(n)) cats.push({id: 'adultos', nombre: 'Adultos', monto: g.monto});
+      cats.push({id: norm(n).replace(/[^a-z0-9]+/g, '').slice(0, 12) + Math.random().toString(36).slice(2, 6), nombre: n, monto: m === '' ? null : Number(m)});
+      await rpc('ix_admin_categorias', {p_admin: this.code, p_categorias: cats});
+      $('#cat_n').dataset.keep = 'no'; $('#cat_m').dataset.keep = 'no'; toast('Categoría agregada 💰'); await this.cargar();
+    }));
+    app.querySelectorAll('[data-catq]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_admin_categorias', {p_admin: this.code, p_categorias: (g.categorias || []).filter(c => c.id !== b.dataset.catq)}); await this.cargar();
+    }));
     on('#exAdd', e => hacer(e.currentTarget, async () => {
       await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: $('#ex_a').value, p_b: $('#ex_b').value, p_activa: true});
       await this.cargar();
@@ -1042,7 +1483,7 @@ const Admin = {
     });
     on('#revelar', e => hacer(e.currentTarget, async () => {
       await rpc('ix_admin_revelar', {p_admin: this.code, p_revelar: !g.revelado});
-      if (!g.revelado){ toast('🎉 ¡Santas revelados!'); confeti(); } else toast('Santas ocultos de nuevo');
+      if (!g.revelado){ toast('🎉 ¡Santas revelados!'); confeti(); Push.avisar({tipo: 'revelado', admin: this.code}); } else toast('Santas ocultos de nuevo');
       await this.cargar();
     }));
     on('#recLista', () => this.recordatorio('lista'));
@@ -1078,6 +1519,49 @@ const Admin = {
       await hacer(null, () => rpc('ix_admin_coorg', {p_admin: this.code, p_activar: false})); this.cargar();
     });
     on('#duplicar', () => this.duplicar());
+    on('#coopAdd', e => hacer(e.currentTarget, async () => {
+      const c = $('#coop_c').value.trim(), m = Number($('#coop_m').value);
+      await rpc('ix_admin_coop_crear', {p_admin: this.code, p_concepto: c, p_monto: m});
+      $('#coop_c').dataset.keep = 'no'; $('#coop_m').dataset.keep = 'no'; await this.cargar();
+    }));
+    app.querySelectorAll('[data-coopv]').forEach(b => b.onclick = () => { this.coopAbierto = this.coopAbierto === b.dataset.coopv ? null : b.dataset.coopv; this.render(); });
+    app.querySelectorAll('[data-coopq]').forEach(b => b.onclick = async () => {
+      if (!await confirmar('¿Borrar esta cooperación?', 'Se borran también los pagos registrados.', 'Borrar')) return;
+      await hacer(null, () => rpc('ix_admin_coop_borrar', {p_admin: this.code, p_id: b.dataset.coopq})); this.cargar();
+    });
+    app.querySelectorAll('[data-pago]').forEach(b => b.onclick = () => hacer(b, async () => {
+      const [c, pid, m] = b.dataset.pago.split('|'); await rpc('ix_admin_coop_pago', {p_admin: this.code, p_coop: c, p_participante: pid, p_pagado: Number(m)}); await this.cargar();
+    }));
+    app.querySelectorAll('[data-pagox]').forEach(b => b.onclick = () => {
+      const [c, pid] = b.dataset.pagox.split('|');
+      const r = modal(`<h2>💵 ¿Cuánto pagó?</h2><input id="px" type="number" inputmode="decimal" placeholder="$">
+        <div class="row mt"><button class="btn ghost grow" data-x="no">Cancelar</button><button class="btn verde grow" data-x="si">Guardar</button></div>`);
+      $('#px').focus(); r.querySelector('[data-x=no]').onclick = closeModal;
+      r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => { await rpc('ix_admin_coop_pago', {p_admin: this.code, p_coop: c, p_participante: pid, p_pagado: Number($('#px').value) || 0}); closeModal(); await this.cargar(); });
+    });
+    app.querySelectorAll('[data-aviso]').forEach(b => b.onclick = () => {
+      const r = this.calendario().find(x => x.id === b.dataset.aviso); if (!r) return;
+      Push.avisar({tipo: 'aviso', admin: this.code, titulo: r.ico + ' ' + r.titulo, texto: r.push, titulo_en: r.ico + ' ' + r.titulo_en, texto_en: r.push_en});
+      toast('🔔 Notificación enviada');
+    });
+    on('#resumen', () => this.resumen());
+    on('#pushYo', () => this.activarPush());
+    on('#pushPrueba', () => Push.avisar({tipo: 'prueba', admin: this.code}));
+    on('#unirPareja', async () => {
+      const a = $('#up_a').value, b = $('#up_b').value; if (a === b) return toast('Elige a dos personas distintas', true);
+      const na = (ps.find(p => p.id === a) || {}).nombre, nb = (ps.find(p => p.id === b) || {}).nombre;
+      if (!await confirmar(`¿Unir a ${esc(na)} y ${esc(nb)}?`, `Quedarán como «${esc(na)} y ${esc(nb)}» con el link y código de ${esc(na)}. Las listas de deseos se juntan.`, 'Unir', 'verde')) return;
+      await hacer(null, () => rpc('ix_admin_unir_pareja', {p_admin: this.code, p_a: a, p_b: b})); toast('💑 ¡Pareja unida!'); this.cargar();
+    });
+    on('#historial', () => this.verHistorial());
+    on('#respaldo', e => hacer(e.currentTarget, async () => {
+      const d = await rpc('ix_admin_respaldo', {p_admin: this.code});
+      descargar(JSON.stringify(d), 'respaldo-' + norm(g.nombre).replace(/[^a-z0-9]+/g, '-') + '.json', 'application/json');
+    }));
+    on('#csv', () => {
+      const filas = [['Nombre','WhatsApp','WhatsApp 2','Categoría','Link','Código','Asistencia','Deseos']].concat(ps.map(p => [p.nombre, p.telefono || '', p.telefono2 || '', this.catNombre(p.categoria), this.linkPart(p), p.pin_propio ? 'propio' : p.pin, p.asistencia || '', p.deseos]));
+      descargar('\ufeff' + filas.map(f => f.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\r\n'), 'participantes.csv', 'text/csv');
+    });
     app.querySelectorAll('[data-trs]').forEach(b => b.onclick = () => { $('#tr_p').value = b.dataset.trs; $('#tr_o0').focus(); });
     on('#trAdd', e => hacer(e.currentTarget, async () => {
       const preg = $('#tr_p').value.trim(), ops = [0,1,2,3].map(k => $('#tr_o' + k).value.trim());
@@ -1098,12 +1582,15 @@ const Admin = {
       const p = ps.find(x => x.id === $('#baja_id').value); if (!p) return;
       if (!await confirmar('¿Quitar a ' + esc(p.nombre) + '?', 'Se borra su lista y sus mensajes. Quien le iba a regalar recibirá a otra persona, sin rehacer el sorteo.', 'Quitar y reacomodar')) return;
       const r = await hacer(null, () => rpc('ix_admin_baja', {p_admin: this.code, p_id: p.id}));
+      Push.avisar({tipo: 'cambio', admin: this.code});
       await this.cargar(); this.avisoCambio(r.afectados, p.nombre + ' salió del intercambio');
     });
     on('#alta', e => hacer(e.currentTarget, async () => {
       const n = $('#alta_n').value.trim(); if (!n) throw new Error('Escribe el nombre');
       const resp = this.altaSinCel && $('#alta_r') ? $('#alta_r').value : null;
-      const r = await rpc('ix_admin_alta', {p_admin: this.code, p_nombre: n, p_telefono: this.altaSinCel ? null : ($('#alta_t').value.trim() || null), p_responsable: resp});
+      const r = await rpc('ix_admin_alta', {p_admin: this.code, p_datos: {nombre: n, telefono: this.altaSinCel ? null : ($('#alta_t').value.trim() || null),
+        responsable: resp, categoria: $('#alta_c') ? $('#alta_c').value : null, idioma: I18N.lang}});
+      Push.avisar({tipo: 'cambio', admin: this.code});
       $('#alta_n').dataset.keep = 'no'; $('#alta_t') && ($('#alta_t').dataset.keep = 'no'); this.altaSinCel = false;
       await this.cargar();
       const nuevo = this.d.participantes.find(x => x.id === r.id);
@@ -1131,6 +1618,91 @@ const Admin = {
       const [a, c] = b.dataset.exq.split('|');
       await rpc('ix_admin_exclusion', {p_admin: this.code, p_a: a, p_b: c, p_activa: false}); await this.cargar();
     }));
+  },
+  calendario(){
+    const g = this.d.grupo; if (!g.fecha) return [];
+    const f = new Date(g.fecha), hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const dia = n => { const d = new Date(f); d.setDate(d.getDate() - n); d.setHours(12, 0, 0, 0); return d; };
+    const link = BASE;
+    const items = [
+      {id: 'lista', n: 14, auto: 'auto-lista', ico: '📝', titulo: 'Llenen su lista de deseos', titulo_en: 'Fill in your wish list',
+        wa: `📝 ¡Faltan 2 semanas para *${g.nombre}*! Si aún no llenas tu lista de deseos, entra a tu link y agrégala. Tu Santa necesita ideas 😉`,
+        wa_en: `📝 2 weeks until *${g.nombre}*! If you haven't filled in your wish list yet, open your link and add it. Your Santa needs ideas 😉`,
+        push: 'Faltan 2 semanas. Tu Santa necesita ideas.', push_en: '2 weeks to go. Your Santa needs ideas.'},
+      {id: 'compra', n: 10, auto: 'auto-compra', ico: '🛍️', titulo: 'Hora de comprar el regalo', titulo_en: 'Time to buy the gift',
+        wa: `🛍️ ¡Faltan 10 días para *${g.nombre}*! Ya es buen momento para comprar tu regalo. Revisa la lista de tu amigo secreto en tu link 🎁`,
+        wa_en: `🛍️ 10 days until *${g.nombre}*! Now is a good time to buy your gift. Check your match's wish list in your link 🎁`,
+        push: 'Faltan 10 días. Revisa la lista de tu amigo secreto.', push_en: '10 days left. Check your match\'s wish list.'},
+      {id: 'asis', n: 7, auto: 'auto-asis', ico: '🙋', titulo: 'Confirmen asistencia', titulo_en: 'Confirm attendance',
+        wa: `🙋 ¡Falta una semana para *${g.nombre}*! Confirma si vas en tu link (pestaña Evento). También ya se desbloqueó la 2ª pista de tu Santa 🔍`,
+        wa_en: `🙋 One week until *${g.nombre}*! Confirm if you're coming in your link (Event tab). Your Santa's 2nd clue is now unlocked 🔍`,
+        push: 'Falta una semana. Confirma si vas.', push_en: 'One week to go. Confirm if you are coming.'},
+      {id: 'cena', n: 3, auto: 'auto-cena', ico: '🍽️', titulo: 'Aparten su platillo', titulo_en: 'Pick your dish',
+        wa: `🍽️ ¡Faltan 3 días para *${g.nombre}*! Revisa en tu link quién lleva qué y aparta tu platillo.`,
+        wa_en: `🍽️ 3 days until *${g.nombre}*! Check who's bringing what in your link and pick your dish.`,
+        push: 'Faltan 3 días. Revisa quién lleva qué.', push_en: '3 days left. Check who is bringing what.'},
+      {id: 'manana', n: 1, auto: 'auto-manana', ico: '🎄', titulo: '¡Mañana es el intercambio!', titulo_en: 'The exchange is tomorrow!',
+        wa: `🎄 ¡Mañana es *${g.nombre}*!${g.lugar ? ' 📍 ' + g.lugar : ''} No olvides tu regalo 🎁 y revisa la última pista de tu Santa 🔍`,
+        wa_en: `🎄 *${g.nombre}* is tomorrow!${g.lugar ? ' 📍 ' + g.lugar : ''} Don't forget your gift 🎁 and check your Santa's last clue 🔍`,
+        push: 'No olvides tu regalo 🎁', push_en: 'Don\'t forget your gift 🎁'},
+      {id: 'hoy', n: 0, auto: 'auto-hoy', ico: '🎉', titulo: '¡Hoy es el día!', titulo_en: 'Today is the day!',
+        wa: `🎉 ¡Hoy es *${g.nombre}*!${g.lugar ? ' 📍 ' + g.lugar : ''} ${new Date(g.fecha).toLocaleTimeString('es-MX', {hour: 'numeric', minute: '2-digit'})}. ¡Nos vemos! 🎁`,
+        wa_en: `🎉 *${g.nombre}* is today!${g.lugar ? ' 📍 ' + g.lugar : ''} ${new Date(g.fecha).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}. See you there! 🎁`,
+        push: g.nombre + (g.lugar ? ' · ' + g.lugar : ''), push_en: g.nombre + (g.lugar ? ' · ' + g.lugar : '')}
+    ];
+    return items.map(r => { const d = dia(r.n), dif = Math.round((new Date(d).setHours(0,0,0,0) - hoy) / 864e5);
+      if (I18N.lang === 'en') r.wa = r.wa_en;
+      return Object.assign(r, {fecha: d.toISOString(), dias: dif, estado: dif < 0 ? 'pasado' : dif === 0 ? 'hoy' : 'futuro'}); });
+  },
+  async activarPush(){
+    const sub = await hacer(null, () => Push.suscribir());
+    await hacer(null, () => rpc('ix_push_guardar_admin', {p_admin: this.code, p_sub: sub, p_url: this.linkAdmin(), p_idioma: I18N.lang}));
+    toast('🔔 Este celular recibirá avisos'); await this.cargar();
+  },
+  async verHistorial(){
+    const h = await hacer(null, () => rpc('ix_admin_historial', {p_admin: this.code}));
+    modal(`<h2>📜 Historial</h2>${h.map(x => `<h3>${esc(x.nombre)} <span class="muted small">${x.fecha ? esc(fechaCorta(x.fecha)) : ''}</span></h3>
+      ${x.revelado ? (x.pares.length ? x.pares.map(p => `<div class="small" style="padding:3px 0">🎅 <b>${esc(p.de)}</b> → 🎁 ${esc(p.para)}</div>`).join('') : '<div class="muted small">Sin sorteo.</div>')
+                   : '<div class="muted small">🔒 Ese intercambio no se reveló, así que sigue en secreto.</div>'}`).join('') || '<p class="muted">Sin intercambios anteriores.</p>'}
+      <button class="btn ghost full mt" onclick="closeModal()">Cerrar</button>`);
+  },
+  async resumen(){
+    const g = this.d.grupo, ps = this.d.participantes, cena = this.d.cena || [];
+    const W = 1080, c = document.createElement('canvas'); c.width = W; c.height = 1350; const x = c.getContext('2d');
+    const css = getComputedStyle(document.body), v = k => css.getPropertyValue(k).trim();
+    const gr = x.createLinearGradient(0, 0, 0, 1350); gr.addColorStop(0, v('--glow') || '#24563a'); gr.addColorStop(1, v('--noche') || '#0d2418');
+    x.fillStyle = gr; x.fillRect(0, 0, W, 1350);
+    const logo = new Image(); logo.src = 'icon-512.png'; await new Promise(r => { logo.onload = r; logo.onerror = r; });
+    try{ x.save(); x.beginPath(); x.roundRect(W / 2 - 90, 60, 180, 180, 40); x.clip(); x.drawImage(logo, W / 2 - 90, 60, 180, 180); x.restore(); }catch(e){}
+    x.textAlign = 'center'; x.fillStyle = v('--oro2') || '#f3d27a'; x.font = '800 64px Fraunces, Georgia, serif';
+    const titulo = g.nombre.length > 26 ? g.nombre.slice(0, 25) + '…' : g.nombre; x.fillText(titulo, W / 2, 320);
+    x.fillStyle = '#fff'; x.font = '700 38px Nunito, sans-serif';
+    let y = 390; const linea = t => { x.fillText(t, W / 2, y); y += 56; };
+    if (g.fecha) linea('📅 ' + fechaLarga(g.fecha));
+    if (g.lugar) linea('📍 ' + g.lugar);
+    const cats = g.categorias || [];
+    if (cats.length) linea('💰 ' + cats.map(c => c.nombre + ' ' + (money(c.monto, g.moneda) || '')).join(' · ')); else if (g.monto) linea('💰 ' + I18N.t('Monto') + ': ' + money(g.monto, g.moneda));
+    linea('👨‍👩‍👧‍👦 ' + ps.length + ' ' + I18N.t('participantes'));
+    const card = (titulo, filas) => {
+      if (!filas.length) return; y += 10; const h = 70 + filas.length * 46;
+      x.fillStyle = 'rgba(255,255,255,.1)'; x.beginPath(); x.roundRect(80, y, W - 160, h, 30); x.fill();
+      x.fillStyle = v('--oro2') || '#f3d27a'; x.font = '800 40px Fraunces, Georgia, serif'; x.textAlign = 'left'; x.fillText(titulo, 120, y + 54);
+      x.fillStyle = '#fff'; x.font = '600 32px Nunito, sans-serif'; filas.forEach((f, i) => x.fillText(f.length > 46 ? f.slice(0, 45) + '…' : f, 120, y + 104 + i * 46));
+      x.textAlign = 'center'; y += h + 24;
+    };
+    card('🍽️ ' + I18N.t('¿Quién lleva qué?'), cena.slice(0, 8).map(c => '• ' + c.texto + ' — ' + (c.quien || I18N.t('Falta quién'))));
+    card('🤫 ' + I18N.t('Reglas'), [I18N.t('No le digas a nadie a quién te tocó.'), g.monto ? I18N.t('Respeta el monto.') : '', I18N.t('Usa los mensajes anónimos si tienes dudas.')].filter(Boolean));
+    x.fillStyle = v('--sub') || '#b9d3c1'; x.font = '700 30px Nunito, sans-serif'; x.fillText('🎁 ' + I18N.t('Entra con tu link de WhatsApp para ver a quién te tocó'), W / 2, 1290);
+    const url = c.toDataURL('image/png');
+    const r = modal(`<h2>🖼️ Resumen</h2><img class="full" src="${url}" alt="">
+      <div class="row mt"><button class="btn verde grow" id="resDesc">⬇️ Descargar</button>${navigator.canShare ? '<button class="btn wa grow" id="resComp">Compartir</button>' : ''}</div>
+      <button class="btn ghost full mt" onclick="closeModal()">Cerrar</button>`);
+    r.querySelector('#resDesc').onclick = () => { const a = document.createElement('a'); a.href = url; a.download = 'resumen-intercambio.png'; document.body.appendChild(a); a.click(); a.remove(); };
+    const sh = r.querySelector('#resComp'); if (sh) sh.onclick = async () => {
+      try{ const b = await (await fetch(url)).blob(); const f = new File([b], 'resumen-intercambio.png', {type: 'image/png'});
+        if (navigator.canShare({files: [f]})) await navigator.share({files: [f], title: g.nombre}); else toast('Tu celular no permite compartir imágenes desde aquí: descárgala', true);
+      }catch(e){}
+    };
   },
   avisoCambio(n, titulo, nuevo){
     const g = this.d.grupo;
@@ -1160,11 +1732,17 @@ const Admin = {
       <button class="btn ghost full mt" onclick="closeModal()">Listo</button>`);
   },
   async agregar(btn){
-    const nombre = $('#np_nombre').value.trim(), tel = this.sinCel ? '' : $('#np_tel').value.trim();
+    let nombre = $('#np_nombre').value.trim(); const tel = this.sinCel ? '' : $('#np_tel').value.trim();
     const resp = this.sinCel && $('#np_resp') ? $('#np_resp').value : null;
     if (!nombre) return toast('Escribe el nombre', true);
-    await hacer(btn, () => rpc('ix_admin_agregar', {p_admin: this.code, p_nombre: nombre, p_telefono: tel || null, p_responsable: resp}));
-    this.sinCel = false;
+    const datos = {nombre, telefono: tel || null, responsable: resp, categoria: $('#np_cat') ? $('#np_cat').value : null, idioma: I18N.lang};
+    if (this.esPareja){
+      const n2 = $('#np_nombre2').value.trim(); if (!n2) return toast('Escribe el nombre de la pareja', true);
+      Object.assign(datos, {nombre: nombre + ' y ' + n2, es_pareja: true, telefono2: $('#np_tel2').value.trim() || null});
+      $('#np_nombre2').dataset.keep = 'no'; $('#np_tel2').dataset.keep = 'no';
+    }
+    await hacer(btn, () => rpc('ix_admin_agregar', {p_admin: this.code, p_datos: datos}));
+    this.sinCel = false; this.esPareja = false;
     $('#np_nombre').dataset.keep = 'no'; $('#np_tel').dataset.keep = 'no';
     await this.cargar();
     const n = $('#np_nombre'); if (n) n.focus();
@@ -1173,6 +1751,7 @@ const Admin = {
     const evitar = $('#evitar').checked, norep = $('#norepetir') ? $('#norepetir').checked : false;
     if (!await confirmar('¿Hacer el sorteo?', `Se sortea entre ${this.d.participantes.length} personas. Después ya no podrás agregar ni quitar gente (a menos que reinicies).`, '🎲 Sortear', 'rojo')) return;
     const r = await hacer(btn, () => rpc('ix_sortear', {p_admin: this.code, p_evitar_parejas: evitar, p_evitar_repetir: norep}));
+    Push.avisar({tipo: 'sorteo', admin: this.code});
     await this.cargar(); confeti(); Musica.efecto('campanas');
     const avisos = [];
     if (evitar && !r.sin_parejas) avisos.push('No se pudo evitar que dos personas se regalen entre sí con estas exclusiones.');
@@ -1195,6 +1774,10 @@ const Admin = {
     const r = modal(`<h2>✏️ Editar participante</h2>
       <label>Nombre</label><input id="ep_n" maxlength="40" value="${esc(p.nombre)}">
       <label>WhatsApp</label><input id="ep_t" type="tel" value="${esc(p.telefono || '')}">
+      ${p.responsable_id ? '' : `<label class="check"><input type="checkbox" id="ep_pj" ${p.es_pareja ? 'checked' : ''}> 💑 Es pareja</label>
+      <label>WhatsApp de la pareja <span class="muted small">(opcional)</span></label><input id="ep_t2" type="tel" value="${esc(p.telefono2 || '')}">`}
+      ${(this.d.grupo.categorias || []).length ? `<label>💰 Categoría</label><select id="ep_c"><option value="">— General —</option>${this.d.grupo.categorias.map(c => `<option value="${esc(c.id)}" ${p.categoria === c.id ? 'selected' : ''}>${esc(c.nombre)}${c.monto ? ' · ' + money(c.monto, this.d.grupo.moneda) : ''}</option>`).join('')}</select>` : ''}
+      <label>🌐 Idioma de sus mensajes</label><select id="ep_i"><option value="es" ${p.idioma !== 'en' ? 'selected' : ''}>Español</option><option value="en" ${p.idioma === 'en' ? 'selected' : ''}>English</option></select>
       ${this.d.participantes.some(x => x.responsable_id === p.id) ? `<p class="hint">${esc(p.nombre)} maneja a otra persona, así que usa su propio celular.</p>` : `
       <label>👶 ¿Lo maneja alguien más?</label>
       <select id="ep_r"><option value="">No, usa su propio celular</option>
@@ -1203,8 +1786,10 @@ const Admin = {
     r.querySelector('[data-x=no]').onclick = closeModal;
     r.querySelector('[data-x=si]').onclick = e => hacer(e.currentTarget, async () => {
       const er = $('#ep_r');
-      await rpc('ix_admin_editar_participante', {p_admin: this.code, p_id: p.id, p_nombre: $('#ep_n').value, p_telefono: $('#ep_t').value || null,
-        p_responsable: er ? (er.value || null) : (p.responsable_id || null)});
+      await rpc('ix_admin_editar_participante', {p_admin: this.code, p_id: p.id, p_datos: {
+        nombre: $('#ep_n').value, telefono: $('#ep_t').value || null, telefono2: $('#ep_t2') ? $('#ep_t2').value || null : null,
+        es_pareja: $('#ep_pj') ? $('#ep_pj').checked : false, categoria: $('#ep_c') ? $('#ep_c').value || null : p.categoria,
+        idioma: $('#ep_i').value, responsable: er ? (er.value || null) : (p.responsable_id || null)}});
       closeModal(); await this.cargar();
     });
   },
@@ -1328,10 +1913,11 @@ const TV = {
     if (this.fase === 'inicio') return prog + `<div style="font-size:min(16vh,140px)">🎅</div>
       <div class="t2">Revelación de Santas</div><div class="t1">${total} participantes</div>
       <div class="ctrl"><button class="btn oro" id="go">▶ Comenzar</button></div>`;
-    if (this.fase === 'pregunta') return prog + `<div class="t1">¿Quién le regaló a…</div><div class="t2">${esc(p.para)}?</div>
+    if (this.fase === 'pregunta') return prog + `${p.av_para ? `<img src="${esc(p.av_para)}" alt="" style="width:min(20vh,160px);height:min(20vh,160px);border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 14px 40px rgba(0,0,0,.5)">` : ''}<div class="t1">¿Quién le regaló a…</div><div class="t2">${esc(p.para)}?</div>
       <div class="ctrl"><button class="btn rojo" id="go">🥁 Revelar</button></div>`;
     if (this.fase === 'redoble') return prog + `<div class="t1">El Santa de ${esc(p.para)} es…</div><div class="redoble">🥁</div>`;
-    if (this.fase === 'revelado') return prog + `<div class="t1">El Santa de <b>${esc(p.para)}</b> fue</div><div class="t3" style="${this.fotoActual ? 'font-size:clamp(44px,8vw,110px)' : ''}">${esc(p.de)}</div>
+    if (this.fase === 'revelado') return prog + `${p.av_de && !this.fotoActual ? `<img src="${esc(p.av_de)}" alt="" style="width:min(22vh,180px);height:min(22vh,180px);border-radius:50%;object-fit:cover;border:5px solid var(--oro2);box-shadow:0 14px 40px rgba(0,0,0,.5);animation:pop .8s">` : ''}
+      <div class="t1">El Santa de <b>${esc(p.para)}</b> fue</div><div class="t3" style="${this.fotoActual ? 'font-size:clamp(44px,8vw,110px)' : ''}">${esc(p.de)}</div>
       ${this.fotoActual ? `<img class="tvfoto" src="${esc(this.fotoActual)}" alt="Regalo"><div class="t1" style="font-size:clamp(14px,1.6vw,20px)">🎁 Esto le compró</div>` : ''}
       ${p.voto ? `<div class="t1" style="margin-top:1.4vh">${p.atino ? `🎯 ¡${esc(p.para)} le atinó!` : `😅 ${esc(p.para)} creía que era ${esc(p.creia)}`}</div>` : ''}
       <div class="ctrl"><button class="btn oro" id="go">${this.i + 1 < total ? 'Siguiente ›' : 'Terminar 🎉'}</button></div>`;
@@ -1585,6 +2171,7 @@ const Part = {
       this.d = await rpc('ix_entrar', {p_token: this.token, p_pin: this.pin});
       store.set('ix_pin_' + this.token, this.pin);
       aplicarTema(this.d.grupo.tema);
+      if (this.d.yo.idioma !== I18N.lang) rpc('ix_idioma', {p_token: this.token, p_pin: this.pin, p_idioma: I18N.lang}).catch(() => {});
       if (this.token === this.raiz)
         this.familia = this.d.a_cargo && this.d.a_cargo.length
           ? [{nombre: this.d.yo.nombre, token: this.token, pin: this.pin, yo: true}, ...this.d.a_cargo] : [];
@@ -1600,6 +2187,41 @@ const Part = {
       else if (this.token !== this.raiz){ toast(e.message, true); }
       else { this.pantallaPin(e.message); }
     }
+  },
+  async activarPush(){
+    const sub = await hacer(null, () => Push.suscribir());
+    const url = BASE + '?p=' + this.raiz;
+    for (const f of (this.familia.length ? this.familia : [{token: this.token, pin: this.pin}]).slice(0, 1))
+      await hacer(null, () => rpc('ix_push_guardar', {p_token: f.token, p_pin: f.pin, p_sub: sub, p_url: url}));
+    toast('🔔 ¡Listo! Te avisaré aquí'); this.render(true);
+  },
+  async grabar(){
+    const anonimo = this.chatCon === 'amigo';
+    let stream, rec, partes = [], seg = 0, timer, efecto = anonimo ? 'ardilla' : 'normal', blob = null, listo = null;
+    const pintar = () => {
+      const r = modal(blob ? `<h2>🎤 Mensaje de voz</h2><p class="muted mt0">Elige cómo sonará tu voz${anonimo ? ' (para que no te reconozcan)' : ''}:</p>
+        <div class="efectos">${Audio8.efectos.filter(e => !anonimo || e[0] !== 'normal').map(([k, ico, t]) => `<button data-ef="${k}" class="${efecto === k ? 'on' : ''}"><span>${ico}</span>${t}</button>`).join('')}</div>
+        <div class="row"><button class="btn ghost grow" id="auPrev">▶️ Escuchar</button><button class="btn rojo grow" id="auSend">Enviar</button></div>
+        <button class="btn ghost full mt" data-x="no">Cancelar</button>`
+      : `<h2>🎤 Grabando…</h2><div class="grab">🔴</div><p class="center" style="font-size:22px;font-weight:800" id="auSeg">0:00 / 0:20</p>
+        <button class="btn rojo full" id="auStop">⏹️ Terminar</button><button class="btn ghost full mt" data-x="no">Cancelar</button>`);
+      r.querySelector('[data-x=no]').onclick = () => { clearInterval(timer); try{ rec && rec.state !== 'inactive' && rec.stop(); }catch(e){} stream && stream.getTracks().forEach(t => t.stop()); blob = null; closeModal(); };
+      const st = r.querySelector('#auStop'); if (st) st.onclick = () => { clearInterval(timer); rec.stop(); };
+      r.querySelectorAll('[data-ef]').forEach(b => b.onclick = () => { efecto = b.dataset.ef; listo = null; pintar(); });
+      const pv = r.querySelector('#auPrev'); if (pv) pv.onclick = () => hacer(pv, async () => { listo = listo || await Audio8.procesar(blob, efecto); await new Audio(listo).play(); });
+      const sd = r.querySelector('#auSend'); if (sd) sd.onclick = () => hacer(sd, async () => {
+        listo = listo || await Audio8.procesar(blob, efecto);
+        await rpc('ix_mensaje', {p_token: this.token, p_pin: this.pin, p_hacia: this.chatCon, p_texto: '', p_audio: listo, p_efecto: efecto});
+        Push.avisar({tipo: 'mensaje', token: this.token, pin: this.pin, hacia: this.chatCon});
+        closeModal(); toast('🎤 ¡Audio enviado!'); await this.refrescar(); const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
+      });
+    };
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio: true}); }
+    catch(e){ return toast('No se pudo usar el micrófono. Revisa los permisos.', true); }
+    rec = new MediaRecorder(stream); rec.ondataavailable = e => e.data.size && partes.push(e.data);
+    rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); if (!partes.length) return; blob = new Blob(partes, {type: rec.mimeType || 'audio/webm'}); pintar(); };
+    rec.start(); pintar();
+    timer = setInterval(() => { seg++; const el = $('#auSeg'); if (el) el.textContent = `0:${String(seg).padStart(2, '0')} / 0:20`; if (seg >= 20){ clearInterval(timer); rec.stop(); } }, 1000);
   },
   async cargarAlbum(){
     this._cargandoAlbum = true;
@@ -1640,7 +2262,8 @@ const Part = {
     const cuerpo = {amigo: () => this.vAmigo(), lista: () => this.vLista(), chat: () => this.vChat(), adviento: () => this.vAdviento(), evento: () => this.vEvento()}[this.tab]();
     conservar(() => {
       app.innerHTML = `
-        <div class="top"><div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">${this.token === this.raiz || !this.familia.length ? 'Hola, ' + esc(this.d.yo.nombre) + ' 👋' : 'Manejando la cuenta de ' + esc(this.d.yo.nombre)}</div></div>
+        <div class="top">${this.d.yo.avatar ? `<img class="avatar" src="${esc(this.d.yo.avatar)}" alt="">` : ''}<div class="grow"><h1>${esc(g.nombre)}</h1><div class="sub">${this.token === this.raiz || !this.familia.length ? 'Hola, ' + esc(this.d.yo.nombre) + ' 👋' : 'Manejando la cuenta de ' + esc(this.d.yo.nombre)}</div></div>
+        <button class="iconbtn" id="ajustesP" title="Ajustes">⚙️</button>
         <button class="iconbtn" id="recargar" title="Actualizar">↻</button></div>
         ${this.familia.length ? `<div class="seg" style="margin-bottom:10px">${this.familia.map(f => `<button class="${f.token === this.token ? 'on' : ''}" data-cuenta="${esc(f.token)}">${f.yo ? '👤 Yo' : '👶 ' + esc(f.nombre)}</button>`).join('')}</div>` : ''}
         ${this.familia.length && this.token !== this.raiz ? `<div class="banner azul small" style="margin-top:0">👶 Estás en la cuenta de <b style="font-size:15px">${esc(this.d.yo.nombre)}</b>. Todo lo que hagas aquí (lista, mensajes, pistas) será a su nombre.</div>` : ''}
@@ -1651,6 +2274,8 @@ const Part = {
     enlazarInstalar();
     this.nav();
     $('#recargar').onclick = () => { this.refrescar(); toast('Actualizado'); };
+    $('#ajustesP').onclick = () => abrirAjustes({onCambio: () => this.render(true), push: () => this.activarPush(),
+      onLang: l => rpc('ix_idioma', {p_token: this.token, p_pin: this.pin, p_idioma: l}).catch(() => {})});
     app.querySelectorAll('[data-cuenta]').forEach(b => b.onclick = () => this.cambiarA(b.dataset.cuenta));
     this.enlazar();
     if (suave) window.scrollTo(0, y);
@@ -1668,10 +2293,10 @@ const Part = {
       ${d.foto ? `<img class="ph" src="${esc(d.foto)}" alt="" data-foto="1">` : ''}
       <div class="grow"><div class="t">${esc(d.texto)}</div>
         ${d.prioridad === 1 ? `<span class="chip oro" style="margin:3px 0">${modo === 'amigo' ? '⭐ Lo que más quiere' : '⭐ Lo quiero mucho'}</span>` : ''}
-        ${this.d.grupo.monto && d.precio && +d.precio > +this.d.grupo.monto ? `<span class="chip rojo" style="margin:3px 0">⚠️ Pasa del monto${modo === 'amigo' ? ' (puedes buscar algo parecido)' : ''}</span>` : ''}
+        ${d.grupal ? `<span class="chip ok" style="margin:3px 0">🤝 ${modo === 'amigo' ? 'Regalo para cooperar entre varios' : 'Para cooperar'}</span>` : this.d.grupo.monto && d.precio && +d.precio > +this.d.grupo.monto ? `<span class="chip rojo" style="margin:3px 0">⚠️ Pasa del monto${modo === 'amigo' ? ' (puedes buscar algo parecido)' : ''}</span>` : ''}
         <div class="muted small">${d.precio ? '≈ ' + money(d.precio) : ''} ${d.link ? `${d.precio ? '· ' : ''}<a href="${esc(d.link)}" target="_blank" rel="noopener">${modo === 'amigo' ? 'Ver dónde comprar' : 'Link'} ↗</a>` : ''}</div>
         ${modo === 'amigo' && !d.comprado ? tiendas(d.texto) : ''}</div>
-      ${modo === 'mio' ? `<button class="btn xs danger" data-borrard="${esc(d.id)}">Quitar</button>` : ''}
+      ${modo === 'mio' ? `<div style="display:flex;flex-direction:column;gap:4px"><button class="btn xs danger" data-borrard="${esc(d.id)}">Quitar</button><button class="btn xs ${d.grupal ? 'oro' : 'ghost'}" data-grupal="${esc(d.id)}" data-v="${d.grupal ? 0 : 1}" title="Regalo para cooperar">🤝</button></div>` : ''}
     </div>`;
   },
   vAmigo(){
@@ -1697,8 +2322,10 @@ const Part = {
     const pm = this.d.pistas_mias || [];
     return `
       <div class="card ribbon center">
+        ${a.avatar ? `<img class="avatar lg" src="${esc(a.avatar)}" alt="" data-foto="1">` : ''}
         <div class="muted">Te tocó regalarle a</div>
         <div class="big-name">${esc(a.nombre)}</div>
+        ${a.es_pareja ? '<div class="chip" style="margin-bottom:6px">💑 Son pareja: un regalo para los dos</div>' : ''}
         ${g.monto ? `<span class="chip oro">💰 Monto: ${money(g.monto, g.moneda)}</span>` : ''}
       </div>
       <div class="card"><h2>📏 Sus datos</h2>${this.perfilHTML(a.perfil, 'Aún no llena sus datos. ¡Pregúntale de forma anónima en Mensajes!')}</div>
@@ -1740,6 +2367,7 @@ const Part = {
         <div class="row mt wrapr">
           <span class="btn sm ghost filebtn">📷 ${this.foto ? 'Cambiar foto' : 'Agregar foto'}<input type="file" accept="image/*" id="d_foto"></span>
           <button class="btn sm ${this.prio === 1 ? 'oro' : 'ghost'}" id="d_prio">⭐ ${this.prio === 1 ? '¡Lo quiero mucho!' : 'Lo quiero mucho'}</button>
+          <button class="btn sm ${this.grupal ? 'oro' : 'ghost'}" id="d_grupal">🤝 ${this.grupal ? '¡Para cooperar!' : 'Para cooperar'}</button>
         </div>
         ${this.foto ? `<div class="foto-prev"><img src="${esc(this.foto)}" alt=""><button class="btn xs danger" id="d_fotoq">Quitar foto</button></div>` : ''}
         <div class="hint" id="d_alerta" style="color:#b3202a;font-weight:700"></div>
@@ -1753,6 +2381,9 @@ const Part = {
       </div>` : ''}
       <div class="card">
         <h2>📏 Mis datos para mi Santa</h2>
+        <div class="row" style="margin-bottom:6px">${this.d.yo.avatar ? `<img class="avatar lg" style="margin:0" src="${esc(this.d.yo.avatar)}" alt="">` : '<span style="font-size:54px">🙂</span>'}
+          <div class="grow"><b>Mi foto</b><div class="muted small">Aparece en la app y en la pantalla de TV.</div>
+          <div class="row wrapr mt"><span class="btn xs verde filebtn">📷 ${this.d.yo.avatar ? 'Cambiar' : 'Subir foto'}<input type="file" accept="image/*" id="av_foto"></span>${this.d.yo.avatar ? '<button class="btn xs danger" id="av_q">Quitar</button>' : ''}</div></div></div>
         <label>👕 Talla de ropa</label><input id="pf_talla" maxlength="200" placeholder="Ej. M / 32" value="${esc(pf.talla)}">
         <label>👟 Calzado</label><input id="pf_calzado" maxlength="200" placeholder="Ej. 26 MX" value="${esc(pf.calzado)}">
         <label>🎨 Colores favoritos</label><input id="pf_colores" maxlength="200" placeholder="Ej. Verde, negro" value="${esc(pf.colores)}">
@@ -1788,11 +2419,14 @@ const Part = {
           ? 'Aquí te escribe quien te va a regalar. Tú no sabes quién es 🤫'
           : `Pregúntale a <b>${esc(this.d.amigo.nombre)}</b> lo que quieras. <b>No sabrá que eres tú.</b>`}</p>
         <div class="chat" id="chat">
-          ${lista.length ? lista.map(m => `<div class="msg ${m.autor === yoAutor ? 'me' : 'them'}">${esc(m.texto)}<time>${m.autor === yoAutor ? 'Tú' : esc(quien)} · ${esc(hora(m.fecha))}</time></div>`).join('')
+          ${lista.length ? lista.map(m => `<div class="msg ${m.autor === yoAutor ? 'me' : 'them'}">${m.audio ? `<button class="btn xs ${m.autor === yoAutor ? 'ghost' : 'oro'}" style="${m.autor === yoAutor ? 'color:#fff;border-color:rgba(255,255,255,.5)' : ''}" data-audio="${esc(m.id)}">▶️ Mensaje de voz</button>${m.texto ? '<br>' : ''}` : ''}${esc(m.texto)}<time>${m.autor === yoAutor ? 'Tú' : esc(quien)} · ${esc(hora(m.fecha))}</time></div>`).join('')
             : `<div class="empty small">${con === 'santa' ? 'Tu Santa aún no te escribe.' : 'Ej. “¿Prefieres algo para la casa o para ti?”'}</div>`}
         </div>
-        <div class="row mt"><input id="m_txt" class="grow" maxlength="400" placeholder="${con === 'santa' ? 'Escríbele a tu Santa…' : 'Pregunta anónima…'}"><button class="btn rojo" id="m_send">Enviar</button></div>
-      </div>`;
+        <div class="row mt"><input id="m_txt" class="grow" maxlength="400" placeholder="${con === 'santa' ? 'Escríbele a tu Santa…' : 'Pregunta anónima…'}">
+          ${window.MediaRecorder && navigator.mediaDevices ? '<button class="btn ghost" id="m_mic" title="Mensaje de voz">🎤</button>' : ''}<button class="btn rojo" id="m_send">Enviar</button></div>
+        ${con === 'amigo' && window.MediaRecorder ? '<div class="hint">🎤 Los mensajes de voz se distorsionan en tu celular antes de enviarse: nadie reconocerá tu voz.</div>' : ''}
+      </div>
+      ${Push.soportado() ? `<div class="card" id="pushCard" hidden><div class="row"><span style="font-size:28px">🔔</span><span class="grow small"><b>¿Te aviso cuando te escriban?</b><br>Activa las notificaciones en este celular.</span><button class="btn xs oro" id="pushAct">Activar</button></div></div>` : ''}`;
   },
   vAdviento(){
     const hoy = diaAdviento(), abiertos = store.get('ix_adv_' + this.token, []);
@@ -1848,7 +2482,7 @@ const Part = {
           `<button class="btn sm grow ${as === v ? c : 'ghost'}" data-asis="${v}">${t}</button>`).join('')}</div>
         ${as === 'no' ? '<p class="hint">El organizador verá tu respuesta y podrá reacomodar el intercambio.</p>' : ''}
       </div>
-      ${g.revelado && this.d.santa_nombre ? `<div class="banner center"><div style="font-size:40px">🎅</div><b>¡Tu Santa fue ${esc(this.d.santa_nombre)}!</b>${this.d.regalo_foto ? `<img src="${esc(this.d.regalo_foto)}" alt="" data-foto="1" style="display:block;width:100%;max-width:260px;margin:10px auto 4px;border-radius:14px;border:3px solid #fff">` : ''}${this.d.adivino === true ? '<div class="small">🎯 ¡Y le atinaste!</div>' : this.d.adivino === false ? '<div class="small">Tú creías que era otra persona 😅</div>' : ''}</div>` : ''}
+      ${g.revelado && this.d.santa_nombre ? `<div class="banner center"><div style="font-size:40px">🎅</div>${this.d.santa_avatar ? `<img class="avatar lg" src="${esc(this.d.santa_avatar)}" alt="">` : ''}<b>¡Tu Santa fue ${esc(this.d.santa_nombre)}!</b>${this.d.regalo_foto ? `<img src="${esc(this.d.regalo_foto)}" alt="" data-foto="1" style="display:block;width:100%;max-width:260px;margin:10px auto 4px;border-radius:14px;border:3px solid #fff">` : ''}${this.d.adivino === true ? '<div class="small">🎯 ¡Y le atinaste!</div>' : this.d.adivino === false ? '<div class="small">Tú creías que era otra persona 😅</div>' : ''}</div>` : ''}
       <div class="card ribbon">
         <h2>📅 El intercambio</h2>
         <div class="info">
@@ -1867,6 +2501,22 @@ const Part = {
           </div>`).join('') : '<div class="muted small">El organizador aún no anota platillos. Puedes proponer uno.</div>'}
         <div class="row mt"><input id="cena_txt" class="grow" maxlength="80" placeholder="Yo llevo… (ej. postre)"><button class="btn verde" id="cenaAdd">+</button></div>
       </div>
+      ${(this.d.coop || []).length ? `<div class="card"><h2>💵 Cooperación</h2>
+        ${this.d.coop.map(c => { const meta = c.monto * c.personas, pct = meta ? Math.min(100, c.total / meta * 100) : 0;
+          return `<div class="opt"><div class="row"><b class="grow">${esc(c.concepto)}</b>${c.pagado >= c.monto ? '<span class="chip ok">✓ Ya pagaste</span>' : c.pagado > 0 ? `<span class="chip oro">Llevas ${money(c.pagado)}</span>` : `<span class="chip rojo">Te toca ${money(c.monto)}</span>`}</div>
+            <div class="barra"><i style="width:${pct}%"></i></div><div class="muted small">Se lleva ${money(c.total) || '$0'} de ${money(meta)}</div></div>`; }).join('')}
+        <p class="hint">El organizador marca los pagos cuando le das el dinero.</p></div>` : ''}
+      ${(this.d.grupales || []).length ? `<div class="card"><h2>🤝 Regalos para cooperar</h2>
+        <p class="muted mt0 small">Regalos que alguien quiere y que pueden comprar entre varios. La persona que lo pidió no ve quién coopera.</p>
+        ${this.d.grupales.map(d => { const tot = d.aportes.reduce((a, x) => a + Number(x.monto), 0), pct = d.precio ? Math.min(100, tot / d.precio * 100) : 0;
+          return `<div class="opt"><div class="row">${d.foto ? `<img class="ph" style="width:52px;height:52px;border-radius:10px;object-fit:cover" src="${esc(d.foto)}" alt="" data-foto="1">` : '<span style="font-size:30px">🎁</span>'}
+            <div class="grow"><b>${esc(d.texto)}</b><div class="muted small">Para ${esc(d.para)}${d.precio ? ' · ≈ ' + money(d.precio) : ''}</div></div></div>
+            ${d.precio ? `<div class="barra"><i style="width:${pct}%"></i></div><div class="small"><b>${money(tot) || '$0'}</b> de ${money(d.precio)}</div>` : `<div class="small">Juntado: <b>${money(tot) || '$0'}</b></div>`}
+            ${d.aportes.length ? `<div class="chips">${d.aportes.map(a => `<span class="chip ok">${esc(a.nombre)} · ${money(a.monto)}</span>`).join('')}</div>` : ''}
+            <div class="row mt"><input type="number" inputmode="decimal" id="ap_${esc(d.id)}" placeholder="$ con cuánto coperas" value="${d.mio ? esc(d.mio) : ''}" class="grow">
+            <button class="btn sm verde" data-aporte="${esc(d.id)}">${d.mio ? 'Cambiar' : 'Me apunto'}</button>${d.mio ? `<button class="btn sm danger" data-aportex="${esc(d.id)}">✕</button>` : ''}</div>
+            ${tiendas(d.texto)}</div>`; }).join('')}
+      </div>` : ''}
       <div class="card"><h2>📸 Álbum del intercambio <span class="chip">${this.album ? this.album.length : this.d.fotos}</span></h2>
         <p class="muted mt0 small">Sube fotos del intercambio, la cena o tu regalo. Se verán aquí y en la pantalla de TV.</p>
         <div class="row"><input id="al_txt" class="grow" maxlength="120" placeholder="Pie de foto (opcional)">
@@ -1909,12 +2559,20 @@ const Part = {
     };
     on('#d_fotoq', () => { this.foto = null; this.render(true); });
     on('#d_prio', () => { this.prio = this.prio === 1 ? 2 : 1; this.render(true); });
+    on('#d_grupal', () => { this.grupal = !this.grupal; this.render(true); if (this.grupal) toast('🤝 Los demás podrán cooperar para este regalo (tú no verás quién)'); });
+    app.querySelectorAll('[data-grupal]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_deseo_grupal', Object.assign(base(), {p_id: b.dataset.grupal, p_grupal: b.dataset.v === '1'})); await this.refrescar();
+    }));
+    const avf = $('#av_foto'); if (avf) avf.onchange = () => hacer(null, async () => {
+      const f = await reducirAvatar(avf.files[0]); await rpc('ix_avatar', Object.assign(base(), {p_foto: f})); toast('📸 ¡Foto lista!'); await this.refrescar();
+    });
+    on('#av_q', e => hacer(e.currentTarget, async () => { await rpc('ix_avatar', Object.assign(base(), {p_foto: null})); await this.refrescar(); }));
     on('#d_add', e => hacer(e.currentTarget, async () => {
       const t = $('#d_txt').value.trim(); if (!t) throw new Error('Escribe qué te gustaría');
       let link = $('#d_link').value.trim(); if (link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
       const pr = $('#d_precio').value;
-      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: link || null, p_precio: pr === '' ? null : Number(pr), p_foto: this.foto, p_prioridad: this.prio}));
-      this.foto = null; this.prio = 2;
+      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: link || null, p_precio: pr === '' ? null : Number(pr), p_foto: this.foto, p_prioridad: this.prio, p_grupal: !!this.grupal}));
+      this.foto = null; this.prio = 2; this.grupal = false;
       ['d_txt','d_link','d_precio'].forEach(id => { const el = $('#' + id); el.value = ''; el.dataset.keep = 'no'; });
       toast('¡Agregado a tu lista! 🎁'); await this.refrescar(); const n = $('#d_txt'); if (n) n.focus();
     }));
@@ -1924,14 +2582,14 @@ const Part = {
     app.querySelectorAll('[data-idea]').forEach(b => b.onclick = () => hacer(b, async () => {
       const [e, t, pr] = (this.ideasLista || [])[+b.dataset.idea] || [];
       if (!t) return;
-      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2}));
+      await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2, p_grupal: false}));
       toast('¡Agregado! ' + e); await this.refrescar();
     }));
     on('#sorprende', e => hacer(e.currentTarget, async () => {
       const ya = this.d.mis_deseos.map(d => norm(d.texto));
       const pick = ideasPara(this.d.yo.perfil, this.d.grupo.monto, 30).filter(i => !ya.includes(norm(i[1]))).slice(0, 3);
       if (!pick.length) throw new Error('Ya no tengo más ideas para ti 😅');
-      for (const [e, t, pr] of pick) await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2}));
+      for (const [e, t, pr] of pick) await rpc('ix_deseo_agregar', Object.assign(base(), {p_texto: t, p_link: null, p_precio: pr, p_foto: null, p_prioridad: 2, p_grupal: false}));
       toast('🎲 Agregué: ' + pick.map(i => i[0]).join(' ')); confeti(60); await this.refrescar();
     }));
     app.querySelectorAll('[data-borrard]').forEach(b => b.onclick = () => hacer(b, async () => {
@@ -1956,10 +2614,19 @@ const Part = {
     const send = btn => hacer(btn, async () => {
       const t = $('#m_txt').value.trim(); if (!t) return;
       await rpc('ix_mensaje', Object.assign(base(), {p_hacia: this.chatCon, p_texto: t}));
+      Push.avisar({tipo: 'mensaje', token: this.token, pin: this.pin, hacia: this.chatCon});
       $('#m_txt').value = ''; $('#m_txt').dataset.keep = 'no';
       await this.refrescar(); const c = $('#chat'); if (c) c.scrollTop = c.scrollHeight;
     });
     on('#m_send', e => send(e.currentTarget));
+    on('#m_mic', () => this.grabar());
+    app.querySelectorAll('[data-audio]').forEach(b => b.onclick = () => hacer(b, async () => {
+      const r = await rpc('ix_audio', Object.assign(base(), {p_id: b.dataset.audio}));
+      if (!r || !r.audio) throw new Error('No se encontró el audio');
+      const au = new Audio(r.audio); b.textContent = '🔊 …'; au.onended = () => { b.textContent = '▶️ Mensaje de voz'; }; await au.play();
+    }));
+    const pc = $('#pushCard'); if (pc && !store.get('ix_push_no', false)) Push.activo().then(on => { if (!on) pc.hidden = false; });
+    on('#pushAct', () => this.activarPush());
     const adv = $('#adivina'); if (adv) adv.onchange = () => hacer(null, async () => {
       await rpc('ix_adivinar', Object.assign(base(), {p_id: adv.value || null}));
       toast(adv.value ? '🕵️ Voto guardado' : 'Voto borrado'); await this.refrescar();
@@ -1984,6 +2651,13 @@ const Part = {
       await rpc('ix_foto_subir', Object.assign(base(), {p_foto: f, p_texto: $('#al_txt').value.trim() || null}));
       $('#al_txt').value = ''; $('#al_txt').dataset.keep = 'no'; toast('📸 ¡Foto en el álbum!'); this.album = null; await this.cargarAlbum();
     });
+    app.querySelectorAll('[data-aporte]').forEach(b => b.onclick = () => hacer(b, async () => {
+      const v = Number($('#ap_' + b.dataset.aporte).value); if (!v) throw new Error('Escribe con cuánto cooperas');
+      await rpc('ix_aporte', Object.assign(base(), {p_deseo: b.dataset.aporte, p_monto: v})); toast('🤝 ¡Gracias por cooperar!'); await this.refrescar();
+    }));
+    app.querySelectorAll('[data-aportex]').forEach(b => b.onclick = () => hacer(b, async () => {
+      await rpc('ix_aporte', Object.assign(base(), {p_deseo: b.dataset.aportex, p_monto: 0})); await this.refrescar();
+    }));
     app.querySelectorAll('[data-alq]').forEach(b => b.onclick = () => hacer(b, async () => {
       await rpc('ix_foto_borrar', Object.assign(base(), {p_id: b.dataset.alq})); this.album = null; await this.cargarAlbum();
     }));
